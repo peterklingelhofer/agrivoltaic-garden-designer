@@ -60,23 +60,22 @@ One bed is outside the array entirely. That spread is the point, and the ranking
 
 | Bed | Where | Annual mean DLI | What the pipeline planted |
 |---|---|---|---|
-| 1 | open sky, clear of the southernmost row | 28.7 mol/m²/d | brussels sprouts, chickpea, cucumber |
-| 2 | between the southern and middle rows | 20.5 mol/m²/d | brussels sprouts, crimson clover, elderberry |
-| 3 | the shade band of the middle row | 11.0 mol/m²/d | ramps, wild ginger |
-| 4 | between the middle and northern rows | 19.8 mol/m²/d | brussels sprouts, crimson clover, elderberry |
+| 1 | open sky, clear of the southernmost row | 28.6 mol/m²/d | tomato, pole bean, napa cabbage |
+| 2 | between the southern and middle rows | 20.4 mol/m²/d | brussels sprouts, crimson clover, teff |
+| 3 | the shade band of the middle row | 10.8 mol/m²/d | ramps, wild ginger |
+| 4 | between the middle and northern rows | 20.2 mol/m²/d | brussels sprouts, crimson clover, teff |
 
-Nobody chose those crops. A full-sun bed gets a chickpea and a shade bed gets ramps because the
+Nobody chose those crops. A full-sun bed gets a tomato and a shade bed gets ramps because the
 light gate and the polyculture scorer say so, which is the product's entire argument in one
 picture.
 
-**These are not the crops this table carried before.** The asset had been baked in early August
-and was not rebaked through the two climate-gate corrections that followed, so what shipped was a
-ranking that no longer existed: bed 1 was pole bean and brussels sprouts, beds 2 and 4 were
-aronia, sorrel and tomatillo. The light field is not what moved. Both `.raster` files come back
-byte-identical across the rebake, so the shade this picture argues from is unchanged and only the
-crops standing in it are different. **A bake is only as current as the ranking it was taken
-from**: any change to the climate or light gates dates every shipped example, silently, because
-nothing recomputes them.
+**These are not the crops this table carried before.** The asset was baked on 2026-09-11, before
+the catalogue gained teff two days later. Beds 2 and 4 had room for a third crop and now fill it
+with teff, next to the brussels sprouts and crimson clover already there; beds 1 and 3 are
+untouched. The `.raster` file comes back byte-identical across the rebake: the shade this
+picture argues from stayed put, and only the crop set changed. **A bake is only as current as the
+ranking it was taken from**: any change to the catalogue or the climate and light gates dates
+every shipped example, silently, because nothing recomputes them.
 
 ## 2. The encoding, and what it costs
 
@@ -173,12 +172,12 @@ What it ships with is **one empty bed of four**, and that is the honest answer r
 defect. Bed 3 stands in 71 to 79 % cumulative shade, above the 0.6 `maxDesignRsr` ceiling every
 annual in the catalogue carries; the only three crops with a measured ceiling above it are
 woodland perennials the climate gate rules out of Phoenix on the July they would have to stand
-through. Nothing in a 163-crop catalogue is both that shade-tolerant and that heat-tolerant. An
+through. Nothing in a 182-crop catalogue is both that shade-tolerant and that heat-tolerant. An
 empty bed makes `lightDemandClause` return null, so the narration falls back to its generic
 sentence instead of asserting an ordering it cannot support.
 
-Bergen, by contrast, came back with aronia, red currant, sorrel, highbush cranberry and lemon balm
-across a 16.5 to 8.7 mol/m²/d gradient.
+Bergen, by contrast, came back with aronia, comfrey, red currant, sorrel, good king henry and
+lemon balm across a 16.5 to 8.3 mol/m²/d gradient.
 
 ## 3. It cannot drift from the schema, and cannot drift from itself
 
