@@ -647,8 +647,8 @@ read as sourced.
 
 ### Still unsourced
 
-167 of the 174 DLI rows are Tier C (3 are A and 4 are B, counted from the shipped catalogue on
-2026-09-12), i.e. inferred from a sun-hour class via the doc 04 §3.3 conversion, not measured.
+175 of the 182 DLI rows are Tier C (3 are A and 4 are B, counted from the shipped catalogue on
+2026-09-13), i.e. inferred from a sun-hour class via the doc 04 §3.3 conversion, not measured.
 No peer-reviewed or extension DLI threshold exists for most of them (alliums, grain legumes,
 most culinary herbs, hops, most named perennials). This is a property of the literature, not a
 search failure. Each Tier C row cites the class-range methodology (Purdue HO-238-B-W and VCE

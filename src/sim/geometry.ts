@@ -325,3 +325,11 @@ export const gridForExtent: (extent: Extent2D, targetCellSizeM: Meters) => GridS
     rows,
   }
 }
+
+/**
+ * The way a fixed panel faces to see the sun's arc: south of it north of the equator, north of
+ * it south of the equator. The layout search builds every candidate facing this way, and a
+ * place that resolves south of the equator turns the starting array to it
+ */
+export const equatorFacingAzimuth = (latitudeDeg: number): Degrees =>
+  (latitudeDeg >= 0 ? 180 : 0) as Degrees
