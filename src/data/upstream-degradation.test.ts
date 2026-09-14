@@ -351,7 +351,9 @@ describe('a resolved site keeps the zone its normals were aggregated in', () => 
     expect(site.normals.source).toBe('open-meteo')
   })
 
-  it('falls back to the longitude zone where no upstream names one', async () => {
+  // the nearest tzdb zone to the point, and the site says that is how it was found; the
+  // longitude rule that used to answer here is now the last resort behind an empty zone table
+  it('falls back to the nearest time zone on record where no upstream names one', async () => {
     fetchJson.mockImplementation((upstream: unknown, _path: unknown, params: URLSearchParams) => {
       if (upstream === 'open-meteo') {
         return Promise.resolve(params.has('daily') ? dailyBody(12) : hourlyBody(12, 200))
@@ -360,9 +362,10 @@ describe('a resolved site keeps the zone its normals were aggregated in', () => 
       return Promise.reject(new Error(`${String(upstream)} is not answered here`))
     })
     const { site, weather } = await resolveSite(LOCATION, 'Amherst', null)
-    expect(site.timezone).toBe('Etc/GMT+5')
+    expect(site.timezone).toBe('America/New_York')
+    expect(site.timezoneBasis).toBe('nearest-zone')
     expect(site.utcOffsetHours).toBe(-5)
-    expect(weather.timezone).toBe('Etc/GMT+5')
+    expect(weather.timezone).toBe('America/New_York')
   })
 })
 
