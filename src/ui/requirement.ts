@@ -100,7 +100,7 @@ export const lightRequirement = (s: AppState): Requirement => ({
   reason: "How much light reaches each bed hasn't been computed yet",
   remedy: {
     label: 'Compute the light',
-    busyLabel: 'Computing it...',
+    busyLabel: 'Computing...',
     disabled: s.raster.status === 'loading',
     // the full check, the same one `useAutoLight` runs by itself: the quick one hands back a
     // different crop list, and a press here is what a grower reaches for when the automatic run

@@ -8,24 +8,24 @@
 > minutes became the binding cost. Historical cost, from when both e2e jobs ran there: the
 > functional job took 14m51s and the visual job 2m1s, about **169 billed minutes** for one push
 > at the private repo's 10x macOS multiplier. The `visual` project itself stays runnable
-> locally on macOS; see "Why the visual project runs on macOS" below.
+> locally on macOS, see "Why the visual project runs on macOS" below.
 >
 > Two functional tests skip under the `CI` environment variable, because they wait on a settled
 > GPU frame that GitHub's macOS runners do not produce:
 >
 > | test | file | reason |
 > |---|---|---|
-> | `the guided camera move runs, and the first pointer event stops it dead` | `e2e/example.spec.ts` | waits on a settled GPU frame; macOS runners have none |
-> | `a wetted surface loses more to the sky occlusion than the same surface dry` | `e2e/specular-occlusion.spec.ts` | waits on a settled GPU frame; macOS runners have none |
+> | `the guided camera move runs, and the first pointer event stops it dead` | `e2e/example.spec.ts` | waits on a settled GPU frame, macOS runners have none |
+> | `a wetted surface loses more to the sky occlusion than the same surface dry` | `e2e/specular-occlusion.spec.ts` | waits on a settled GPU frame, macOS runners have none |
 >
 > **Public since 2026-09-12.** Hosted runners are free on public repositories, so the workflow
-> runs on every push. The first public run: `checks` and `rust` green; `e2e (functional, macos)`
+> runs on every push. The first public run: `checks` and `rust` green, `e2e (functional, macos)`
 > 216 tests in 19.8 minutes, 166 passed, 49 skipped, one failure in `e2e/persistence.spec.ts`, a
 > timing race in which the boot-time site lookup's soil copy-in scheduled a save before the test
 > read the storage notice. Fixed the same day in `src/state/store.ts`: the copy-in is not an edit,
 > so it schedules no save and cannot displace the shipped example. The second run (c2b7f8a)
 > passed that spec and lost one test to a renderer hang on the runner's virtual GPU (Metal
-> command-buffer errors after a layout was applied; the browser context took nine minutes to
+> command-buffer errors after a layout was applied, the browser context took nine minutes to
 > close). The functional project now retries a failed test once under `CI`, and only there.
 
 The workflow runs on every push to `main` and on every pull request. A
@@ -55,7 +55,7 @@ and a release build for `wasm32-unknown-unknown`, all against the physics core i
 **`e2e-functional` (macos-latest)** runs the `functional` Playwright project: 216 tests
 (2026-09-11) covering journeys, invariants, water compliance, array energy, degradation, site
 search, the rendered overlay's colour against its legend, and the runtime WCAG contrast audit.
-169 of them run by default; the other 47 are the agent's and skip unless `VITE_AGENT=on`. It is
+169 of them run by default, the other 47 are the agent's and skip unless `VITE_AGENT=on`. It is
 on macOS rather than Linux for the GPU, which the long note in `ci.yml` measures.
 
 **The agent's weights are fetched in `checks` only, as of 2026-09-07.** `models/` is 58 MB and
@@ -66,13 +66,13 @@ sets also assert `COLLAPSE_FLOOR`, an alarm for a router that has fallen over ra
 to tune towards.
 
 **The e2e job doesn't fetch them any more.** `playwright.config.ts` used to build the webServer
-with `VITE_AGENT=on`, which made the weights mandatory there too; it builds the way a deploy
+with `VITE_AGENT=on`, which made the weights mandatory there too, it builds the way a deploy
 builds now. `agent.spec.ts` skips itself, the agent halves of `a11y` and `contrast` are guarded
 by `AGENT_IN_BUILD`, and 47 of the 223 functional tests skip, taking the local suite from about
 2.9 minutes to 1.4. `VITE_AGENT=on bunx playwright test` restores all of it, and needs `models/`
 present. Put the fetch step back in the e2e job when the flag goes back on.
 
-`visual` (2 tests, 3 screenshots) stopped running as a CI job on 2026-09-12; it still runs
+`visual` (2 tests, 3 screenshots) stopped running as a CI job on 2026-09-12, it still runs
 locally on macOS.
 
 The e2e job passes `--forbid-only` so a stray `test.only` cannot narrow the suite into a
@@ -84,7 +84,7 @@ fail, which is what makes a red build diagnosable without reproducing it locally
 
 `e2e/visual.spec.ts-snapshots/` holds three baselines, all suffixed `-darwin`. Playwright
 suffixes snapshot filenames by `process.platform`, so a Linux runner looks for `-linux.png`
-files that do not exist. Three options were on the table; this repo takes **(a), run the
+files that do not exist. Three options were on the table, this repo takes **(a), run the
 `visual` project on macOS**.
 
 The reasoning:
@@ -108,7 +108,7 @@ The reasoning:
 
 The cost was real: this was a private repository, so macOS minutes billed at a 10x
 multiplier, for 2 tests, in a job that ran separately from the functional suite. The
-documented fallback here was (c): delete the `e2e-visual` job. It was taken on 2026-09-12;
+documented fallback here was (c): delete the `e2e-visual` job. It was taken on 2026-09-12,
 visual regressions are gated locally now, not in CI. See the note at the top of this file.
 
 ### No silent baseline writes
@@ -148,7 +148,7 @@ sidebar under lists that keep growing after the thing each test waited for is fi
 either fetch, and contention only changed how often one landed inside the five-second screenshot
 window. `e2e/visual.spec.ts` now waits on both as conditions. Measured after: **5 consecutive
 green runs of the visual project at `--workers=2`**, where three consecutive runs failed before,
-with both baselines byte-unchanged; and the full suite 115/115 in 224 s at `--workers=2` against
+with both baselines byte-unchanged, and the full suite 115/115 in 224 s at `--workers=2` against
 367 s at `--workers=1`. The visual CI job pinned `--workers=1` for the CPU reason above.
 
 Pinning the target's POSITION is the obvious shortcut and it is wrong: both legends have
@@ -208,7 +208,7 @@ machine minutes apart, with every runtime dependency identical.
 That test taps a fixed point on the canvas and expects the bed under it to select, and the
 example garden opens on a slow orbit, so it assumes a camera pose rather than waiting for one.
 1.63.0 appears to shift the timing enough to matter under load. **The test is the fragile
-half**; the pin buys time rather than fixing anything. Unpinning means first making that tap
+half**, the pin buys time rather than fixing anything. Unpinning means first making that tap
 wait for a settled camera instead of a wall-clock moment.
 
 One cache, plus bun's own:
@@ -218,7 +218,7 @@ One cache, plus bun's own:
   Playwright version resolved from the installed package. A cold Chromium download
   dominates e2e runtime otherwise. On a cache hit the job still runs
   `playwright install-deps chromium` on Linux, because the system libraries live outside
-  the cached directory; on macOS there are no such deps and the step is omitted.
+  the cached directory, on macOS there are no such deps and the step is omitted.
 
 Keying the browser cache on the resolved version rather than on the lockfile hash means a
 lockfile change that does not move Playwright still hits.
@@ -267,7 +267,7 @@ Two consequences:
     bunx playwright test --workers=2 --forbid-only --update-snapshots=none --reporter=json
   node -e "const r=require('/tmp/pw.json');let n=0;const w=s=>{for(const p of s.specs||[])for(const t of p.tests||[])n+=1;for(const c of s.suites||[])w(c)};r.suites.forEach(w);console.log(n)"
   ```
-- **In CI**, assert the count. `bunx playwright test --list` prints the expected total;
+- **In CI**, assert the count. `bunx playwright test --list` prints the expected total,
   compare it against the JSON report and fail on a mismatch. Trusting the exit code alone would
   let a run that skipped a fifth of the suite report green, which is the same class of hazard as
   the `--update-snapshots=missing` default that silently writes an absent baseline and passes.
@@ -289,7 +289,7 @@ git diff --stat e2e/visual.spec.ts-snapshots
 ```
 
 Then open both images and confirm the diff is the change you made. `--update-snapshots=all`
-rewrites baselines whether or not they differ and should not be used; `changed` leaves
+rewrites baselines whether or not they differ and should not be used, `changed` leaves
 untouched images alone, which keeps the diff reviewable.
 
 Two failure modes are known and are not regressions, both documented in the header of

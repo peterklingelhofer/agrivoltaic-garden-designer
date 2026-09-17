@@ -471,7 +471,7 @@ describe('a site with no frost in the record', () => {
     expect(calendar.notes).not.toContain(CALENDAR_PROVENANCE_NOTE)
     // Pune's October also sits above its monthly mean, so the named run runs through it
     expect(calendar.notes).toContain(
-      "The rains here fall mostly in June to October; this calendar doesn't model them, so sow with the rains as local practice says",
+      "The rains here fall mostly in June to October, this calendar doesn't model them, so sow with the rains as local practice says",
     )
     // Amherst's rain is even through the year, so it gets no such sentence
     expect(wetSeasonNote(siteFixture().normals.monthlyPrecipMm)).toBeNull()
@@ -490,7 +490,7 @@ describe('a site with no frost in the record', () => {
 describe('wetSeasonNote', () => {
   it("names both of a bimodal climate's rainy seasons, in calendar order", () => {
     expect(wetSeasonNote([50, 40, 90, 200, 150, 30, 15, 20, 25, 50, 150, 90])).toBe(
-      "The rains here fall mostly in March to May and November to December; this calendar doesn't model them, so sow with the rains as local practice says",
+      "The rains here fall mostly in March to May and November to December, this calendar doesn't model them, so sow with the rains as local practice says",
     )
   })
 

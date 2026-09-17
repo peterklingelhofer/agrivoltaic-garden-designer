@@ -5,15 +5,14 @@ place an array and wait out a bake before the product showed them anything, so e
 makes about light, shade and crop response was invisible until they had done the work.
 
 It now opens on a worked example: a real `PersistedDesign`, with a `DliRaster` this simulation
-baked, loaded when and only when the browser holds no design of its own. Nothing in it is a
-picture of a result. The design is authored; every number is produced.
+baked, loaded when and only when the browser holds no design of its own. Nothing in it is a picture
+of a result. The design is authored, every number is produced.
 
 Rebuild it with `bun run bake-example`, or `node scripts/bake-example-garden.mjs --dry-run` to bake
-and report without writing. `--no-cache` forces the upstream fetches; without it the archive
+and report without writing. `--no-cache` forces the upstream fetches, without it the archive
 responses are cached under `node_modules/.cache/`, because Open-Meteo answers 429 to the third
 identical request in a row and an archive year does not change between two runs. Format the result
-afterwards: the written JSON is not formatted, and `bunx biome check --write public/data`
-does it.
+afterwards: the written JSON is not formatted, and `bunx biome check --write public/data` does it.
 
 Two things about running it, both learned the hard way on 2026-09-01:
 
@@ -36,11 +35,11 @@ Authored, in `scripts/bake-example-garden.mjs`: the site (Amherst, Massachusetts
 default), the plot boundary, one three-row south-facing array at 9 m pitch and 2.6 m clearance,
 four beds, the hour the scene is posed at, and the bake resolution. That is the whole of it.
 
-The array's rows run east-west and are spaced north-south, which is what the four bed northings
-are measured against: the row centres land on -9, 0 and +9. `rowAzimuthDeg` is the direction the
-rows RUN, so east-west is **90**. It read 180 until 2026-09-01, when `panelSnapshot` had its two
+The array's rows run east-west and are spaced north-south, which is what the four bed northings are
+measured against: the row centres land on -9, 0 and +9. `rowAzimuthDeg` is the direction the rows
+RUN, so east-west is **90**. It read 180 until 2026-09-01, when `panelSnapshot` had its two
 horizontal axes exchanged and 180 was what produced the arrangement described here. The three
-rasters are byte-identical across that change, because the array itself was never wrong; only the
+rasters are byte-identical across that change, because the array itself was never wrong, only the
 field naming its orientation was.
 
 Produced, by the same modules the browser runs, loaded out of `src/` through Vite so there is no
@@ -69,18 +68,18 @@ Nobody chose those crops. A full-sun bed gets a tomato and a shade bed gets ramp
 light gate and the polyculture scorer say so, which is the product's entire argument in one
 picture.
 
-**These are not the crops this table carried before.** The asset was baked on 2026-09-11, before
-the catalogue gained teff two days later. Beds 2 and 4 had room for a third crop and now fill it
-with teff, next to the brussels sprouts and crimson clover already there; beds 1 and 3 are
-untouched. The `.raster` file comes back byte-identical across the rebake: the shade this
-picture argues from stayed put, and only the crop set changed. **A bake is only as current as the
-ranking it was taken from**: any change to the catalogue or the climate and light gates dates
-every shipped example, silently, because nothing recomputes them.
+**These are not the crops this table carried before.** The asset was baked on 2026-09-11, before the
+catalogue gained teff two days later. Beds 2 and 4 had room for a third crop and now fill it with
+teff, next to the brussels sprouts and crimson clover already there, beds 1 and 3 are untouched. The
+`.raster` file comes back byte-identical across the rebake: the shade this picture argues from
+stayed put, and only the crop set changed. **A bake is only as current as the ranking it was taken
+from**: any change to the catalogue or the climate and light gates dates every shipped example,
+silently, because nothing recomputes them.
 
 ## 2. The encoding, and what it costs
 
 A `DliRaster` is 27 `Float32Array`s over the grid, plus two more per time window. Written as JSON
-this example is **2.73 MB**; as raw float32 it is **603 kB**. Neither is a first-paint asset.
+this example is **2.73 MB**, as raw float32 it is **603 kB**. Neither is a first-paint asset.
 
 `AGDR v1`, written by `encodeExampleRaster` and read by `decodeExampleRaster` in
 `src/data/example-raster.ts` — one module, so the format has one definition:
@@ -88,10 +87,10 @@ this example is **2.73 MB**; as raw float32 it is **603 kB**. Neither is a first
 1. **Per-slice quantisation to 4 096 levels.** Each slice carries its own minimum and maximum.
 2. **A raster-order predictor.** A cell is coded against the cell to its left, and the first cell
    of a row against the cell above it, so a smoothly varying field costs a small delta per cell.
-3. **Zigzag varints with a zero-run escape.** A non-zero delta is `zigzag(delta) + 1`, one byte
-   for anything within 63 steps; a token of 0 introduces a run of unchanged cells. That escape is
-   what pays for the format: thirteen of the twenty-seven slices are open-sky fields with no
-   panel above them, uniform across the grid, and they collapse to a handful of bytes each.
+3. **Zigzag varints with a zero-run escape.** A non-zero delta is `zigzag(delta) + 1`, one byte for
+   anything within 63 steps, a token of 0 introduces a run of unchanged cells. That escape is what
+   pays for the format: thirteen of the twenty-seven slices are open-sky fields with no panel above
+   them, uniform across the grid, and they collapse to a handful of bytes each.
 
 No decompression stream in the browser, and the file still gzips on the way out. Same trade as
 the climate grids in `docs/STATIC-LAYERS.md`.
@@ -105,12 +104,12 @@ the climate grids in `docs/STATIC-LAYERS.md`.
 | 0.60 m | 44 × 59 | 274 kB | 1.24 MB | 46.6 kB | 30.6 kB |
 
 The overlay uploads the quantity as a half-float texture and interpolates between cells, so a
-coarser grid does not pixelate; what it costs is the sharpness of the shade band's edge, which is
-the one thing this picture is for. 0.4 m puts 22 cells across the 9 m pitch and 4 across the
-1.5 m depth of a bed, so a bed still has a light gradient inside it rather than one value. 0.6 m
-puts 15 and 2. That is where the choice was made, and it is a judgement about legibility rather
-than a measurement; the bytes are the measurement. This is an example, not the visitor's design,
-and their own bake runs at 0.25 m or 0.12 m as before.
+coarser grid does not pixelate, what it costs is the sharpness of the shade band's edge, which is
+the one thing this picture is for. 0.4 m puts 22 cells across the 9 m pitch and 4 across the 1.5 m
+depth of a bed, so a bed still has a light gradient inside it rather than one value. 0.6 m puts 15
+and 2. That is where the choice was made, and it is a judgement about legibility rather than a
+measurement, the bytes are the measurement. This is an example, not the visitor's design, and their
+own bake runs at 0.25 m or 0.12 m as before.
 
 ### Quantisation
 
@@ -123,11 +122,11 @@ and their own bake runs at 0.25 m or 0.12 m as before.
 
 The error is measured, not predicted: `quantisationErrorOf` encodes and decodes and reports the
 largest disagreement, so what the asset records includes the float32 storage as well as the
-quantisation. Two things set the floor. `contourStep` draws iso-lines every 5 mol/m²/d on a field
-of this range and the legend prints its ticks at the same interval, so 0.0045 is a thousandth of
-one line. The colour ramp has 256 entries, about 0.16 mol/m²/d apart on this field, so 256 levels
-would put one quantisation step on one ramp entry and band the picture; 4 096 puts sixteen
-levels inside every ramp entry.
+quantisation. Two things set the floor. `contourStep` draws iso-lines every 5 mol/m²/d on a field of
+this range and the legend prints its ticks at the same interval, so 0.0045 is a thousandth of one
+line. The colour ramp has 256 entries, about 0.16 mol/m²/d apart on this field, so 256 levels would
+put one quantisation step on one ramp entry and band the picture, 4 096 puts sixteen levels inside
+every ramp entry.
 
 ### What ships
 
@@ -141,19 +140,19 @@ levels inside every ramp entry.
 | `public/data/example-garden-high.json` | 10 698 B | 2 035 B |
 | **A visitor fetches ONE pair** | **~106-113 kB** | **~67-75 kB** |
 
-**Only one pair is ever fetched.** What a second band costs is repository and deploy size, not
-load time, which is the whole reason having more than one is affordable. They are fetched once,
-on first paint, and only by a visitor with no saved design; a returning visitor requests neither.
+**Only one pair is ever fetched.** What a second band costs is repository and deploy size, not load
+time, which is the whole reason having more than one is affordable. They are fetched once, on first
+paint, and only by a visitor with no saved design, a returning visitor requests neither.
 
 ### Which band
 
-`example-garden-<band>.{json,raster}`, where the band comes from the visitor's own time zone
-through `src/data/timezone-bands.ts`, generated from tzdb `zone.tab` coordinates by
+`example-garden-<band>.{json,raster}`, where the band comes from the visitor's own time zone through
+`src/data/timezone-bands.ts`, generated from tzdb `zone.tab` coordinates by
 `scripts/generate-timezone-bands.mjs`. Reading real coordinates matters: `America/Denver` and
 `America/Phoenix` share a prefix and six degrees of latitude, and any table written by hand from
 zone names would put them in the same band. Bands are `low` under 35 deg, `temperate` to 50, and
-`high` above; 235 of 418 zones are `low`, so that is the omitted default and the table only
-carries the other 183 (1.9 kB gzipped).
+`high` above, 235 of 418 zones are `low`, so that is the omitted default and the table only carries
+the other 183 (1.9 kB gzipped).
 
 Bake one with `bun run bake-example -- --band=high`, then run the formatter over `public/data`: the
 script writes JSON that Biome has an opinion about. `SHIPPED_BANDS` in `src/state/example.ts`
@@ -168,13 +167,13 @@ shade-benefit bonus was paid on site heat and water with no reference to whether
 shade in it, and `growingSeasonMeanTempC` scored a perennial over its growing window only, so the
 July that would kill it was never read.
 
-What it ships with is **one empty bed of four**, and that is the honest answer rather than a
-defect. Bed 3 stands in 71 to 79 % cumulative shade, above the 0.6 `maxDesignRsr` ceiling every
-annual in the catalogue carries; the only three crops with a measured ceiling above it are
-woodland perennials the climate gate rules out of Phoenix on the July they would have to stand
-through. Nothing in a 182-crop catalogue is both that shade-tolerant and that heat-tolerant. An
-empty bed makes `lightDemandClause` return null, so the narration falls back to its generic
-sentence instead of asserting an ordering it cannot support.
+What it ships with is **one empty bed of four**, and that is the honest answer rather than a defect.
+Bed 3 stands in 71 to 79 % cumulative shade, above the 0.6 `maxDesignRsr` ceiling every annual in
+the catalogue carries, the only three crops with a measured ceiling above it are woodland perennials
+the climate gate rules out of Phoenix on the July they would have to stand through. Nothing in a
+182-crop catalogue is both that shade-tolerant and that heat-tolerant. An empty bed makes
+`lightDemandClause` return null, so the narration falls back to its generic sentence instead of
+asserting an ordering it cannot support.
 
 Bergen, by contrast, came back with aronia, comfrey, red currant, sorrel, good king henry and
 lemon balm across a 16.5 to 8.3 mol/m²/d gradient.
@@ -186,8 +185,8 @@ function `loadDesign` uses for a design restored from `localStorage`. There is n
 and no second shape. Two things are stricter than for a saved design:
 
 - **Any dropped field is fatal.** A stored design with one unreadable field is repaired and
-  reported; an example with one is refused outright. A saved design is the visitor's work and
-  worth salvaging. An example that is half itself is worse than no example.
+  reported, an example with one is refused outright. A saved design is the visitor's work and worth
+  salvaging. An example that is half itself is worse than no example.
 - **The raster must belong to the design.** `exampleGridMatches` recomputes the grid the shipped
   design would be baked on today and compares it to the grid inside the shipped raster. A change
   to the scene margin, the grid sizing or the array geometry makes the pair inconsistent, and an
@@ -208,19 +207,19 @@ the example is the thing behind the questions rather than a second thing to dism
 plain words that nothing on screen is yours yet, prints the provenance of the light field it is
 showing, and carries one control that clears it.
 
-Nothing about the example is written to storage. `loadExample` tells the persistence writer what
-is coming before the state moves, so the writer sees the example arrive and stays quiet; the
-first edit the visitor authors moves the design off the example and is saved exactly as any other
-edit is. `loadExample` also refuses to run at all if the browser already holds a design, and
-stands down if an edit lands while the asset is still in flight.
+Nothing about the example is written to storage. `loadExample` tells the persistence writer what is
+coming before the state moves, so the writer sees the example arrive and stays quiet, the first edit
+the visitor authors moves the design off the example and is saved exactly as any other edit is.
+`loadExample` also refuses to run at all if the browser already holds a design, and stands down if
+an edit lands while the asset is still in flight.
 
 ## 5. The camera
 
-`src/scene/framing.ts` computes where to stand from the array's own geometry rather than storing
-a pose, so the framing cannot drift from the design. At the default camera the open ground is
-nearly uniform and the contours have nothing to say; the field varies across the pitch and
-nowhere else. So the camera is placed on the side the panels face, 38° off the pitch axis so the
-rows recede rather than stack, at 27° elevation and 1.12 times the array's longest span.
+`src/scene/framing.ts` computes where to stand from the array's own geometry rather than storing a
+pose, so the framing cannot drift from the design. At the default camera the open ground is nearly
+uniform and the contours have nothing to say, the field varies across the pitch and nowhere else. So
+the camera is placed on the side the panels face, 38° off the pitch axis so the rows recede rather
+than stack, at 27° elevation and 1.12 times the array's longest span.
 
 `useGuidedTour` turns that view slowly, at **2.4 degrees a second**, held in degrees per second
 rather than in OrbitControls' `autoRotateSpeed`, which steps per frame: on the software
@@ -235,9 +234,9 @@ motion.
 
 `e2e/example.spec.ts` asserts all three by reading a strip of sky rather than the whole canvas.
 Foliage has wind in its vertex shader off a shared clock, so the canvas is never twice the same
-image and "the orbit stopped" cannot be asserted from it. Above the horizon there is nothing but
-the Preetham sky, which is a function of the hour and the view direction; the hour is fixed by
-the example, so that strip changes when and only when the camera turns.
+image and "the orbit stopped" cannot be asserted from it. Above the horizon there is nothing but the
+Preetham sky, which is a function of the hour and the view direction, the hour is fixed by the
+example, so that strip changes when and only when the camera turns.
 
 ## 6. What the rest of the e2e suite does about it
 
@@ -250,10 +249,10 @@ An unreadable body rather than a 404, because a 404 puts a console error on ever
 suite and several specs assert the absence of those.
 
 No visual baseline moved. At the shipped comparison settings both snapshots match exactly, 0
-differing pixels; at `threshold: 0`, where every sub-perceptual difference counts,
-`dli-overlay.png` reports 33 031 differing pixels and a build of the commit before this work, in
-a throwaway worktree against the same baseline file, reports 33 743. That residue is the
-rasteriser's and it predates this change.
+differing pixels, at `threshold: 0`, where every sub-perceptual difference counts, `dli-overlay.png`
+reports 33 031 differing pixels and a build of the commit before this work, in a throwaway worktree
+against the same baseline file, reports 33 743. That residue is the rasteriser's and it predates
+this change.
 
 ## 7. The contrast audit had to get sharper first
 
@@ -263,6 +262,6 @@ the canvas could be audited at all: the banner reported zero text elements check
 collector's own floor turns into a failure rather than a pass.
 
 A fully opaque background-color hides everything painted before it, gradients included, so it now
-clears that flag; a background-image on the same element sets it again, because it paints over
-its own colour. All eighteen contrast tests pass with the sharper resolver, including the
-self-test that proves the audit can still fail.
+clears that flag, a background-image on the same element sets it again, because it paints over its
+own colour. All eighteen contrast tests pass with the sharper resolver, including the self-test that
+proves the audit can still fail.
