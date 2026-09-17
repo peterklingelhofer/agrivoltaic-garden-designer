@@ -149,8 +149,8 @@ export const BLOCKED_TEXT: Readonly<Record<BlockedNeed, string>> = {
     describe work that already finished
   */
   'ranking-running':
-    'The light is worked out. I have started ranking crops against it. I will answer as soon as it lands.',
-  designs: "I haven't worked out any layouts yet. Ask me to design it and I will.",
+    'The light is computed. I have started ranking crops against it. I will answer as soon as it lands.',
+  designs: "I haven't computed any layouts yet. Ask me to design it and I will.",
   catalog: "I don't know that one. It may not be in the catalogue this build ships.",
   /*
     "Ask me again in a moment" is what both of these used to end with, and it asks somebody who
@@ -210,7 +210,7 @@ const complianceHeadline = (checks: readonly ComplianceCheck[]): string => {
   const parts = [
     [count('meets-expedited-parameters'), 'meet the expedited design parameters'] as const,
     [count('requires-exception-request'), 'would need an exception request'] as const,
-    [count('indeterminate'), 'cannot be worked out from the shapes alone'] as const,
+    [count('indeterminate'), 'cannot be computed from the shapes alone'] as const,
   ]
     .filter(([n]) => n > 0)
     .map(([n, words]) => `${String(n)} ${words}`)
@@ -376,7 +376,7 @@ export const wordsFor = (utterance: Utterance, catalog: readonly Crop[]): readon
     case 'designs':
       return [
         {
-          text: `I worked out ${String(utterance.archetypes.length)} layouts. The one I would go with is ${ARCHETYPE_LABEL[utterance.recommended]}.`,
+          text: `I computed ${String(utterance.archetypes.length)} layouts. The one I would go with is ${ARCHETYPE_LABEL[utterance.recommended]}.`,
           tone: 'say',
         },
         // the search's own account of its limits, verbatim, because it is the sentence that keeps
@@ -536,7 +536,7 @@ export const wordsFor = (utterance: Utterance, catalog: readonly Crop[]): readon
     case 'panel-cost-run':
       return [
         {
-          text: "I can work that out by running the same year again with every panel row taken off the plot. I've opened the seasons step; press Compare with no panels there and I'll have both figures.",
+          text: "I can work that out by running the same year again with every panel row taken off the plot. I've opened the seasons step, press Compare with no panels there and I'll have both figures.",
           tone: 'say',
         },
       ]
@@ -682,7 +682,7 @@ export const wordsFor = (utterance: Utterance, catalog: readonly Crop[]): readon
         {
           // said out loud because the design search is what decides where a bed belongs, and
           // this one was placed by the defaults rather than by the light
-          text: 'It sits where the defaults put it, and nothing about the light went into that. Ask me to design it again if you want it worked out properly.',
+          text: 'It sits where the defaults put it, and nothing about the light went into that. Ask me to design it again if you want it computed properly.',
           tone: 'caveat',
         },
       ]
@@ -703,7 +703,7 @@ export const wordsFor = (utterance: Utterance, catalog: readonly Crop[]): readon
           tone: 'say',
         },
         {
-          text: 'The light was worked out for where they were, so those figures are stale until it is run again.',
+          text: 'The light was computed for where they were, so those figures are stale until it is run again.',
           tone: 'caveat',
         },
       ]
@@ -739,7 +739,7 @@ export const wordsFor = (utterance: Utterance, catalog: readonly Crop[]): readon
           tone: 'say',
         },
         {
-          text: 'The light was worked out for the old shape, so those numbers are stale until it is run again.',
+          text: 'The light was computed for the old shape, so those numbers are stale until it is run again.',
           tone: 'caveat',
         },
       ]
@@ -747,11 +747,11 @@ export const wordsFor = (utterance: Utterance, catalog: readonly Crop[]): readon
       const rasterLine: Line =
         utterance.raster === null
           ? {
-              text: "The light hasn't been worked out for this garden yet, so there's no run to describe.",
+              text: "The light hasn't been computed for this garden yet, so there's no run to describe.",
               tone: 'say',
             }
           : {
-              text: `The light model is ${utterance.raster.skyModel}, sampled at ${String(utterance.raster.sunDirectionCount)} sun positions over ${utterance.raster.cellSizeM.toFixed(2)} m squares of ground, worked out by ${utterance.raster.backend}.`,
+              text: `The light model is ${utterance.raster.skyModel}, sampled at ${String(utterance.raster.sunDirectionCount)} sun positions over ${utterance.raster.cellSizeM.toFixed(2)} m squares of ground, computed by ${utterance.raster.backend}.`,
               tone: 'say',
             }
       return [
@@ -780,7 +780,7 @@ export const wordsFor = (utterance: Utterance, catalog: readonly Crop[]): readon
               tone: 'say',
             },
             {
-              text: "This app works out light there and ranks crops for it; that's what it knows about growing here.",
+              text: "This app works out light there and ranks crops for it, that's what it knows about growing here.",
               tone: 'note',
             },
           ]

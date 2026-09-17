@@ -31,17 +31,17 @@ already produces, so the PV yield and the ground DLI map continue to read one sk
 
 1. **POA irradiance** — already implemented (`src/sim/transposition.ts`)
 2. **Cell temperature** — Faiman, or the Sandia/King model. Both in pvlib, NREL-documented
-3. **DC output** — PVWatts v5 DC model as the defensible default; De Soto single-diode if
-   per-module fidelity is ever wanted
+3. **DC output** — PVWatts v5 DC model as the defensible default, De Soto single-diode if per-module
+   fidelity is ever wanted
 4. **Inverter** — Sandia/CEC inverter model. Needed for clipping, which is exactly what bites
    at the high DC:AC ratios agrivoltaic layouts tend toward
 5. **Loss stack** — PVWatts defaults (soiling, wiring, mismatch, availability)
 6. **Self-consumption vs export** — a household load profile against generation. This, not
    power flow, is the question a garden owner actually has
 
-There is **no JS port of pvlib**; the ecosystem is Python and MATLAB only. Implement the same
-way SPA and Perez were done: port the specific algorithms, validate against pvlib reference
-values, cite the source in the corpus.
+There is **no JS port of pvlib**, the ecosystem is Python and MATLAB only. Implement the same way
+SPA and Perez were done: port the specific algorithms, validate against pvlib reference values, cite
+the source in the corpus.
 
 Bifacial gain and albedo are already partially handled by the inter-reflection term, though
 note that term's 3-8% magnitude is UNVERIFIABLE per `docs/VERIFICATION.md`.
@@ -68,17 +68,16 @@ The denominator is a **sole-use, monoculture-equivalent fixed-tilt PV plant on t
 
 | Term | Value |
 |---|---|
-| Ground cover ratio | 0.40, the conventional sole-use figure; 0.35-0.45 is carried as band width |
+| Ground cover ratio | 0.40, the conventional sole-use figure, 0.35-0.45 is carried as band width |
 | Orientation | equator-facing, tilt = site latitude clamped to 10-35 deg |
 | DC:AC ratio | 1.20 |
 | Modules, inverter, loss stack | **identical to the agrivoltaic array** |
 | Units on both sides | annual AC kWh per m2 of land, land = module aperture / GCR |
 
 Keeping the hardware identical is deliberate: it makes the ratio isolate the agrivoltaic design
-decision (pitch, tilt, clearance, tracking) rather than the module technology, which is what
-Dupraz compared. Note that a default garden array at GCR 0.39 is barely thinned against this
-reference, so its electricity term sits near 1; the term only falls once rows are spread for
-light on the ground.
+decision (pitch, tilt, clearance, tracking) rather than the module technology, which is what Dupraz
+compared. Note that a default garden array at GCR 0.39 is barely thinned against this reference, so
+its electricity term sits near 1, the term only falls once rows are spread for light on the ground.
 
 The band is built from named contributions and never asserted: the reference GCR choice
 dominates (+/-12.7%), the row-shading treatment does not cancel between numerator and
@@ -97,11 +96,11 @@ The corpus has `pvlib-python`, `sandia-pvpmc`, `marion2017-bifacial` and
 - **King, Gonzalez, Galbraith & Boyson 2007 (Sandia inverter model)**: not implemented, named
   in this doc as the eventual upgrade
 
-No citekey was invented for any of them. Every affected stage in `src/sim/pv/provenance.ts`
-names pvlib and the Sandia PVPMC modelling guide as surrogates, both of which state the
-formulae and coefficients in full, and says in its caveat that the primary is absent. Two false
-citations have already been treated as release blockers here; a surrogate that admits it is
-a surrogate is the correct handling, not a plausible-looking key.
+No citekey was invented for any of them. Every affected stage in `src/sim/pv/provenance.ts` names
+pvlib and the Sandia PVPMC modelling guide as surrogates, both of which state the formulae and
+coefficients in full, and says in its caveat that the primary is absent. Two false citations have
+already been treated as release blockers here, a surrogate that admits it is a surrogate is the
+correct handling, not a plausible-looking key.
 
 ## Interaction with compliance
 

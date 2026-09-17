@@ -149,19 +149,19 @@ export const todayMillis = (): EpochMillis => epochMillis(Date.now())
 const DEFAULT_SIM_OPTIONS: SimulationOptions = { ...PREVIEW_OPTIONS, backend: 'webgl2-shadowmap' }
 
 export const ENERGY_NEEDS_SITE =
-  'No site or weather yet. Look up the place first: the electricity is worked out against its typical meteorological year'
+  'No site or weather yet. Look up the place first: the electricity is computed against its typical meteorological year'
 
 export const ENERGY_NEEDS_ARRAY =
   'No array yet. Add one first: there is no electricity without panels'
 
 export const SUGGESTION_NEEDS_RANKING =
-  'No ranking for this bed yet, and suggestions are built from one. Look up the place, draw a bed, work out the light, then rank the crops'
+  'No ranking for this bed yet, and suggestions are built from one. Look up the place, draw a bed, compute the light, then rank the crops'
 
 export const SUGGESTION_NEEDS_LIGHT =
-  'No light worked out for this bed yet. Work out the light first: the shade is what tells two crops apart'
+  'No light computed for this bed yet. Compute the light first: the shade is what tells two crops apart'
 
 export const SUGGESTION_NEEDS_ENERGY =
-  'A polyculture is scored on the land equivalent ratio, which counts the electricity from the panels. Work out the annual energy first'
+  'A polyculture is scored on the land equivalent ratio, which counts the electricity from the panels. Compute the annual energy first'
 
 let client: SimClient | null = null
 let clientFailure: string | null = null

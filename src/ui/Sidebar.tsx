@@ -127,7 +127,7 @@ const summaryOf = (s: AppState, id: SidebarStep): string | null => {
     }
     case 'light':
       return s.raster.status === 'loading'
-        ? 'Being worked out...'
+        ? 'Being computed...'
         : s.bedLight.length > 0
           ? 'Worked out'
           : null

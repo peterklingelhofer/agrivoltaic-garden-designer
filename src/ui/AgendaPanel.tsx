@@ -275,7 +275,7 @@ export const AgendaPanel = (): ReactElement => {
         </div>
       ) : null}
       <details className="wizard-advanced" data-testid="details-agenda-method">
-        <summary>How these dates were worked out</summary>
+        <summary>How these dates were computed</summary>
         <p className="panel-sub" data-testid="readout-agenda-percentile">
           At {agenda.frostRiskPercentile}% frost exceedance: in that share of years, a frost falls
           outside these dates. Set the percentile in the planting calendar below, and every

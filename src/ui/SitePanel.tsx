@@ -31,7 +31,7 @@ const WEATHER_IDLE = 'No weather yet. Looking up the place loads it'
 const zoneWords = (rating: TemperatureHardinessRating): string =>
   rating.scheme.startsWith('usda')
     ? rating.basis === 'weather-record'
-      ? `zone ${rating.zoneLabel}, USDA-style, worked out from the weather record`
+      ? `zone ${rating.zoneLabel}, USDA-style, computed from the weather record`
       : `zone ${rating.zoneLabel} (USDA)`
     : `${rating.scheme} ${rating.zoneLabel}`
 
@@ -235,7 +235,7 @@ export const SitePanel = (): ReactElement => {
           the assumed pH only inside a bed and asked why the place step had kept quiet */}
       {resolved?.soil.sourceId === 'default' ? (
         <p className="notice notice-idle" data-testid="status-site-soil">
-          The soil map has no reading for this spot or within 6 km of it; it leaves out built-up
+          The soil map has no reading for this spot or within 6 km of it, it leaves out built-up
           ground and water. Every bed assumes pH 6.5 loam until you type your own soil.
         </p>
       ) : null}
@@ -291,7 +291,7 @@ export const SitePanel = (): ReactElement => {
           Look up these coordinates
         </Action>
         <p className="panel-sub" data-testid="readout-site-resolve-help">
-          Only needed for coordinates typed in by hand; choosing a search result looks the place up
+          Only needed for coordinates typed in by hand, choosing a search result looks the place up
           on its own.
         </p>
         <SelectField

@@ -90,7 +90,7 @@ export const DliLegend = ({
       */}
       {stale ? (
         <p className="legend-stale" data-testid={`${testId}-stale`}>
-          Worked out for the layout before your last change. Re-run the light to update it.
+          Computed for the layout before your last change. Re-run the light to update it.
         </p>
       ) : null}
       <div

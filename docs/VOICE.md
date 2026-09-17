@@ -11,7 +11,7 @@ seasons step in `CONVERGENCE.md` 7), this sheet wins.
 1. **Say what the thing is.** A heading names its content. A label names the quantity. A button
    names the action. "Results so far" for the results, "Build cost" for the cost, "Run a season"
    for the button.
-2. **Literal words.** No metaphors, images or personification. A rotation rule refuses a planting;
+2. **Literal words.** No metaphors, images or personification. A rotation rule refuses a planting,
    the ground says nothing. A harvest is a random draw within a published range.
 3. **Nobody speaks in the first person.** There's no "we", no "this game", no "the line we drew".
    Say what set a number and where: "a 50% floor this app sets", "a threshold from Decision
@@ -22,17 +22,19 @@ seasons step in `CONVERGENCE.md` 7), this sheet wins.
 5. **Number first, source after.** "LER 1.64 (Dupraz et al. 2011)". Citations are verbatim.
 6. **One idea per sentence, under twenty words.** Questions belong in headings that ask the reader
    something ("What do you want in this bed?") and nowhere else.
-7. **State uncertainty once.** "An estimate from a benchmark for 500 kW systems; a small array
-   costs more per watt." One sentence, then move on.
+7. **State uncertainty once.** "An estimate from a benchmark for 500 kW systems, a small array costs
+   more per watt." One sentence, then move on.
 8. **Consistent nouns.** Array, panel, plot, bed, planting, season (one growing year), yield.
    "Full yield" is the unshaded reference. Pests.
 9. **Outcomes and refusals share one shape.** "Tomato, Bed 2: harvested, 81% of full yield. Pests
-   took 5%." "Tomato, Bed 2: not planted. Rotation: Solanaceae grew here 1 season ago; 3 needed."
+   took 5%." "Tomato, Bed 2: not planted. Rotation: Solanaceae grew here 1 season ago, 3 needed."
 10. **"About" marks a rounded figure**, and money is always rounded to two significant figures.
 11. **Contractions in prose.** "Doesn't", "isn't", "you'll". Labels and readouts stay as they are.
 12. **Keep what tests pin.** Test ids never change for wording. `vocabulary.test.tsx` requires a
-    term and its gloss on screen together; `no-paths-in-prose.test.ts` forbids file paths in
-    prose; `point-estimate.test.ts` forbids calling a band a point. Read them first.
+    term and its gloss on screen together, `no-paths-in-prose.test.ts` forbids file paths in prose,
+    `point-estimate.test.ts` forbids calling a band a point. Read them first.
+13. **No semicolons.** Two clauses take a comma or two sentences. A figure the app derives is
+    "computed", never "worked out".
 
 ## Tells to remove (slopdetector.tech, and one more)
 
@@ -71,7 +73,7 @@ numbering on content that isn't a sequence, stock CTA pairs, "Built with ❤️"
 | One field doing the work of (land equivalent ratio, Dupraz et al. 2011): 1.64 fields | Land equivalent ratio (LER): 1.64. The land a separate solar farm plus a separate garden would need to match this plot (Dupraz et al. 2011). |
 | The beds stayed above 50%, the line we drew for this game, so the panels shared the ground. | Yield stayed above the 50% floor this app sets, so the panels share the ground. |
 | Old sayings this garden is testing | Companion-planting claims under trial |
-| harvested, 67% of a full crop; bugs ate about 5% | harvested, 67% of full yield. Pests took about 5%. |
+| harvested, 67% of a full crop, bugs ate about 5% | harvested, 67% of full yield. Pests took about 5%. |
 | Landed at 62% of a full crop, a roll of the dice inside what scientists measured for 12% shade | 62% of full yield: a random draw within the published range for 12% shade |
 | The ground said no | Not planted |
 | Died or never ripened | Lost to frost, shade or a short season |

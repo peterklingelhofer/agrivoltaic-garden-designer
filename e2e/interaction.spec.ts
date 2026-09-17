@@ -437,7 +437,7 @@ test('the overlay names its channel before there is anything to show', async ({ 
    * surfaces described a missing raster in three different wordings and none of them could be
    * acted on where it was read
    */
-  await expect(page.getByTestId('status-overlay')).toContainText(/hasn't been worked out yet/i)
+  await expect(page.getByTestId('status-overlay')).toContainText(/hasn't been computed yet/i)
   await expect(page.getByTestId('status-overlay-run')).toBeVisible()
   await expect(legend).toHaveCount(0)
 
@@ -608,7 +608,7 @@ test('cancelling a bake returns the app to idle and leaves it usable', async ({ 
   await cancelledRun(page)
 
   // idle, not error and not a half-written raster, and the sentence says the run is still owed
-  await expect(status).toContainText(/not worked out for this arrangement/i)
+  await expect(status).toContainText(/not computed for this arrangement/i)
   await expect(cancel).toHaveCount(0)
   await expect(page.getByTestId('readout-sim-progress')).toHaveCount(0)
   await expect(page.getByTestId('status-overlay')).toBeVisible()

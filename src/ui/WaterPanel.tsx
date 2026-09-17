@@ -43,7 +43,7 @@ const Balance = ({ balance }: { readonly balance: BedWaterBalance }): ReactEleme
       <div className="readouts">
         <Readout
           id="water-method"
-          label="How ET0 was worked out"
+          label="How ET0 was computed"
           value={ET0_METHOD_LABEL[balance.method]}
         />
         <Readout

@@ -10,9 +10,9 @@ export const SEASON_REPORTS_KEPT = 12
 export const SEASON_NEEDS_SITE = 'No site yet. A season runs on its weather, so look up the place'
 export const SEASON_NEEDS_BEDS = 'No bed yet. A season runs on what is planted, so draw a bed'
 export const SEASON_NEEDS_LIGHT =
-  'No light worked out yet. A season runs on the light reaching each bed, so work it out'
+  'No light computed yet. A season runs on the light reaching each bed, so compute it'
 export const SEASON_LIGHT_STALE =
-  'The light is out of date for this layout. Work it out again before running a season'
+  'The light is out of date for this layout. Compute it again before running a season'
 export const SEASON_NEEDS_CATALOG = "The crop catalogue hasn't loaded yet"
 export const SEASON_NEEDS_RULES = "The companion rules haven't loaded yet"
 

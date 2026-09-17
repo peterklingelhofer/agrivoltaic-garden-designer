@@ -271,7 +271,7 @@ describe('using the browser location', () => {
   })
 })
 
-describe('a zone worked out from the weather record says so', () => {
+describe('a zone computed from the weather record says so', () => {
   it('labels a derived rating apart from one read off the USDA grid', async () => {
     useAppStore.setState({
       site: ready(
@@ -289,7 +289,7 @@ describe('a zone worked out from the weather record says so', () => {
     })
     const harness = await mount(<SitePanel />)
     expect(harness.get('readout-site-hardiness').textContent).toBe(
-      'zone 7a, USDA-style, worked out from the weather record',
+      'zone 7a, USDA-style, computed from the weather record',
     )
     await harness.unmount()
   })

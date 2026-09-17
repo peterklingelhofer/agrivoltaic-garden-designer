@@ -1,12 +1,12 @@
 # Turning this into a game
 
 > **Where this ended, 2026-09-03.** The prototype this document narrates from section 8d onward,
-> `prototypes/solarpunk/play/`, was audited (`docs/CONVERGENCE.md`), merged into the designer as
-> the simulation mode (`src/simulation/`, Decision Record 14) and deleted. What survives of the
+> `prototypes/solarpunk/play/`, was audited (`docs/CONVERGENCE.md`), merged into the designer as the
+> simulation mode (`src/simulation/`, Decision Record 14) and deleted. What survives of the
 > directory is the coarse light driver and its comparison against the bake, renamed
 > `prototypes/light-harness/` and, on 2026-09-04, moved into `src/sim/` as `gap.test.ts` and
-> `testkit.ts`; `prototypes/` is gone. Everything below is the record of how the mode was arrived at, and
-> the paths it names are historical
+> `testkit.ts`, `prototypes/` is gone. Everything below is the record of how the mode was arrived
+> at, and the paths it names are historical
 
 An assessment of porting the agrivoltaic garden designer into a simulation game, plausibly in
 Rust, keeping the provenance discipline that makes this project what it is.
@@ -53,10 +53,10 @@ not, because of the number in the next row:
 | Citations | 188 entries, 253 KB of CSL-JSON |
 
 The tests are the actual asset. They are the only reason anyone should believe the Perez
-transposition or the DIRINT decomposition in this repo is right. A rewrite that leaves them
-behind is not a port of a validated model; it is a fresh implementation of the same equations
-with the validation thrown away. Section 5 is about how to avoid that, and it is the single most
-important engineering decision in this document.
+transposition or the DIRINT decomposition in this repo is right. A rewrite that leaves them behind
+is not a port of a validated model, it is a fresh implementation of the same equations with the
+validation thrown away. Section 5 is about how to avoid that, and it is the single most important
+engineering decision in this document.
 
 ---
 
@@ -74,10 +74,10 @@ src/sim/shading.ts         0
 src/sim/cpu.ts             0
 ```
 
-`compliance.ts` appears to reference `window` eleven times; every one is the *growing season
-window*, not the browser global. The only genuinely web-bound files in `sim/` are
-`gpu/webgl2.ts` (577 lines) and the worker plumbing, and both are one backend behind
-`backend.ts` with a CPU path already sitting beside them.
+`compliance.ts` appears to reference `window` eleven times, every one is the *growing season
+window*, not the browser global. The only genuinely web-bound files in `sim/` are `gpu/webgl2.ts`
+(577 lines) and the worker plumbing, and both are one backend behind `backend.ts` with a CPU path
+already sitting beside them.
 
 **The citations are the most portable thing in the repository.** They live in
 `docs/CITATIONS.csl.json` as standard CSL-JSON, not in a bespoke format: 188 entries across
@@ -92,9 +92,9 @@ happens, the research corpus transfers intact.
 **Simulation games are fun because they lie, and this project exists because it does not.**
 
 SimCity's traffic model is not a traffic model. Cities: Skylines' agents pathfind in ways no
-transport planner would defend. Oxygen Not Included's thermodynamics are internally consistent
-and physically wrong. That is not laziness; legibility requires simplification, and a player who
-cannot predict the consequence of an action is not playing, they are watching.
+transport planner would defend. Oxygen Not Included's thermodynamics are internally consistent and
+physically wrong. That is not laziness, legibility requires simplification, and a player who cannot
+predict the consequence of an action is not playing, they are watching.
 
 This codebase is built on the opposite commitment. Its doctrine is that the only thing hidden is
 detail, and a caveat is never detail. `compliance.ts` will tell you that a figure has no standing
@@ -102,8 +102,8 @@ because the regulator mandates its own tool. The water balance names the fractio
 panels intercept before it reaches the bed. That honesty is the product.
 
 Put those together and you get the design problem: **a light bake takes seconds and returns an
-answer with five caveats; a game loop has sixteen milliseconds and needs an answer a player can
-act on.** Every decision below is downstream of that.
+answer with five caveats, a game loop has sixteen milliseconds and needs an answer a player can act
+on.** Every decision below is downstream of that.
 
 There are three ways out, and only the third is any good.
 
@@ -111,12 +111,12 @@ There are three ways out, and only the third is any good.
    real-time one. Honest, and narrows the audience to people who already like spreadsheets.
 2. **Keep the pace, drop the fidelity.** Approximate everything, cite nothing. This is a normal
    game, and the reason to build it on this repo evaporates.
-3. **Split the clock.** Cheap approximations drive the moment-to-moment loop; the real model runs
-   on commit, on season boundaries, or when the player asks. The player feels a responsive game
-   and the *scored* outcomes come from the defensible model. This is what the app already does,
+3. **Split the clock.** Cheap approximations drive the moment-to-moment loop, the real model runs on
+   commit, on season boundaries, or when the player asks. The player feels a responsive game and the
+   *scored* outcomes come from the defensible model. This is what the app already does,
    incidentally: `PREVIEW_OPTIONS` (Tregenza MF1, one substep an hour, 0.25 m cells) against
-   `FINAL_OPTIONS` (Reinhart MF2, four substeps, 0.12 m cells). The two-tier idea is already
-   built, tested and named.
+   `FINAL_OPTIONS` (Reinhart MF2, four substeps, 0.12 m cells). The two-tier idea is already built,
+   tested and named.
 
 Take option 3. It is the only one where the provenance survives contact with a game loop, and
 half of it exists.
@@ -153,10 +153,10 @@ That single move does several things at once:
 - and it is honest: the game's confidence in a mechanic is exactly the project's confidence in
   the claim behind it
 
-I am not aware of a game that does this. Kerbal has real orbital mechanics; Terra Nil and
-Timberborn are solarpunk-adjacent with invented systems; none of them models *how well the
-designers know what they modelled*. That is either an empty niche or a graveyard, and the
-honest answer is that nobody knows which.
+I am not aware of a game that does this. Kerbal has real orbital mechanics, Terra Nil and Timberborn
+are solarpunk-adjacent with invented systems, none of them models *how well the designers know what
+they modelled*. That is either an empty niche or a graveyard, and the honest answer is that nobody
+knows which.
 
 ---
 
@@ -164,12 +164,11 @@ honest answer is that nobody knows which.
 
 ### What Rust genuinely buys here
 
-**The type system this project has been faking.** `Cited<T>` is a tagged union that TypeScript
-can only approximate; note `seal()` in `types/cited.ts`, a cast that exists to fake nominal
-typing. In Rust it is an `enum` with exhaustive matching, and the compiler enforces what a
-convention currently enforces. Same for the units: `Meters`, `Fraction`, `DayOfYear` are branded
-types today, which is a comment the compiler mostly believes. Rust newtypes, or `uom`, make them
-real.
+**The type system this project has been faking.** `Cited<T>` is a tagged union that TypeScript can
+only approximate, note `seal()` in `types/cited.ts`, a cast that exists to fake nominal typing. In
+Rust it is an `enum` with exhaustive matching, and the compiler enforces what a convention currently
+enforces. Same for the units: `Meters`, `Fraction`, `DayOfYear` are branded types today, which is a
+comment the compiler mostly believes. Rust newtypes, or `uom`, make them real.
 
 **Parallelism, but not where you would hope.** `rayon` is a real gain for the CPU-side work:
 weather decomposition, the recommendation ranking, the design search. It is **not** a gain for
@@ -236,9 +235,9 @@ reason in the last row of the next table.
 | 300 | 816 ms | 3,309 ms |
 | Example garden on SwiftShader | 4,681 ms | **13,431 ms** |
 
-Two things fall out. The full check is roughly `450 ms + 9.5 ms per panel`, so at garden scale it
-is dominated by fixed overhead and at 300 panels by the panels. And the weakest device is **17x**
-slower than a real GPU, which is where the two-tier design actually earns its keep; not on the
+Two things fall out. The full check is roughly `450 ms + 9.5 ms per panel`, so at garden scale it is
+dominated by fixed overhead and at 300 panels by the panels. And the weakest device is **17x**
+slower than a real GPU, which is where the two-tier design actually earns its keep, not on the
 laptop it was tuned on.
 
 **Why Rust cannot help this.** The hot loop is a GLSL fragment shader, one invocation per ground
@@ -264,9 +263,9 @@ into a depth buffer once per direction turns `cells x directions x panels` into
 panels per direction, coarsen the 2 degree sun binning that produces 2,223 directions, or
 finish `gpu/webgpu.ts`, currently a 27-line availability check, as a compute shader.
 
-So the honest ordering is: the algorithm is worth improving, the GPU path is worth finishing,
-and the language is not the lever. Rust remains worth doing for the reasons above it, which are
-about types, testability and reuse; it should not be sold as a performance fix for the bake.
+So the honest ordering is: the algorithm is worth improving, the GPU path is worth finishing, and
+the language is not the lever. Rust remains worth doing for the reasons above it, which are about
+types, testability and reuse, it should not be sold as a performance fix for the bake.
 
 ### The move that resolves it
 
@@ -335,9 +334,9 @@ Bevy is a defensible cost for a *game*, where a player expects to wait once, and
 defensible cost for the *designer*, whose best property is that a link opens instantly.
 
 **Leptos is more expensive than React, which is the direction nobody guesses.** Its floor, 167 kB
-for a panel with three buttons, is most of what this app's entire UI bundle costs today. Rust
-does not tree-shake the way an ES module graph does, and monomorphisation adds rather than
-removes. A Rust DOM framework is viable on size; it is not a saving.
+for a panel with three buttons, is most of what this app's entire UI bundle costs today. Rust does
+not tree-shake the way an ES module graph does, and monomorphisation adds rather than removes. A
+Rust DOM framework is viable on size, it is not a saving.
 
 #### The decision this actually turns on is DOM versus canvas
 
@@ -388,11 +387,11 @@ problem and it is the most likely way one of the two rots.
 
 **Single source of truth is achieved only if the web app actually migrates.**
 
-Extract the crate for the game, leave the TypeScript running in the web app, and there are now
-two implementations of the same physics with nothing forcing them to agree. That is strictly
-worse than today, when there is one. Stage 1 in section 8 is therefore not a warm-up for the
-game, it is the thing that makes the whole argument true; a plan that quietly defers it has
-inverted its own rationale.
+Extract the crate for the game, leave the TypeScript running in the web app, and there are now two
+implementations of the same physics with nothing forcing them to agree. That is strictly worse than
+today, when there is one. Stage 1 in section 8 is therefore not a warm-up for the game, it is the
+thing that makes the whole argument true, a plan that quietly defers it has inverted its own
+rationale.
 
 Two things are also less shared than "one engine" suggests, and both are worth knowing before
 the word gets used in a plan:
@@ -402,10 +401,10 @@ the word gets used in a plan:
   `scripts/fetch-plant-traits.mjs`. Real single-sourcing means moving the catalogue to JSON or
   TOML that both languages read, or making the generator emit both. Mechanical, and easy to
   leave undone until it has already forked.
-- **The granularity differs.** This engine bakes a 0.12 m raster for *one* plot. A city-scale
-  game wants coarse per-tile figures for thousands of them. The functions are shared; the driver
-  and the resolution are not. "Same engine" honestly means one crate with more than one entry
-  point, not the game calling `runSimulation`.
+- **The granularity differs.** This engine bakes a 0.12 m raster for *one* plot. A city-scale game
+  wants coarse per-tile figures for thousands of them. The functions are shared, the driver and the
+  resolution are not. "Same engine" honestly means one crate with more than one entry point, not the
+  game calling `runSimulation`.
 
 ---
 
@@ -445,13 +444,12 @@ Real condensation-type units land in the region of hundreds of watt-hours to ove
 per litre in moderate conditions, and worse in dry air. A garden's irrigation demand is measured
 in hundreds of litres.
 
-**So a provenance-honest model will show that AWG is usually a bad idea, and that is the
-mechanic.** The interesting version of this feature is not a free upgrade; it is a device the
-game lets you build, models truthfully, and thereby teaches you to distrust. Compare it against a
-cistern that stores winter rain for summer and it will lose almost everywhere, which is a real
-finding about real technology and precisely the kind of thing this project exists to say. A game
-where the shiny high-tech option is usually wrong and the boring one usually wins is more
-solarpunk, not less.
+**So a provenance-honest model will show that AWG is usually a bad idea, and that is the mechanic.**
+The interesting version of this feature is not a free upgrade, it is a device the game lets you
+build, models truthfully, and thereby teaches you to distrust. Compare it against a cistern that
+stores winter rain for summer and it will lose almost everywhere, which is a real finding about real
+technology and precisely the kind of thing this project exists to say. A game where the shiny
+high-tech option is usually wrong and the boring one usually wins is more solarpunk, not less.
 
 This is the mechanic to build first, because it is the one that proves the whole thesis: that
 citation-backed modelling produces *better game design*, not just more defensible numbers.
@@ -506,13 +504,12 @@ with that open.
 Behind the `backend.ts` seam. Differential-tested against the TypeScript. Deliverable: the
 current app with a validated Rust core. Useful even if everything stops here.
 
-> **Done on `rust-sim-core`, and further than the heading asks.** `crates/agv-sim` is not a
-> parallel implementation behind a seam any more: it is the ONLY implementation. 2,679 lines of
-> TypeScript physics were deleted on 2026-09-02, so `bun run test` and `bun run build` both need a Rust
-> toolchain and a build with the core switched off refuses every number rather than degrading.
-> Four modules stay dual on purpose. At the port: 43 Rust tests, 1,724 TypeScript, 222 functional
-> e2e; `docs/CI.md` carries the current numbers.
-> See section 8a.
+> **Done on `rust-sim-core`, and further than the heading asks.** `crates/agv-sim` is not a parallel
+> implementation behind a seam any more: it is the ONLY implementation. 2,679 lines of TypeScript
+> physics were deleted on 2026-09-02, so `bun run test` and `bun run build` both need a Rust
+> toolchain and a build with the core switched off refuses every number rather than degrading. Four
+> modules stay dual on purpose. At the port: 43 Rust tests, 1,724 TypeScript, 222 functional e2e,
+> `docs/CI.md` carries the current numbers. See section 8a.
 
 **Stage 2. One mechanic, end to end, in the existing web app.** Atmospheric water generation,
 because section 6 argues it is the thesis in miniature. Cite it, model it, let it lose to a rain
@@ -523,9 +520,9 @@ possible 2D. This is where you find out whether there is a game, and it is much 
 out here than after building a renderer.
 
 > **Built, 2026-09-02.** `prototypes/solarpunk/loop.ts` was the affordable half and had no screen
-> and no player; `prototypes/solarpunk/play/` is the rest of it, and section 8d records what it is
-> and how to read the result. `bun run prototype:play`. What is left of this stage is not code: it is
-> an hour with a person in front of it.
+> and no player, `prototypes/solarpunk/play/` is the rest of it, and section 8d records what it is
+> and how to read the result. `bun run prototype:play`. What is left of this stage is not code: it
+> is an hour with a person in front of it.
 
 **Stage 4. Bevy, if and only if stage 3 was fun.**
 
@@ -535,19 +532,19 @@ Done, and checked:
 
 | | |
 |---|---|
-| `crates/agv-sim` | The whole physics: SPA and delta-T; Perez 1990 transposition; Erbs, DISC, DIRINT and Engerer 2; array geometry and the four trackers; shadow projection and the infinite-row closed forms; view factors, interreflection, rear-side POA; snow; the PVWatts chain end to end. No dependencies, 101 kB of wasm, 37 kB brotli |
-| The ONLY implementation | 2,679 lines of TypeScript physics deleted. `bun run test` and `bun run build` run `bun run rust:wasm` first; a build with the core off refuses every number rather than degrading |
-| Right | `tests/nrel_spa.rs` against NREL Appendix A.5, better than 0.001 degrees; `tests/pvlib_decomposition.rs` against pvlib's own output, within a watt; `tests/geometry_spec.rs` against closed forms and PVWatts' published defaults, written BEFORE the deletion because those modules had only parity evidence |
+| `crates/agv-sim` | The whole physics: SPA and delta-T, Perez 1990 transposition, Erbs, DISC, DIRINT and Engerer 2, array geometry and the four trackers, shadow projection and the infinite-row closed forms, view factors, interreflection, rear-side POA, snow, the PVWatts chain end to end. No dependencies, 101 kB of wasm, 37 kB brotli |
+| The ONLY implementation | 2,679 lines of TypeScript physics deleted. `bun run test` and `bun run build` run `bun run rust:wasm` first, a build with the core off refuses every number rather than degrading |
+| Right | `tests/nrel_spa.rs` against NREL Appendix A.5, better than 0.001 degrees, `tests/pvlib_decomposition.rs` against pvlib's own output, within a watt, `tests/geometry_spec.rs` against closed forms and PVWatts' published defaults, written BEFORE the deletion because those modules had only parity evidence |
 | Not diverged | `src/sim/rust-geometry-parity.test.ts`, over the four modules still deliberately dual |
-| Wired | `src/sim/core.ts` holds the installed core and `requirePhysicsCore` throws rather than degrading; `src/main.tsx` awaits `ensurePhysicsCore` before the first render |
-| One copy of the tables | only `perez_tables.rs` is generated now; `spa_tables.rs` and `dirint_tables.rs` are the only copies and are hand-maintained |
+| Wired | `src/sim/core.ts` holds the installed core and `requirePhysicsCore` throws rather than degrading, `src/main.tsx` awaits `ensurePhysicsCore` before the first render |
+| One copy of the tables | only `perez_tables.rs` is generated now, `spa_tables.rs` and `dirint_tables.rs` are the only copies and are hand-maintained |
 | Gated | a `rust` CI job for fmt, clippy and tests |
 
 Three decisions worth knowing before continuing:
 
 - **No wasm-bindgen.** The boundary is f64 in and f64 out, so `src/wasm.rs` exports a plain C ABI
   and `src/sim/rust-core.ts` reads it back. Revisit when the boundary needs strings, structs or
-  errors; it does not yet.
+  errors, it does not yet.
 - **The core is installed, not injected.** `src/sim/core.ts` is module state, which is normally a
   smell and here is the only design that works: the bake runs in a Worker, and a `RustCore` is a
   set of closures over a `WebAssembly.Instance`, so it cannot cross `postMessage`. Each module
@@ -559,11 +556,11 @@ Three decisions worth knowing before continuing:
   fails at the build step**, which is the correct failure and the reason the Workers Builds
   command needs `rustup target add wasm32-unknown-unknown` in front of it.
 
-Transposition landed 2026-09-01 and behaved better than solar position did: across 1,296 swept
-sky states the two implementations are **bit-identical**, worst disagreement 0.0. That is not luck
-and it is not a guarantee either. Solar position accumulates hundreds of transcendental terms and
-cannot manage it; transposition is a short chain of arithmetic over a few table lookups, so both
-sides land on the same bits.
+Transposition landed 2026-09-01 and behaved better than solar position did: across 1,296 swept sky
+states the two implementations are **bit-identical**, worst disagreement 0.0. That is not luck and
+it is not a guarantee either. Solar position accumulates hundreds of transcendental terms and cannot
+manage it, transposition is a short chain of arithmetic over a few table lookups, so both sides land
+on the same bits.
 
 Decomposition landed the same day and is bit-identical too, in all four models, for a different
 and more interesting reason: `src/sim` stores every irradiance series in a `Float32Array`, so both
@@ -642,12 +639,11 @@ the thing at all:
 | `recommend/` | 3,220 | 3,684 |
 | `data/` | 12,045 (catalogue, schema, reference tables) | 1,669 (network I/O, example raster) |
 
-The `sim/` split within "left to port": both shells need the PV chain (745), geometry (306),
-shading (136), view factor (113), the CPU visibility reference (168), units (64) and snow (109).
-Compliance (394), the raster (151), the accumulator (143) and the MF:2 skydome (481) are shaped
-for the designer's one-plot 0.12 m bake; a game wants coarse per-tile figures for thousands of
-plots, which is section 5c's point that the driver and the resolution are not shared even when the
-functions are.
+The `sim/` split within "left to port": both shells need the PV chain (745), geometry (306), shading
+(136), view factor (113), the CPU visibility reference (168), units (64) and snow (109). Compliance
+(394), the raster (151), the accumulator (143) and the MF:2 skydome (481) are shaped for the
+designer's one-plot 0.12 m bake, a game wants coarse per-tile figures for thousands of plots, which
+is section 5c's point that the driver and the resolution are not shared even when the functions are.
 
 ### The anchor: the port already done, rather than a guess
 
@@ -677,9 +673,9 @@ year one, progression, failure states, multiple sites. Plus two things this sect
 - **A coarse per-tile light driver.** The existing pipeline bakes one plot at 0.12 m. Nothing in
   the repository computes light for a thousand tiles cheaply, and that driver is what decides
   whether the game runs at all.
-- **The game's own renderer.** Section 5b priced both routes: wgpu at 129 kB brotli, where you
-  write the scene layer yourself, or Bevy at 3,194 kB, where you do not. The designer's 5,282-line
-  scene layer does not transfer; it is three.js-shaped.
+- **The game's own renderer.** Section 5b priced both routes: wgpu at 129 kB brotli, where you write
+  the scene layer yourself, or Bevy at 3,194 kB, where you do not. The designer's 5,282-line scene
+  layer does not transfer, it is three.js-shaped.
 
 ### The order, and why each step stands alone
 
@@ -690,7 +686,7 @@ happens.
 |---|---|---|
 | 0 | Solar, transposition, decomposition, wired behind a flag | **done** |
 | 1 | Finish the shared physics: PV chain, geometry, shading, view factor, CPU reference, units, snow | the designer's numbers have one implementation |
-| 2 | Move the catalogue to a format both languages read | the generator emits both; the drift check covers it |
+| 2 | Move the catalogue to a format both languages read | the generator emits both, the drift check covers it |
 | 3 | Delete the TypeScript physics | "single source of truth" becomes true rather than aspirational |
 | 4 | Second entry point | measured above: about a kilobyte and an afternoon |
 | 5 | The game | nothing. This is the bet |
@@ -721,11 +717,11 @@ Section 8b ends by saying the measurements are not what decides this, and that t
 test the part that does is to prototype the hardest unknown before paying for any architecture.
 That was done, in `prototypes/solarpunk/`, which is a throwaway and says so.
 
-**Speed is solved.** A cached tile costs 2.5 us; a town of 4,096 tiles resolves in 10 ms; a full
+**Speed is solved.** A cached tile costs 2.5 us, a town of 4,096 tiles resolves in 10 ms, a full
 monthly tick of that town costs 0.59 ms. The reason is the one thing from the prototype worth
 carrying forward: cost is per array CONFIGURATION, not per tile, because the infinite-row closed
-forms this repository already has and already tests take an array's description and not a
-position. A thousand tiles carrying five layouts is five evaluations.
+forms this repository already has and already tests take an array's description and not a position.
+A thousand tiles carrying five layouts is five evaluations.
 
 **Accuracy is solved too.** The driver converges on the shipped pipeline's own raster as the
 array grows, exactly as an infinite-row approximation should: **-5.1%** at 9 x 18, **-0.4%** at
@@ -743,9 +739,9 @@ sky view factor at 0.6495, which is the closed form's answer to within 0.1%, and
 estimate agrees with both quadratures of the sky dome at the same point.
 
 **So the coarse driver is not a second model.** It is the same model evaluated cheaply, and the
-worry section 8b raised, that a game on a coarse driver would fork the MODEL rather than the
-shell, does not apply to this driver. Holding it there needs one differential test, not a testing
-discipline; `prototypes/solarpunk/gap.test.ts` is that test.
+worry section 8b raised, that a game on a coarse driver would fork the MODEL rather than the shell,
+does not apply to this driver. Holding it there needs one differential test, not a testing
+discipline, `prototypes/solarpunk/gap.test.ts` is that test.
 
 **The first answer was 25% dark, and it was measuring the application.** For a day this section
 recorded that the driver read 33.1% / 28.9% / 24.9% low and that "the entire gap is in how the
@@ -756,15 +752,15 @@ array, producing rows that stood shoulder to shoulder and shaded almost nothing.
 axes deliberately today and the gap comes straight back, from 1.1% to 17.8%.
 
 That was fixed on 2026-09-01, in `src/sim/geometry.ts` and `crates/agv-sim/src/geometry.rs`
-together; `crates/agv-sim/README.md` describes it in full under *What holds it up*. The shipped
-app had been overstating light under an array by about 23%.
+together, `crates/agv-sim/README.md` describes it in full under *What holds it up*. The shipped app
+had been overstating light under an array by about 23%.
 
-It is recorded here because it is the reason this section's numbers changed, and because of what
-it says about evidence. **A prototype built to test a game found the largest correctness bug in
-the designer.** It found it by comparing the raster against the closed form on an array shaped the
-way real ones are: `src/sim/shading.test.ts` already made that comparison and passed, because its
+It is recorded here because it is the reason this section's numbers changed, and because of what it
+says about evidence. **A prototype built to test a game found the largest correctness bug in the
+designer.** It found it by comparing the raster against the closed form on an array shaped the way
+real ones are: `src/sim/shading.test.ts` already made that comparison and passed, because its
 fixture set the row azimuth equal to the surface azimuth, which is the one array shape the broken
-code got right. The test existed; the FIXTURE was the blind spot.
+code got right. The test existed, the FIXTURE was the blind spot.
 
 **What section 8c still does NOT answer** is whether any of it is fun. That needs a person and a
 screen, and section 7 item 3 is about exactly the temptation to let a number stand in for that.
@@ -798,7 +794,7 @@ worth doing and is the easiest to quietly drop.
 
 The material for the third was already here and not hypothetical: **10 A, 20 B, 2 C, 12 D and 14 E
 graded claims** across the data files, plus `Cited<T>` and the verification states in
-`types/evidence.ts`. Nothing had to be invented; it had to be wired to an outcome.
+`types/evidence.ts`. Nothing had to be invented, it had to be wired to an outcome.
 
 ### What was NOT needed, and this is the useful half
 
@@ -809,7 +805,7 @@ Nothing in stages 1, 2 or 4, and none of it turned out to be needed in the build
   already ships, and section 8c measures it within 1.1% of the full bake at 2.1 us a tile. The
   6,500 to 13,000 lines section 8b prices buy nothing a fun test can use.
 - **No Bevy, no renderer, no canvas.** Section 5b's whole argument is that the DOM-versus-canvas
-  choice is the expensive one; a grid of coloured cells is DOM and costs nothing to abandon.
+  choice is the expensive one, a grid of coloured cells is DOM and costs nothing to abandon.
 - **No second entry point.** Section 8b spiked one at +1,200 bytes, and even that is more
   commitment than this needs. A page under `prototypes/` that is never built or deployed is
   enough, and being unable to ship it is a feature.
@@ -842,10 +838,10 @@ The evidence tier is the mechanic and it is wired to outcomes rather than to a p
 
 The pairing that makes the point came out of the data rather than a designer:
 `marigold-cover-nematode` is grade C, works, and asks for the whole bed for a season, because its
-`requiresManagement` says a dense stand held 60 to 90 days; `marigold-interplanted-nematode` is
+`requiresManagement` says a dense stand held 60 to 90 days, `marigold-interplanted-nematode` is
 grade E, free, and does nothing. Same claim, two forms, and choosing between them is this
-repository's thesis as one decision. The crops split the same way without being arranged to:
-sweet corn is offered grade A and B practices, tomato is offered D and E.
+repository's thesis as one decision. The crops split the same way without being arranged to: sweet
+corn is offered grade A and B practices, tomato is offered D and E.
 
 Played through once: seven seasons of a grade D practice showed a mean harvest of 1.10 against
 1.00, and the reveal answered *"Anecdotal, untested, no proposed mechanism"*. Six seasons of the
@@ -876,10 +872,10 @@ buy. Nothing about that verdict touches the designer, which keeps its own number
 
 `loop.ts` invents its energy: `KWP_PER_ARRAY_TILE = 1.5` and `KWH_PER_KWP_YEAR = 1200`, hard-coded
 beside a comment admitting it. The light half of that loop is the application's own and now agrees
-with the bake to 1.1%; the electricity half is a guess. For a fun test that is defensible, and it
-must not survive the test: a game whose whole premise is that its numbers mean something cannot
-have a made-up figure on one side of its central tradeoff. `runAnnualChain` already produces the
-real one per configuration, and it memoises the same way the light does.
+with the bake to 1.1%, the electricity half is a guess. For a fun test that is defensible, and it
+must not survive the test: a game whose whole premise is that its numbers mean something cannot have
+a made-up figure on one side of its central tradeoff. `runAnnualChain` already produces the real one
+per configuration, and it memoises the same way the light does.
 
 ---
 
@@ -924,16 +920,16 @@ The sprites went into the game in **one import and two call sites**, and they ar
 Neither was predictable from reading and both were instant on screen.
 
 1. **Scale.** The designer draws a bed a person is standing beside, so a 0.3 m carrot is a big
-   object. A game tile is 6.5 m of ground seen from 30 m up, and a fixed sixteen plants in it
-   reads as scattered litter. Fixed by spacing plants at the crop's own mature width, which the
-   catalogue already holds; a tile now carries between 4 and 121 plants depending on the crop.
-2. **Photometric units, and this is the one to remember.** `keyLight` returns a PHYSICAL
-   irradiance in the hundreds of watts, because the designer's exposure is 0.0315 under AgX and
-   its sky is a real radiance model. Every colour a game author picks is an ordinary 0-to-1 sRGB
-   colour. Mixed under that exposure the sun is right and everything hand-picked is crushed to
-   near black. The first build was white-out, the second was an olive murk. **Reflectances stay in
-   0-to-1; emissive and background colours have to be lifted into the beam's scale.** Take
-   `RENDERER_SETTINGS` and `keyLight` together or take neither: they are one setting.
+   object. A game tile is 6.5 m of ground seen from 30 m up, and a fixed sixteen plants in it reads
+   as scattered litter. Fixed by spacing plants at the crop's own mature width, which the catalogue
+   already holds, a tile now carries between 4 and 121 plants depending on the crop.
+2. **Photometric units, and this is the one to remember.** `keyLight` returns a PHYSICAL irradiance
+   in the hundreds of watts, because the designer's exposure is 0.0315 under AgX and its sky is a
+   real radiance model. Every colour a game author picks is an ordinary 0-to-1 sRGB colour. Mixed
+   under that exposure the sun is right and everything hand-picked is crushed to near black. The
+   first build was white-out, the second was an olive murk. **Reflectances stay in 0-to-1, emissive
+   and background colours have to be lifted into the beam's scale.** Take `RENDERER_SETTINGS` and
+   `keyLight` together or take neither: they are one setting.
 
 ### What it would cost to go from this to a game people would call immersive
 
@@ -941,7 +937,7 @@ The spike is a board with light, shade, growth and a camera. It is not yet a gam
 designed. Honest buckets, and the ordering matters more than the numbers:
 
 - **Art direction, 60 to 70% of the remaining work and the only real risk.** Everything above is
-  mechanical; making it *look* like a place is not, and it is the part this repository has no head
+  mechanical, making it *look* like a place is not, and it is the part this repository has no head
   start on. The designer's renderer is tuned to be photographic and legible, which is the correct
   target for a design tool and the wrong one for a game people call cute. A stylised look is a
   different lighting model, different materials and probably different foliage, and at that point
@@ -952,7 +948,7 @@ designed. Honest buckets, and the ordering matters more than the numbers:
   where a real asset pipeline and its licensing arrive, and it is the first point at which the
   claim that the game costs no new art stops being true.
 - **Camera, selection and placement affordances** at game quality rather than click-a-quad.
-- **Performance at city scale.** 49 tiles is nothing; the instancing story here is per tile and
+- **Performance at city scale.** 49 tiles is nothing, the instancing story here is per tile and
   would want to be per crop across the whole board, and `PlantInstances` has a comment about
   regressing past ~5,000 objects that will matter.
 
@@ -962,9 +958,9 @@ Two things, and the second is a correction.
 
 **Section 5b's DOM-versus-canvas argument now has a worked example, and it went the way 5b
 predicted.** The first build put the 3D above a visible grid of buttons, which was two pictures of
-one board; the grid was removed a session later and the board is now placed on directly, by
-pressing the ground. That is the right call for a game and it is exactly the moment 5b warns
-about, because the obvious next step is to delete the buttons along with the grid.
+one board, the grid was removed a session later and the board is now placed on directly, by pressing
+the ground. That is the right call for a game and it is exactly the moment 5b warns about, because
+the obvious next step is to delete the buttons along with the grid.
 
 They were not deleted, they were made `.sr-only`. A canvas takes no focus and announces nothing,
 so deleting them is the difference between a game that is a canvas and a game that is mouse-only.
@@ -975,15 +971,15 @@ keyboard user can see where they are. **Cost: one CSS class.** Everything render
 
 The general form is worth stating because it will come up again: *a canvas game keeps its
 accessibility by keeping a real control layer, not by describing the canvas.* The `aria-hidden`
-canvas is the picture; the hidden buttons are the interface. Anything that can only be done by
+canvas is the picture, the hidden buttons are the interface. Anything that can only be done by
 pointing at pixels is a thing some players cannot do.
 
-**The claim that a game "shares the designer's visuals" needs narrowing.** It shares the
-geometry generators and the colour pipeline, which is genuinely most of the hard part and cost
-about a day. It does not share the scene, the lighting rig, or any of the nine components that
-actually draw the designer, and it shares nothing at all for the half of a game that is not
-plants and panels. "One engine, one look" was never going to be true; "one plant model and one
-catalogue" is true, is worth having, and is what was actually demonstrated.
+**The claim that a game "shares the designer's visuals" needs narrowing.** It shares the geometry
+generators and the colour pipeline, which is genuinely most of the hard part and cost about a day.
+It does not share the scene, the lighting rig, or any of the nine components that actually draw the
+designer, and it shares nothing at all for the half of a game that is not plants and panels. "One
+engine, one look" was never going to be true, "one plant model and one catalogue" is true, is worth
+having, and is what was actually demonstrated.
 
 **A note for whoever picks this up.** `prototypes/solarpunk/tsconfig.json` was added because the
 prototype was in NO typecheck at all: `tsconfig.app.json` includes only `src`. That is worth
@@ -1008,7 +1004,7 @@ the personas measured independently:
   seasons: carrot 881.5 against tomato 686.3.
 - **surplus light was worth nothing.** Tomato yielded 1.150 at 15.7 mol/m2/day and 1.150 at 33.8.
 - **two of five crops were permanent silent zeros.** Strawberry cleared its threshold under NO
-  array; sweet corn cleared it under no dense one. A player spends 147 presses to find out.
+  array, sweet corn cleared it under no dense one. A player spends 147 presses to find out.
 
 Meanwhile `src/recommend/yield.ts` already interpolates the **Laub et al. 2022** shade-response
 curve with 95% bands and per-group study counts, `src/data/crops.ts` exposes `laubCurve`, and
@@ -1038,7 +1034,7 @@ six companion rules a player might never touch and onto the main verb, choosing 
 **The evidence mechanic could be skipped in one press.** Trials were counted once per BED per
 advance, not per season, so six painted beds plus a single Advance read as six seasons of evidence
 and revealed the claim. Painting the board is the first thing every player does. A season is now a
-season however many beds ran it; beds are still summed, because a mean over more beds is a better
+season however many beds ran it, beds are still summed, because a mean over more beds is a better
 estimate, but replication across beds must not buy replication across time. Pinned by a test that
 fails with "expected 8 to be 1" against the old code.
 
@@ -1190,10 +1186,10 @@ A board earns MANAGEMENT ACTIONS for the share of the sole-use solar-farm floor 
 with no panels, nine with the board covered. Practices are what actions buy.
 
 **The budget's size is the one invented number in the game, and it says so in its own first line
-rather than its last.** The repository has no labour model; how much management a kilowatt-hour
-buys is a game dial and cannot be anything else. It is a THRESHOLD and not a rate, deliberately,
-because a rate invites tuning by feel and then being quoted as though it meant something, which is
-exactly how `KWP_PER_ARRAY_TILE = 1.5` got into the previous loop and had to be taken back out.
+rather than its last.** The repository has no labour model, how much management a kilowatt-hour buys
+is a game dial and cannot be anything else. It is a THRESHOLD and not a rate, deliberately, because
+a rate invites tuning by feel and then being quoted as though it meant something, which is exactly
+how `KWP_PER_ARRAY_TILE = 1.5` got into the previous loop and had to be taken back out.
 
 What the budget is SPENT on is authored, not priced here: a practice costs one action per entry in
 its own `RuleScope.requiresManagement`. And that produces the property nobody designed:
@@ -1243,9 +1239,9 @@ out why is the interesting part. A flat price charges the same for three arrays 
 three scattered across the board, so it takes money off the player without giving them a decision:
 the cheapest layout is still whichever one the light model happens to prefer, which is scatter.
 
-What actually differs is **balance of system**. Panels scale with panel count; trenches, combiners
-and the run back to the inverter scale with the number of separate ARRAYS. That is why utility
-solar is built in blocks. So `buildDebt` is two terms:
+What actually differs is **balance of system**. Panels scale with panel count, trenches, combiners
+and the run back to the inverter scale with the number of separate ARRAYS. That is why utility solar
+is built in blocks. So `buildDebt` is two terms:
 
 ```
 debt = panelTiles * buildPerPanelTile + runs * buildPerConnection
@@ -1279,7 +1275,7 @@ So pest pressure on a bed is `1 - (unrelated green neighbours / 9)`, plus a term
 family has come off that ground before. Two things fall out that are worth naming:
 
 - **A lone bed is fully exposed, not safe.** Bare ground is not green, so it dilutes nothing. That
-  is the classic result and it is the reason undersowing is worth doing at all; a game that made
+  is the classic result and it is the reason undersowing is worth doing at all, a game that made
   isolation protective would have inverted the finding it is built on.
 - **Panels want to be in a block and crops of one family do not.** The two systems now pull in
   opposite directions across the same board, which is the first thing here that behaves like a
@@ -1309,15 +1305,15 @@ the grade A insectary rule and the detail panel says *"Read that number again."*
 A third instance of the same thing turned up while wiring it. `practiceEffect`'s A and B branch
 already refused a rule whose `effectMetric` was not about yield, but that check cannot reach the
 grade C, D and E rules because none of them carries an effect figure at all. Until the board had
-pests they were paid in yield for want of anywhere else to put them, which was harmless; the moment
-pests existed it became **double payment from a single coin**, with
-`marigold-interplanted-nematode` taking 1.18 on the harvest and 0.8 off the pests from one
-`hiddenTruth` roll. One hypothesis, two answers. The fix is that a rule whose `kind` is about pest
-numbers is worth nothing on the harvest at every grade, and `PEST_KINDS` is read by both functions
-so that the partition is stated in one place rather than kept in step by hand.
+pests they were paid in yield for want of anywhere else to put them, which was harmless, the moment
+pests existed it became **double payment from a single coin**, with `marigold-interplanted-nematode`
+taking 1.18 on the harvest and 0.8 off the pests from one `hiddenTruth` roll. One hypothesis, two
+answers. The fix is that a rule whose `kind` is about pest numbers is worth nothing on the harvest
+at every grade, and `PEST_KINDS` is read by both functions so that the partition is stated in one
+place rather than kept in step by hand.
 
 `desmodium-interception` is refused for a different reason and by the same principle. Grade B, six
-studies, pests to a fifth, and `validRegions: ['KE', 'UG', 'TZ', 'ET']`; its notes say the outcome
+studies, pests to a fifth, and `validRegions: ['KE', 'UG', 'TZ', 'ET']`, its notes say the outcome
 "is grade A but non-transferable ... and must not fire for a home-garden bed elsewhere". The board
 is in Massachusetts, so `appliesHere` drops it before the palette is built. **A well-evidenced rule
 that was measured somewhere else is not a rule you get to use**, and that is now enforced rather
@@ -1374,7 +1370,7 @@ grey light was pointed at it.
 Reusing it cost one extraction: `SkyDome` and `IblGround` were private components inside the
 store-coupled `SkyLight.tsx` and are now `src/scene/skyDome.tsx`, which imports nothing from
 `src/state`. That is the same split `foliage.ts` and `panelGeometry.ts` already have and 8e
-described; this round is the first time the split was applied to something rather than observed.
+described, this round is the first time the split was applied to something rather than observed.
 `foliageColour` came out of `sceneMath.ts` the same way.
 
 **The bug.** The selection ring and the hover ring were `meshBasicMaterial` at hand-picked 0-to-1
@@ -1470,7 +1466,7 @@ invent any. What is regional and defensible is that insect development rate is c
 accumulated heat above a threshold, which is what every extension IPM programme forecasts
 generations from, and 10 °C is the conventional base for the pests these companion rules are about.
 So `site.seasonGdd.base10C` scales the pest pressure the spatial model already produced. The driver
-is measured; only the reference it is divided by is a dial.
+is measured, only the reference it is divided by is a dial.
 
 `PestReading` now separates **crowding** from **pressure**, and that separation came out of a test.
 Crowding is the arrangement alone, which is what a player put there and can undo. Pressure folds in
@@ -1483,7 +1479,7 @@ saying nothing.
 Asked directly, and the answer was already in the decision record. `docs/00-DECISIONS.md` section 4:
 
 > Weather input must be a **TMY**, never a single year. The sign of the shade effect flips between
-> normal and drought years (Weselek 2021 potato -20% to +11%; Amaducci 2018 maize gains only under
+> normal and drought years (Weselek 2021 potato -20% to +11%, Amaducci 2018 maize gains only under
 > rainfed stress).
 
 WeatherKit is a forecast and observation service. It does not publish a multi-decade hourly record,
@@ -1531,9 +1527,9 @@ What is still genuinely the game's, and should stay:
 
 What a real merge would take, in the order the work falls out:
 
-1. The game's board is a 7x7 grid of 6.5 m tiles; the designer's plot is polygonal beds and arrays
-   at arbitrary positions. One of the two has to give, and it should be the grid: a bed is already
-   a polygon in `src/types/garden.ts`.
+1. The game's board is a 7x7 grid of 6.5 m tiles, the designer's plot is polygonal beds and arrays
+   at arbitrary positions. One of the two has to give, and it should be the grid: a bed is already a
+   polygon in `src/types/garden.ts`.
 2. `game.ts`'s reducer and `src/state/store.ts` are two state models over the same nouns. The store
    is the survivor, and `World` becomes a slice of it.
 3. Time. The designer has an instant (`timeUtcMillis`) and the game has a calendar. The game's is
@@ -1593,26 +1589,26 @@ Five things, in the order they save time.
    `tests/pvlib_decomposition.rs` say the Rust is RIGHT, against published worked examples.
    `src/sim/rust-geometry-parity.test.ts` says the four modules still implemented twice have not
    DIVERGED from each other. A change that keeps one and breaks the other is telling you something
-   specific; do not relax either to get green. Section 8a records exactly where each one is blind,
+   specific, do not relax either to get green. Section 8a records exactly where each one is blind,
    and section 8c records a bug that neither kind could ever have caught, because parity holds two
    implementations to EACH OTHER and both carried it.
-3. **Only `perez_tables.rs` is still generated.** `spa_tables.rs` and `dirint_tables.rs` became
-   the only copies when the TypeScript physics was deleted, and they are hand-maintained against
-   their published sources; their headers say so. `perez_tables.rs` is still generated from
-   `src/sim/perez-tables.ts` by `scripts/generate-rust-tables.mjs`, because `skydome.ts` still
-   reads that table and skydome is not ported. Do not edit that one by hand.
+3. **Only `perez_tables.rs` is still generated.** `spa_tables.rs` and `dirint_tables.rs` became the
+   only copies when the TypeScript physics was deleted, and they are hand-maintained against their
+   published sources, their headers say so. `perez_tables.rs` is still generated from
+   `src/sim/perez-tables.ts` by `scripts/generate-rust-tables.mjs`, because `skydome.ts` still reads
+   that table and skydome is not ported. Do not edit that one by hand.
 4. **Every parity tolerance is measured, not chosen.** Solar position: 1e-10, against a worst
    observed disagreement of 1.6e-13. Transposition and decomposition: both bit-identical, held at
    1e-9 and at one f32 ulp respectively so a different libm cannot fail them. If one starts
    failing, read the number in the failure message before touching the tolerance: a real
    algorithmic difference is a whole-degree effect, and anything in between is worth understanding
    rather than accommodating.
-5. **The crate is the only physics, and the switch is inverted.** `VITE_RUST_CORE` is on unless
-   it is exactly `off`, and a build with it off renders the shell and refuses every number rather
-   than falling back, because there is nothing left to fall back to.
-   `src/sim/core-wiring.test.ts` is the file that proves the seams are live rather than merely
-   present; it drives each one with a core that answers WRONG, because a run that quietly used
-   something else would pass for the wrong reason.
+5. **The crate is the only physics, and the switch is inverted.** `VITE_RUST_CORE` is on unless it
+   is exactly `off`, and a build with it off renders the shell and refuses every number rather than
+   falling back, because there is nothing left to fall back to. `src/sim/core-wiring.test.ts` is the
+   file that proves the seams are live rather than merely present, it drives each one with a core
+   that answers WRONG, because a run that quietly used something else would pass for the wrong
+   reason.
 6. **`Float32Array` stores in `src/sim` are load-bearing** and `math::through_f32` reproduces
    them on purpose. A port that keeps everything in `f64` is a more accurate implementation of a
    different function. Three of these were found by parity, the last at 5.1e-10 relative.
@@ -1626,8 +1622,8 @@ the open one section 7 item 1 names.
   Workers Builds command. The branch is green locally, 222 e2e included, and CI has never run on
   it because `ci.yml` triggers on `push: [main]` and `pull_request`.
 - **Done 2026-09-04: `gap.test.ts`'s comparison is `src/sim/gap.test.ts`**, with the driver as
-  `src/sim/testkit.ts`, at 2 m cells and nine seconds; its crossed-axes block is the regression
-  test for the row-axis bug.
+  `src/sim/testkit.ts`, at 2 m cells and nine seconds, its crossed-axes block is the regression test
+  for the row-axis bug.
 - **Measure before deleting the four dual modules.** `geometry.ts`, `shading.ts`, `viewfactor.ts`
   and `snow.ts` sit on synchronous paths. The question is what crossing the wasm boundary costs
   there, not whether the port is right.

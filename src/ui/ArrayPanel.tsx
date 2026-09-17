@@ -136,7 +136,7 @@ export const ArrayPanel = (): ReactElement => {
           : undefined
       }
       title="Solar panels"
-      subtitle="The rows of panels on this plot. Ground cover ratio is worked out from row width and row spacing as you edit"
+      subtitle="The rows of panels on this plot. Ground cover ratio is computed from row width and row spacing as you edit"
       // the layout search is the press at the top of the step this panel sits in, so it is not
       // offered a second time here
       actions={

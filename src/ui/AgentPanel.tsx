@@ -271,7 +271,7 @@ interface Group {
  */
 const BLOCK: Partial<Record<Line['tone'], string>> = {
   caveat: "What that answer doesn't cover",
-  provenance: 'How this was worked out',
+  provenance: 'How this was computed',
 }
 
 const grouped = (lines: readonly Line[]): readonly Group[] => {

@@ -38,7 +38,8 @@
 | `DLI` | daily light integral | mol m⁻² d⁻¹ |
 | `PPFD` | photosynthetic photon flux density | µmol m⁻² s⁻¹ |
 
-Angles are stored in **radians** internally; only the UI and the Perez/Kasten empirical formulas that are defined in degrees convert.
+Angles are stored in **radians** internally, only the UI and the Perez/Kasten empirical formulas
+that are defined in degrees convert.
 
 **Coordinate frame.** Scene is right-handed ENU: `+x = East`, `+y = North`, `+z = Up`. The unit sun vector is
 
@@ -46,7 +47,9 @@ Angles are stored in **radians** internally; only the UI and the Perez/Kasten em
 s = ( cos α_s · sin γ_s ,  cos α_s · cos γ_s ,  sin α_s )
 ```
 
-Three.js users note: three.js is Y-up. Keep the physics in ENU and apply a single fixed basis swap at the render boundary; do **not** carry two angle conventions through the model code. This is the single most common source of azimuth sign bugs.
+Three.js users note: three.js is Y-up. Keep the physics in ENU and apply a single fixed basis swap
+at the render boundary, do **not** carry two angle conventions through the model code. This is the
+single most common source of azimuth sign bugs.
 
 ---
 
@@ -56,11 +59,11 @@ Three.js users note: three.js is Y-up. Keep the physics in ENU and apply a singl
 
 | Algorithm | Reference | Stated uncertainty | Valid range | Cost |
 |---|---|---|---|---|
-| **NREL SPA** | Reda & Andreas 2004, *Solar Energy* 76(5) 577–589; NREL/TP-560-34302 rev. Jan 2008 | **±0.0003°** (≈1.1 arcsec) in zenith and azimuth | −2000 to +6000 | ~300 trig ops (heliocentric L/B/R series: 64+34+40+... terms, nutation 63 terms) |
+| **NREL SPA** | Reda & Andreas 2004, *Solar Energy* 76(5) 577–589, NREL/TP-560-34302 rev. Jan 2008 | **±0.0003°** (≈1.1 arcsec) in zenith and azimuth | −2000 to +6000 | ~300 trig ops (heliocentric L/B/R series: 64+34+40+... terms, nutation 63 terms) |
 | **Michalsky** | Michalsky 1988, *Solar Energy* 40(5) 227–235 (Astronomical Almanac low-precision) | ≈0.01° (36 arcsec) | 1950–2050 | ~20 trig ops |
-| **PSA** | Blanco-Muriel et al. 2001, *Solar Energy* 70(5) 431–441; updated Blanco et al. 2020 | **≤0.008°** (0.5 arcmin) | 1999–2015 original, 2020–2050 update | ~15 trig ops |
+| **PSA** | Blanco-Muriel et al. 2001, *Solar Energy* 70(5) 431–441, updated Blanco et al. 2020 | **≤0.008°** (0.5 arcmin) | 1999–2015 original, 2020–2050 update | ~15 trig ops |
 | **Grena #3 / #5** | Grena 2012, *Solar Energy* 86, 1323–1337 | 0.01° (#3) / 0.0027° (#5) | 2010–2110 | ~10–25 trig ops |
-| **NOAA / Spencer** | Spencer 1971; NOAA GML solar calculator | ≈0.05–0.2° in declination | any | ~10 trig ops |
+| **NOAA / Spencer** | Spencer 1971, NOAA GML solar calculator | ≈0.05–0.2° in declination | any | ~10 trig ops |
 
 Statistical benchmarking of SPA against Grena 1–5 confirms SPA as the reference standard while showing Grena #5 within a few 10⁻³ degrees at roughly one tenth the cost (IEEE Latin America Transactions, "Statistical Analysis of Solar Position Calculation Algorithms: SPA and Grena 1-5").
 
@@ -92,13 +95,16 @@ Julian Ephemeris Cent.: JCE = (JDE − 2451545) / 36525
 Julian Ephemeris Mill.: JME = JCE / 10
 ```
 
-`ΔT = TT − UT1` (≈ 69–74 s for 2020–2030). Ship a small polynomial/table (IERS Bulletin A, or Espenak & Meeus polynomial expressions for ΔT); an error of 1 s in ΔT moves the sun by ≈0.004°, so a constant 70 s is acceptable for a design tool but the table is 20 lines.
+`ΔT = TT − UT1` (≈ 69–74 s for 2020–2030). Ship a small polynomial/table (IERS Bulletin A, or
+Espenak & Meeus polynomial expressions for ΔT), an error of 1 s in ΔT moves the sun by ≈0.004°, so a
+constant 70 s is acceptable for a design tool but the table is 20 lines.
 
 ### 1.4 NREL SPA computation chain (implement in this order)
 
 1. **Heliocentric longitude, latitude, radius vector.** Earth periodic terms `L0…L5`, `B0…B1`, `R0…R4` (Appendix A.4.2 of NREL/TP-560-34302). Each term `L_i = Σ_j A_j cos(B_j + C_j · JME)`, then `L = (L0 + L1·JME + … + L5·JME⁵)/10⁸`, reduced to [0, 360).
 2. **Geocentric longitude/latitude:** `Θ = L + 180°`, `β_geo = −B`.
-3. **Nutation in longitude and obliquity:** 63-term series in the mean elongation `X0`, mean anomalies `X1, X2`, argument of latitude `X3`, ascending node `X4`; yields `Δψ`, `Δε`.
+3. **Nutation in longitude and obliquity:** 63-term series in the mean elongation `X0`, mean
+   anomalies `X1, X2`, argument of latitude `X3`, ascending node `X4`, yields `Δψ`, `Δε`.
 4. **True obliquity:** `ε = ε_0/3600 + Δε`, with `ε_0` the 10th-order polynomial in `U = JME/10`.
 5. **Aberration correction:** `Δτ = −20.4898 / (3600 · R)` degrees.
 6. **Apparent sun longitude:** `λ = Θ + Δψ + Δτ`.
@@ -122,11 +128,13 @@ Julian Ephemeris Mill.: JME = JCE / 10
 11. **Topocentric zenith and azimuth:** see 1.5.
 12. **Refraction:** see 1.5.
 
-Reference implementation to port from: NREL's C source at <https://midcdmz.nrel.gov/spa/> (registration required; permissive research licence), or the already-permissive transcriptions in `pvlib-python` (`pvlib/spa.py`, BSD-3) and `sg2` / `SolarPosition.jl`.
+Reference implementation to port from: NREL's C source at <https://midcdmz.nrel.gov/spa/>
+(registration required, permissive research licence), or the already-permissive transcriptions in
+`pvlib-python` (`pvlib/spa.py`, BSD-3) and `sg2` / `SolarPosition.jl`.
 
 ### 1.5 Explicit angle equations (these are the ones the shading model consumes)
 
-**Solar declination (Spencer 1971, for the simplified path only; SPA supersedes it):**
+**Solar declination (Spencer 1971, for the simplified path only, SPA supersedes it):**
 
 ```
 Γ = 2π (n − 1 + (h_UTC − 12)/24) / 365            [fractional year, rad]
@@ -165,7 +173,9 @@ sin α_s = cos θ_z = sin φ sin δ + cos φ cos δ cos ω
 γ_s = π + atan2( sin ω ,  cos ω sin φ − tan δ cos φ )        [rad, in (0, 2π)]
 ```
 
-The `atan2` form is mandatory. The single-argument `cos γ_s = (sin δ cos φ − cos δ sin φ cos ω)/sin θ_z` form loses the east/west branch and produces mirrored shadows in the afternoon; it also blows up at `θ_z → 0` (tropics, solar noon). Guard `α_s > 89.9°` by holding the previous azimuth.
+The `atan2` form is mandatory. The single-argument `cos γ_s = (sin δ cos φ − cos δ sin φ cos ω)/sin
+θ_z` form loses the east/west branch and produces mirrored shadows in the afternoon, it also blows
+up at `θ_z → 0` (tropics, solar noon). Guard `α_s > 89.9°` by holding the previous azimuth.
 
 **Atmospheric refraction (SPA / Bennett 1982), degrees, applied to the geometric elevation `e_0`:**
 
@@ -175,8 +185,8 @@ applied only when e_0 ≥ −(0.26667 + 0.5667)     [sun-disc + refraction thres
 e = e_0 + Δe
 ```
 
-**Air mass (Kasten & Young 1989), `θ_z` in degrees. `AM_r` is what Perez 1990 is fitted against
-and `AM_a` is what DISC and DIRINT want; the two are not interchangeable, and handing Perez the
+**Air mass (Kasten & Young 1989), `θ_z` in degrees. `AM_r` is what Perez 1990 is fitted against and
+`AM_a` is what DISC and DIRINT want, the two are not interchangeable, and handing Perez the
 pressure-corrected one overstated sky diffuse by about 1% at 1,800 m until 2026-09-07
 (`docs/VALIDATION.md` section 1):**
 
@@ -200,7 +210,8 @@ SPA gives `R` directly, so prefer `E_0 = E_sc / R²`.
 cos AOI = cos θ_z cos β + sin θ_z sin β cos(γ_s − γ_c)
 ```
 
-**Profile angle** (apparent solar elevation projected into the plane perpendicular to the row axis; this is the *only* sun angle the infinite-row shading math needs):
+**Profile angle** (apparent solar elevation projected into the plane perpendicular to the row axis,
+this is the *only* sun angle the infinite-row shading math needs):
 
 ```
 tan ψ = tan α_s / | cos(γ_s − γ_c) |
@@ -211,11 +222,11 @@ with `σ = sign( cos(γ_s − γ_c) )` recording which side of the row the sun i
 
 | Library | What it is | Verdict |
 |---|---|---|
-| **suncalc** (mourner, BSD-2, ~2 kB) | Meeus low-precision; accuracy comparable to timeanddate.com. Good sunrise/sunset phases and moon. Does **not** expose refraction control, air mass, `R`, or pressure/temperature. | Use for **UI only** (sunrise/sunset markers, twilight bands, moon). Not for the irradiance model. |
+| **suncalc** (mourner, BSD-2, ~2 kB) | Meeus low-precision, accuracy comparable to timeanddate.com. Good sunrise/sunset phases and moon. Does **not** expose refraction control, air mass, `R`, or pressure/temperature. | Use for **UI only** (sunrise/sunset markers, twilight bands, moon). Not for the irradiance model. |
 | **suncalc3 / suncalc-ts** | Maintained TS forks of the above with typings and more phases | Same verdict, better DX. |
-| **solar-calculator** (d3/Observable, Mike Bostock, ISC) | NOAA GML solar calculator port; declination, EoT, azimuth/elevation, century-based. ≈0.02° class. | Reasonable **fallback** path; small and dependency-free. |
+| **solar-calculator** (d3/Observable, Mike Bostock, ISC) | NOAA GML solar calculator port, declination, EoT, azimuth/elevation, century-based. ≈0.02° class. | Reasonable **fallback** path, small and dependency-free. |
 | **`spa.js` / `nrel-spa` / `solarpos` ports** | Several direct transcriptions of NREL/TP-560-34302 exist on npm and GitHub with varying completeness. Verify the port includes nutation, aberration, and topocentric parallax before trusting the ±0.0003° claim. | **Recommended primary**, after golden-file validation. If none is complete, porting `pvlib/spa.py` is a ~700-line mechanical job (the periodic-term tables dominate). |
-| **`sg2` (Solar Geometry 2)** | Blanc & Wald 2012 fast algorithm, C/Python; ~0.0015° for 1980–2030 at ~1/50 SPA cost | Good WASM candidate if SPA JS proves too slow (it will not). |
+| **`sg2` (Solar Geometry 2)** | Blanc & Wald 2012 fast algorithm, C/Python, ~0.0015° for 1980–2030 at ~1/50 SPA cost | Good WASM candidate if SPA JS proves too slow (it will not). |
 | **`pvlib-python`** | Not shippable to the browser, but the **reference oracle**. | Use offline to generate golden CSVs: `solarposition.spa_python`, `irradiance.erbs/dirint/disc`, `irradiance.perez`, `bifacial.infinite_sheds`. |
 
 **Validation gate:** generate `pvlib` output for 6 sites × 8760 h (Reykjavík 64°N, Berlin 52.5°N, Davis CA 38.5°N, Delhi 28.6°N, Nairobi −1.3°, Christchurch −43.5°) and assert max abs error < 0.001° in zenith and azimuth, < 0.5 W m⁻² in POA. Commit as fixtures.
@@ -261,7 +272,8 @@ DNI = E_0 (K_nc − ΔK_n)
 
 **DIRINT (Perez et al. 1992, *Solar Energy* 49(3) 187–200)** – DISC plus a 4-D lookup table indexed by `(K_t', z-bin, W-bin, ΔK_t'-bin)`, where `K_t'` is the air-mass-independent clearness index, `W` is precipitable water (from dew point) and `ΔK_t'` is the stability index built from the neighbouring time steps. 6×6×7×5 = 1260 coefficients.
 
-**Engerer2 (Engerer 2015, *Solar Energy* 116, 215–237; re-parameterised globally by Bright & Engerer 2019, *J. Renew. Sustain. Energy* 11, 033701)** – logistic in a clear-sky-aware feature set:
+**Engerer2 (Engerer 2015, *Solar Energy* 116, 215–237, re-parameterised globally by Bright & Engerer
+2019, *J. Renew. Sustain. Energy* 11, 033701)** – logistic in a clear-sky-aware feature set:
 
 ```
 K_d = C + (1 − C) / ( 1 + exp( β0 + β1 K_t + β2 AST + β3 θ_z + β4 ΔK_tc ) ) + β5 K_de
@@ -279,7 +291,9 @@ AST   = apparent solar time, hours
 | Engerer 2015 (Australia, 1-min) | 4.2336e-2 | −3.7912 | 7.5479 | −1.0036e-2 | 3.1480e-3 | −5.3146 | 1.7073 |
 | Bright & Engerer 2019 (global, 1-min) | 1.0562e-1 | −4.1332 | 8.2578 | 1.0087e-2 | 8.8801e-4 | −4.9302 | 4.4378e-1 |
 
-Bright & Engerer 2019 additionally publish coefficient sets for 5, 10, 15, 30-min, 1-h and daily resolutions (their Table 3). **Use the hourly set for hourly TMY data; the 1-min set is not valid at 1 h.** Global re-parameterisation improved 1-min RMSE from 0.168 to 0.138 and R² from 0.80 to 0.86.
+Bright & Engerer 2019 additionally publish coefficient sets for 5, 10, 15, 30-min, 1-h and daily
+resolutions (their Table 3). **Use the hourly set for hourly TMY data, the 1-min set is not valid at
+1 h.** Global re-parameterisation improved 1-min RMSE from 0.168 to 0.138 and R² from 0.80 to 0.86.
 
 **Benchmark evidence.** Gueymard & Ruiz-Arias 2016 (*Solar Energy* 128, 1–30, "Extensive worldwide validation and climate sensitivity analysis of direct irradiance predictions from 1-min global irradiance") evaluated 140 separation models across 54 stations and found **Engerer2 and DIRINT jointly best**, with DIRINT ranking first or near-first at hourly resolution and Engerer2 strongest sub-hourly. Erbs is materially worse (typically +15–30 % relative MBE/RMSE on DNI) but requires no auxiliary data.
 
@@ -314,7 +328,8 @@ The models differ only in `POA_skydiffuse`.
 ```
 POA_d = DHI · (1 + cos β)/2
 ```
-Systematically under-predicts on clear days by 5–10 % because it ignores circumsolar brightening; over-predicts under overcast. Adequate only as a debug baseline.
+Systematically under-predicts on clear days by 5–10 % because it ignores circumsolar brightening,
+over-predicts under overcast. Adequate only as a debug baseline.
 
 **Hay & Davies 1980:** adds a circumsolar term weighted by the anisotropy index `A_i`:
 ```
@@ -347,7 +362,9 @@ F₂ =           f₂₁(ε) + f₂₂(ε) Δ + (π θ_z /180°) f₂₃(ε)    
 POA_d = DHI [ (1 − F₁)(1 + cos β)/2  +  F₁ (a/b)  +  F₂ sin β ]
 ```
 
-**Perez 1990 coefficient table** (the "all-country / allsitescomposite1990" set, fitted on Albany NY, Geneva, Los Angeles, Albuquerque, Phoenix, Cape Canaveral, Osage, Trappes and Carpentras; 6 coefficients × 8 clearness bins = 48 parameters):
+**Perez 1990 coefficient table** (the "all-country / allsitescomposite1990" set, fitted on Albany
+NY, Geneva, Los Angeles, Albuquerque, Phoenix, Cape Canaveral, Osage, Trappes and Carpentras, 6
+coefficients × 8 clearness bins = 48 parameters):
 
 | Bin | ε range | f₁₁ | f₁₂ | f₁₃ | f₂₁ | f₂₂ | f₂₃ |
 |---|---|---|---|---|---|---|---|
@@ -362,14 +379,25 @@ POA_d = DHI [ (1 − F₁)(1 + cos β)/2  +  F₁ (a/b)  +  F₂ sin β ]
 
 Bin `ε = 1` exactly (`DHI = GHI`, fully overcast) falls in bin 1 and yields `F₁ ≈ 0`, degenerating gracefully to isotropic.
 
-**Source of record for the coefficients:** Perez, Ineichen, Seals, Michalsky & Stewart (1990), Table 6; mirrored verbatim in Sandia PVPMC's modelling guide (<https://pvpmc.sandia.gov/modeling-guide/1-weather-design-inputs/plane-of-array-poa-irradiance/calculating-poa-irradiance/poa-sky-diffuse/perez-sky-diffuse-model/>) and in `pvlib.irradiance._get_perez_coefficients('allsitescomposite1990')`. **Copy from pvlib's source, then diff against the Sandia table.** pvlib also carries the France-1988, Phoenix-1988, Elmadina-1988, Osage-1988, Albany-1988, Albuquerque-1988, Capecanaveral-1988 and Albany-1988 regional sets if you later want site-tuned coefficients.
+**Source of record for the coefficients:** Perez, Ineichen, Seals, Michalsky & Stewart (1990), Table
+6, mirrored verbatim in Sandia PVPMC's modelling guide
+(<https://pvpmc.sandia.gov/modeling-guide/1-weather-design-inputs/plane-of-array-poa-irradiance/calculating-poa-irradiance/poa-sky-diffuse/perez-sky-diffuse-model/>)
+and in `pvlib.irradiance._get_perez_coefficients('allsitescomposite1990')`. **Copy from pvlib's
+source, then diff against the Sandia table.** pvlib also carries the France-1988, Phoenix-1988,
+Elmadina-1988, Osage-1988, Albany-1988, Albuquerque-1988, Capecanaveral-1988 and Albany-1988
+regional sets if you later want site-tuned coefficients.
 
 ### 2.5 Transposition recommendation
 
-**Use Perez 1990 (`allsitescomposite1990`) as the default; expose isotropic as a "fast/debug" toggle only.**
+**Use Perez 1990 (`allsitescomposite1990`) as the default, expose isotropic as a "fast/debug" toggle
+only.**
 
 Justification:
-1. Repeated empirical validation (Loutzenhiser et al. 2007, *Solar Energy* 81(2) 254–267, "Empirical validation of models to compute solar irradiance on inclined surfaces for building energy simulation"; Gueymard 2009; Yang 2016) puts Perez 1990 first or tied-first among the classical transposition models across tilts and climates, typically 3–5 % MBE better than isotropic and 1–2 % better than Hay-Davies at high tilt.
+1. Repeated empirical validation (Loutzenhiser et al. 2007, *Solar Energy* 81(2) 254–267, "Empirical
+   validation of models to compute solar irradiance on inclined surfaces for building energy
+   simulation", Gueymard 2009, Yang 2016) puts Perez 1990 first or tied-first among the classical
+   transposition models across tilts and climates, typically 3–5 % MBE better than isotropic and 1–2
+   % better than Hay-Davies at high tilt.
 2. It is the model behind `gendaymtx`, hence behind the Radiance/Ladybug cumulative-sky workflow this spec adopts in §5. Using the same sky model for the PV plane and for the ground map keeps a **single source of truth** for the sky radiance distribution and makes the energy balance auditable.
 3. It is the pvlib and SAM default, so validation fixtures are free.
 
@@ -382,7 +410,10 @@ Cost: ~40 flops per timestep. Irrelevant.
 ```
 PPFD [µmol m⁻² s⁻¹] ≈ η_PAR · E_shortwave [W m⁻²]
 ```
-with `η_PAR ≈ 2.02 µmol J⁻¹` for global solar radiation at the surface (Meek, Hatfield, Howell, Idso & Reginato 1984, *Agronomy Journal* 76, 939–945; McCree 1972). Use a slightly higher `η ≈ 2.1–2.2 µmol J⁻¹` for the pure-diffuse component and `≈ 2.0` for beam, since diffuse skylight is blue-shifted:
+with `η_PAR ≈ 2.02 µmol J⁻¹` for global solar radiation at the surface (Meek, Hatfield, Howell, Idso
+& Reginato 1984, *Agronomy Journal* 76, 939–945, McCree 1972). Use a slightly higher `η ≈ 2.1–2.2
+µmol J⁻¹` for the pure-diffuse component and `≈ 2.0` for beam, since diffuse skylight is
+blue-shifted:
 
 ```
 PPFD = 2.00 · E_beam,horiz + 2.15 · E_diffuse,horiz        (recommended two-band split)
@@ -393,7 +424,10 @@ DLI [mol m⁻² d⁻¹] = 1e−6 · Σ_over_day PPFD_i · Δt_i [s]
                   = 0.0036 · Σ_hours PPFD_h              (for Δt = 1 h, PPFD in µmol m⁻² s⁻¹)
 ```
 
-Report both **annual mean DLI** and a **monthly DLI stack** per ground cell; crop suitability thresholds are seasonal (lettuce ≈ 12–17, tomato ≈ 22–30, most leafy greens tolerate ≥ 10 mol m⁻² d⁻¹). Also report **shade fraction** `1 − DLI_array / DLI_open` because agronomy literature is parameterised on relative shading.
+Report both **annual mean DLI** and a **monthly DLI stack** per ground cell, crop suitability
+thresholds are seasonal (lettuce ≈ 12–17, tomato ≈ 22–30, most leafy greens tolerate ≥ 10 mol m⁻²
+d⁻¹). Also report **shade fraction** `1 − DLI_array / DLI_open` because agronomy literature is
+parameterised on relative shading.
 
 ---
 
@@ -413,12 +447,16 @@ The canonical parametric row array. Rows are infinite in the along-axis directio
 | Clearance height | `h_c` | ground to **lowest** module edge (this is the agronomically meaningful one) | 0.5 – 8 m |
 | Max height | `h_max = h_c + W sin β` | derived | – |
 | Row length | `L_row` | finite length, drives edge effects | 5 – 200 m |
-| Transmittance | `τ` | 0 = opaque; checkerboard/spaced modules 0.2–0.5; semi-transparent glass-glass 0.1–0.3 | 0 – 0.8 |
+| Transmittance | `τ` | 0 = opaque, checkerboard/spaced modules 0.2–0.5, semi-transparent glass-glass 0.1–0.3 | 0 – 0.8 |
 | Bifaciality | `φ_bi` | rear/front efficiency ratio | 0 – 0.95 |
 | Tracking | – | fixed / single-axis N-S horizontal / single-axis tilted / 2-axis / agro-optimised | – |
 | Ground albedo | `ρ_g` | see §7 | 0.05 – 0.9 |
 
-Note the two competing GCR definitions in the literature. Use `GCR = W/P` (**collector width over pitch**, the Sandia/pvlib/NREL convention). Some agronomy papers use *projected* coverage `GCR_proj = W cos β / P`, which is what actually determines mid-day shading and is what agronomists mean by "the field is 30 % covered". **Display both** in the UI and label them; conflating them is a standing source of confusion in APV papers.
+Note the two competing GCR definitions in the literature. Use `GCR = W/P` (**collector width over
+pitch**, the Sandia/pvlib/NREL convention). Some agronomy papers use *projected* coverage `GCR_proj
+= W cos β / P`, which is what actually determines mid-day shading and is what agronomists mean by
+"the field is 30 % covered". **Display both** in the UI and label them, conflating them is a
+standing source of confusion in APV papers.
 
 ### 3.2 Shade-free spacing / backtracking criterion
 
@@ -445,25 +483,38 @@ evaluated at `ψ_min` for the solstice 9:00 sun. For a single-axis tracker, back
 
 **Elevated (overhead) APV**
 
-- Clearance height `h_c`: **2–5 m** is the dominant band. 2.1–2.5 m is the ADEME/German DIN SPEC 91434 minimum for hand and light-machinery work; 4–5 m for combine harvesters, sprayers and orchard equipment. Commercial mounting-system ranges quoted at 1.5–5.5 m. Research plots have tested 0.6 m and 1.2 m for low crops.
+- Clearance height `h_c`: **2–5 m** is the dominant band. 2.1–2.5 m is the ADEME/German DIN SPEC
+  91434 minimum for hand and light-machinery work, 4–5 m for combine harvesters, sprayers and
+  orchard equipment. Commercial mounting-system ranges quoted at 1.5–5.5 m. Research plots have
+  tested 0.6 m and 1.2 m for low crops.
 - GCR: **0.25–0.50** for APV vs **0.35–0.55** slant-GCR / 0.8+ projected for conventional utility-scale ground-mount. DIN SPEC 91434 requires ≤ 15 % agricultural yield loss for "Category I" APV, which in practice caps projected coverage near 0.3.
-- For combine-harvested cereals, INRAE work (Assessment of the ground coverage ratio of agrivoltaic systems as a proxy for potential crop productivity, hal-04240227) finds panel density must stay **below GCR 0.20** to avoid unacceptable yield loss; shade-tolerant crops, forage and pasture tolerate 0.30–0.45.
-- Tilt: reduce below the energy-optimal `β ≈ φ · 0.85` when uniformity matters; APV designs commonly run 10–25° in mid-latitudes to lower `h_max` and shorten shadows.
+- For combine-harvested cereals, INRAE work (Assessment of the ground coverage ratio of agrivoltaic
+  systems as a proxy for potential crop productivity, hal-04240227) finds panel density must stay
+  **below GCR 0.20** to avoid unacceptable yield loss, shade-tolerant crops, forage and pasture
+  tolerate 0.30–0.45.
+- Tilt: reduce below the energy-optimal `β ≈ φ · 0.85` when uniformity matters, APV designs commonly
+  run 10–25° in mid-latitudes to lower `h_max` and shorten shadows.
 - Density modulation: **checkerboard** (alternate module positions omitted, `τ_eff` 0.3–0.5 by area) and **spaced-strip** layouts trade a linear energy loss for a much more *uniform* ground DLI, which is agronomically worth more than the mean. Semi-transparent glass-glass modules with cell-gap `τ = 0.1–0.3` give the same effect with a smoother penumbra.
 
 **Vertical bifacial east-west (Next2Sun archetype)**
 
 - `β = 90°`, `γ_c = 90°/270°` (module plane running N-S, faces E and W).
-- Row spacing **8–15 m**; Next2Sun quotes ≥ 8 m and states the vertical design occupies ≈ **5 % of the land area**, with 8–15 m crop-rotation strips preserving full machinery access.
-- Ground irradiance under 8 m spacing: crops receive **≥ 75 %** of open-field irradiation; at 10 m spacing, **79.9–82.5 %** (high-latitude study, *Applied Energy* 402 (2026) 126879, "Performance evaluation of high latitude agrivoltaic systems with vertically mounted bifacial panels").
+- Row spacing **8–15 m**, Next2Sun quotes ≥ 8 m and states the vertical design occupies ≈ **5 % of
+  the land area**, with 8–15 m crop-rotation strips preserving full machinery access.
+- Ground irradiance under 8 m spacing: crops receive **≥ 75 %** of open-field irradiation, at 10 m
+  spacing, **79.9–82.5 %** (high-latitude study, *Applied Energy* 402 (2026) 126879, "Performance
+  evaluation of high latitude agrivoltaic systems with vertically mounted bifacial panels").
 - Module bottom edge should be elevated **≥ 0.8–1.0 m**: Ground Global Reflection homogeneity is only achieved for elevation ≥ 1 m in E-W vertical farms (arXiv:1806.06666, ground sculpting for vertical bifacial).
 - Distinctive DLI signature: two moving shadow bands (morning westward, afternoon eastward) and **near-zero shading at solar noon**, giving the most uniform and least midday-stressed light of any APV topology. Also a favourable generation profile (dual morning/evening peaks) for grid value.
 
 **Rules of thumb worth encoding as UI warnings**
 
 - `h_c / P` controls shadow *blur*: penumbra and inter-row leakage grow with clearance, so raising the array at fixed GCR improves uniformity more than it reduces mean shading.
-- Shadow *dwell time* at a point scales with `W cos β / (P · rate of shadow travel)`; keeping any cell's continuous shade below ~3–4 h avoids the worst photosynthesis-induction penalties.
-- N-S row orientation gives a fast-moving E-to-W shadow (good uniformity, worse winter mid-day yield); E-W rows give a stationary shadow band (bad uniformity, better winter energy). Warn on E-W tilted rows for crops.
+- Shadow *dwell time* at a point scales with `W cos β / (P · rate of shadow travel)`, keeping any
+  cell's continuous shade below ~3–4 h avoids the worst photosynthesis-induction penalties.
+- N-S row orientation gives a fast-moving E-to-W shadow (good uniformity, worse winter mid-day
+  yield), E-W rows give a stationary shadow band (bad uniformity, better winter energy). Warn on E-W
+  tilted rows for crops.
 
 ### 3.4 Recommended defaults per latitude band
 
@@ -471,13 +522,13 @@ Fixed-tilt, monofacial or bifacial elevated APV, temperate row crops, |latitude|
 
 | Band | Tilt `β` | Azimuth `γ_c` | GCR `W/P` | Clearance `h_c` | Notes |
 |---|---|---|---|---|---|
-| 0–15° (equatorial) | 10–12° (min for self-cleaning) | equator-facing; orientation is nearly irrelevant | 0.30–0.40 | 3.0 m | Shadow is short and near-vertical at noon; heat/water stress relief often outweighs light loss. Prioritise ventilation. |
+| 0–15° (equatorial) | 10–12° (min for self-cleaning) | equator-facing, orientation is nearly irrelevant | 0.30–0.40 | 3.0 m | Shadow is short and near-vertical at noon, heat/water stress relief often outweighs light loss. Prioritise ventilation. |
 | 15–30° (subtropical) | 15–20° | equator-facing (180°/0°) | 0.30–0.40 | 3.0–3.5 m | Strong case for APV: shade reduces evapotranspiration. Consider checkerboard `τ_eff ≈ 0.4`. |
 | 30–45° (mid) | 25–30° | equator-facing | 0.28–0.38 | 3.5–4.0 m | The classic APV band. N-S rows preferred for uniformity. Default `P` from `P_min` at winter-solstice 9:00. |
-| 45–55° (high-mid) | 25–35° (below energy-optimum to shorten shadows) | equator-facing, or **vertical bifacial E-W** | 0.20–0.30 slant | 4.0–4.5 m | Low winter sun makes shadows very long; vertical bifacial at 8–12 m pitch is often the better answer. |
+| 45–55° (high-mid) | 25–35° (below energy-optimum to shorten shadows) | equator-facing, or **vertical bifacial E-W** | 0.20–0.30 slant | 4.0–4.5 m | Low winter sun makes shadows very long, vertical bifacial at 8–12 m pitch is often the better answer. |
 | > 55° (high) | **90° vertical bifacial E-W strongly recommended** | 90°/270° | equivalent projected coverage 0.05–0.10 | bottom edge 0.8–1.0 m, top 3.0–3.5 m | Tilted arrays need impractical pitch. Vertical E-W at ≥ 8 m spacing keeps ≥ 75 % of open-field light. |
 
-Default row length 100 m; default `ρ_g = 0.20` (grass); default `τ = 0`.
+Default row length 100 m, default `ρ_g = 0.20` (grass), default `τ = 0`.
 
 ---
 
@@ -575,7 +626,8 @@ E_diff,gnd(u) = DHI · SVF(u)  +  τ · DHI · (1 − SVF(u))          (τ term 
 
 **Recommendation:** patch integration with the same 577-patch Reinhart sky used in §5. Monte-Carlo sampling is kept only as an offline cross-check for the patch discretisation error.
 
-**Multi-bounce and albedo.** See §7; the single-bounce enclosure correction is a two-line change to the above.
+**Multi-bounce and albedo.** See §7, the single-bounce enclosure correction is a two-line change to
+the above.
 
 ### 4.3 Temporal integration
 
@@ -594,10 +646,19 @@ where `Ŵ_j = Σ_{h ∈ bin j} DNI_h sin α_{s,h} Δt` and `Ŝ_i = Σ_h L_{i,h} 
 
 **Hourly vs sub-hourly.**
 
-- *Radiometric* argument: for fixed-tilt POA energy, integrating 1-min data vs 1-h means differs by well under 2 % annually because the errors are largely symmetric; TMY files are hourly anyway, so sub-hourly weather is unavailable without synthetic downscaling.
+- *Radiometric* argument: for fixed-tilt POA energy, integrating 1-min data vs 1-h means differs by
+  well under 2 % annually because the errors are largely symmetric, TMY files are hourly anyway, so
+  sub-hourly weather is unavailable without synthetic downscaling.
 - *Geometric* argument: this is the real issue. The hour angle advances 15° per hour. At `α_s = 30°`, a 4 m tall structure's shadow tip translates ≈ 1.5–2 m per hour. Sampling the sun once per hour therefore produces **banded, aliased annual DLI maps** with stripe artefacts at the pitch scale, and it can bias individual cells by 5–10 % even when the field mean is correct.
-- *The fix costs nothing in data*: **sub-step the sun position within each hour while holding the hour's irradiance constant.** With `n_sub = 4` (15-minute geometric sampling), each hour contributes 4 sun directions each weighted `DNI_h · sin α_s · 900 s`. This is the standard treatment in Radiance's `gendaymtx -5` solar decomposition and in Ladybug's sun-path workflow, and it removes essentially all banding. `n_sub = 4` is the recommendation; `n_sub = 2` is visibly worse, `n_sub = 12` is indistinguishable from `n_sub = 4` after the 2° direction binning of §5.
-- Because §5 dedupes sun directions onto a fixed grid, `n_sub = 4` costs **almost no extra render passes** (the 35 040 sub-hourly samples collapse to the same ~600–900 unique binned directions); it only changes the accumulated weights. Take it.
+- *The fix costs nothing in data*: **sub-step the sun position within each hour while holding the
+  hour's irradiance constant.** With `n_sub = 4` (15-minute geometric sampling), each hour
+  contributes 4 sun directions each weighted `DNI_h · sin α_s · 900 s`. This is the standard
+  treatment in Radiance's `gendaymtx -5` solar decomposition and in Ladybug's sun-path workflow, and
+  it removes essentially all banding. `n_sub = 4` is the recommendation, `n_sub = 2` is visibly
+  worse, `n_sub = 12` is indistinguishable from `n_sub = 4` after the 2° direction binning of §5.
+- Because §5 dedupes sun directions onto a fixed grid, `n_sub = 4` costs **almost no extra render
+  passes** (the 35 040 sub-hourly samples collapse to the same ~600–900 unique binned directions),
+  it only changes the accumulated weights. Take it.
 
 Practical accuracy/perf table for the annual ground map:
 
@@ -616,7 +677,7 @@ Practical accuracy/perf table for the annual ground map:
 
 | Approach | Description | Verdict |
 |---|---|---|
-| **Per-timestep shadow mapping (naive)** | 8760 orthographic depth renders + 8760 accumulate passes | 17 520 passes. Correct but 5–15 s and wasteful; the sky is re-integrated every hour despite being the same geometry. |
+| **Per-timestep shadow mapping (naive)** | 8760 orthographic depth renders + 8760 accumulate passes | 17 520 passes. Correct but 5–15 s and wasteful, the sky is re-integrated every hour despite being the same geometry. |
 | **GPU ray casting per texel per timestep** | compute shader, ray/scene intersection | Same asymptotic waste as above unless combined with direction dedup. |
 | **Precomputed sun-path sampling + cumulative sky (daylight coefficients)** | Factorise geometry from weather (§4.3). Render once per *unique direction*, weight by cumulative TMY energy. | **Recommended.** This is the Radiance `gendaymtx`/`rcontrib` daylight-coefficient method and the basis of Ladybug/Honeybee annual radiation and of Pollination's `sky-irradiance` recipe. |
 | **Spherical-harmonic / ambient-occlusion approximations** | project sky into SH9/SH16 | Too smooth. SH9 cannot represent the sharp inter-row sky gaps that dominate APV ground light. Reject. |
@@ -638,7 +699,10 @@ Patch radiances come from the Perez 1990 all-weather sky luminance/radiance dist
 ```
 This is exactly what `gendaymtx -m 2 -O1 -A` produces (`-A` = cumulative). Cross-validate the JS implementation against `gendaymtx` output for a known EPW.
 
-**Critical: do not bin the direct sun into sky patches.** The beam carries 55–80 % of annual energy and the solar disc is 0.53° wide; smearing it into a 6° patch destroys shadow definition. Radiance's 5-phase method separates the solar contribution for exactly this reason. Handle the sun as its own direction set.
+**Critical: do not bin the direct sun into sky patches.** The beam carries 55–80 % of annual energy
+and the solar disc is 0.53° wide, smearing it into a 6° patch destroys shadow definition. Radiance's
+5-phase method separates the solar contribution for exactly this reason. Handle the sun as its own
+direction set.
 
 ### 5.3 Sun direction set
 
@@ -657,18 +721,23 @@ For a mid-latitude site this yields **600–900 unique daylight directions**. 2�
 
 **Hybrid, chosen by scene type and API availability.**
 
-**Path A: analytic ray casting (WebGPU compute) when the scene is parametric rows.**
-The occluder set is a small number of oriented rectangles on a regular lattice. A compute shader with one invocation per ground texel loops over `N_dir` directions; for each, it transforms the ray into row-local coordinates and does the closed-form modulo test of §4.1, plus explicit tests against the finite row ends, posts and any user-placed obstacles. Roughly 30–60 flops per (texel, direction).
+**Path A: analytic ray casting (WebGPU compute) when the scene is parametric rows.** The occluder
+set is a small number of oriented rectangles on a regular lattice. A compute shader with one
+invocation per ground texel loops over `N_dir` directions, for each, it transforms the ray into
+row-local coordinates and does the closed-form modulo test of §4.1, plus explicit tests against the
+finite row ends, posts and any user-placed obstacles. Roughly 30–60 flops per (texel, direction).
 
 ```
 512×512 texels × 1300 directions × 45 flops ≈ 1.5×10^10 flops
 ```
-At an effective 500 GFLOP/s on integrated graphics (M-series, Iris Xe) that is **~30 ms**; on a discrete GPU, ~5 ms. Memory traffic is trivial (one RG32F accumulation texture, 2 MB).
+At an effective 500 GFLOP/s on integrated graphics (M-series, Iris Xe) that is **~30 ms**, on a
+discrete GPU, ~5 ms. Memory traffic is trivial (one RG32F accumulation texture, 2 MB).
 
 **Path B: shadow-map accumulation (WebGL2 fallback, and for arbitrary imported geometry).**
 For each direction: render scene depth from that direction into a 1024² orthographic depth texture covering the site AABB, then run a full-screen pass over the 512² ground raster that projects each texel into the light's clip space, does a 4-tap PCF depth comparison, and adds `weight · comparison` into a float accumulation FBO (`EXT_color_buffer_float` / `EXT_float_blend`, or manual ping-pong if additive float blending is unavailable).
 
-Per-pass cost on a mid-range 2023 laptop iGPU: depth render of ~5 000 triangles at 1024² ≈ 0.12 ms; accumulate pass at 512² ≈ 0.06 ms. **≈ 0.2 ms per direction.**
+Per-pass cost on a mid-range 2023 laptop iGPU: depth render of ~5 000 triangles at 1024² ≈ 0.12 ms,
+accumulate pass at 512² ≈ 0.06 ms. **≈ 0.2 ms per direction.**
 
 ```
 1300 directions × 0.2 ms ≈ 260 ms total GPU time
@@ -688,19 +757,22 @@ Drive this from a `requestAnimationFrame` scheduler with an adaptive `passes/fra
 
 | Item | Value |
 |---|---|
-| Ground raster | 512 × 512 over the site bounding box, clamped so cell size ∈ [5 cm, 50 cm]; 1024² for sites > 100 m |
+| Ground raster | 512 × 512 over the site bounding box, clamped so cell size ∈ [5 cm, 50 cm], 1024² for sites > 100 m |
 | Accumulation format | `RGBA32F` (R = beam Wh, G = diffuse Wh, B = beam PAR, A = diffuse PAR), or two `RG32F` targets |
 | Sky patches | 577 (Reinhart MF:2) final, 145 (Tregenza) preview |
 | Sun directions | 600–900 (2° binning, 15-min sub-steps), 1800 at high quality |
 | Total passes | ≈ 1 200–1 500 final, ≈ 250 preview |
 | Shadow map | 1024², orthographic, fitted per-direction to the scene AABB, 32-bit depth, 4-tap rotated PCF |
-| Depth bias | slope-scaled, `constant = 2`, `slope = 2.5`; plus render **front faces only** for the depth pass with a small normal offset on the receiver |
+| Depth bias | slope-scaled, `constant = 2`, `slope = 2.5`, plus render **front faces only** for the depth pass with a small normal offset on the receiver |
 | Target wall clock | < 700 ms final bake, < 120 ms preview, UI never below 50 fps |
-| Interactive mode | single sun direction, 1 shadow map/frame, trivially 60 fps; use for the time-of-day scrubber |
+| Interactive mode | single sun direction, 1 shadow map/frame, trivially 60 fps, use for the time-of-day scrubber |
 
 **Numerical precision.** 1300 additions of values around 1e2–1e3 Wh into float32 (24-bit mantissa) accumulate a relative error ~1e-5. Fine. Do *not* accumulate in float16.
 
-**Readback.** For the DLI statistics, crop-suitability zoning and CSV export, read back the accumulation texture once with `readPixels` into a `Float32Array` (1 MB for 512²) or, in WebGPU, `copyTextureToBuffer` + `mapAsync`. Do the histogram, per-zone means and monthly stacks on the CPU or in a second compute pass; do not read back per frame.
+**Readback.** For the DLI statistics, crop-suitability zoning and CSV export, read back the
+accumulation texture once with `readPixels` into a `Float32Array` (1 MB for 512²) or, in WebGPU,
+`copyTextureToBuffer` + `mapAsync`. Do the histogram, per-zone means and monthly stacks on the CPU
+or in a second compute pass, do not read back per frame.
 
 **Monthly / seasonal outputs.** Run 12 accumulation targets (one per month) rather than 12 separate bakes: the direction set is shared, only the weights differ. Cost is 12 extra `add` operations per pass, i.e. one wider accumulate shader writing to a texture array. This is the single highest-value extra feature for agronomy and it is nearly free.
 
@@ -712,17 +784,21 @@ Drive this from a `requestAnimationFrame` scheduler with an adaptive `passes/fra
 
 | Source | Spatial coverage | Spatial res. | Temporal | Key variables | Auth / rate limit | CORS (browser-direct?) | Licence |
 |---|---|---|---|---|---|---|---|
-| **PVGIS 5.3** (EC JRC) <br> `https://re.jrc.ec.europa.eu/api/v5_3/{tmy,seriescalc,PVcalc,MRcalc,DRcalc,printhorizon}` | SARAH-3: Europe, Africa, W+S Asia, parts of S. America (Meteosat disk). PVGIS-ERA5: **global**. NSRDB: Americas. | SARAH-3 0.05° (~5 km); ERA5 0.28° | Hourly 2005–2023; **TMY** generator; monthly; also returns a horizon profile | GHI, DNI (Gb(n)), DHI, GTI, T2m, WS10m, RH, pressure, plus full PV yield | No key. **30 calls/s per IP**, HTTP 429 above | **No.** "Access to PVGIS APIs via AJAX is not allowed, and requests to change the CORS policy will be rejected." Must proxy. | EC reuse / CC-BY 4.0 with attribution |
-| **NASA POWER** <br> `https://power.larc.nasa.gov/api/temporal/{hourly,daily,monthly}/point` | **Global**, poles included | 0.5° × 0.625° (MERRA-2 meteo); solar from CERES/SYN1deg regridded, effectively ~0.5–1° | Hourly 2001–NRT; daily 1981–NRT | `ALLSKY_SFC_SW_DWN` (GHI), `ALLSKY_SFC_SW_DNI`, `ALLSKY_SFC_SW_DIFF`, `CLRSKY_*`, `T2M`, `RH2M`, `WS2M`, `PS`, `ALLSKY_SRF_ALB`, `PRECTOTCORR` | No key. **No published hard rate limit**; NASA monitors and throttles abusive use. Max **20 parameters per point request**, 1 parameter per regional request | **Yes** in practice (`Access-Control-Allow-Origin: *`) | US Government public domain, free, attribution requested |
-| **NSRDB / GOES PSM v4** <br> `https://developer.nlr.gov/api/nsrdb/v2/solar/nsrdb-GOES-tmy-v4-0-0-download.csv` (`developer.nrel.gov` was retired 29 May 2026; PSM v3.2.2 was replaced by GOES v4.0.0) | Americas: **175° W – 25° W, 20° S – 60° N**, plus separate international products (Himawari, MSG) | 0.038° ≈ **4 km** | **30-min** and 60-min, 1998–2023 | GHI, DNI, DHI, clearsky variants, `Temperature`, `Dew Point`, `Surface Albedo`, `Precipitable Water`, `Wind Speed`, `Pressure`, `Cloud Type`, `Solar Zenith Angle` | **Free API key required.** Rate-limited per key (default order ~1 000 requests/hour; download endpoints have low concurrency limits and can return 429) | Technically reachable, but the key would be exposed client-side. **Proxy.** | Public / freely available; cite Sengupta et al. 2018, *Renew. Sustain. Energy Rev.* 89, 51–60 |
-| **Open-Meteo** <br> `https://archive-api.open-meteo.com/v1/archive`, `https://api.open-meteo.com/v1/forecast` | **Global** | ERA5 0.25° (from 1940), **ERA5-Land 0.1°** (from 1950); forecast models 1–11 km; separate **Satellite Radiation API** (Meteosat/GOES/Himawari, ~5 km, 15-min) | Hourly archive 1940–present (5-day lag); 15-min for forecast and satellite products | `shortwave_radiation` (GHI), `direct_radiation`, `diffuse_radiation`, `direct_normal_irradiance`, `global_tilted_irradiance`, `terrestrial_radiation`, `temperature_2m`, `relative_humidity_2m`, `wind_speed_10m`, `precipitation`, `soil_temperature/moisture` | **No key.** Free for non-commercial use, soft limits ~10 000 calls/day, 5 000/hour, 600/min. Paid tier and self-hosting (AGPLv3 server, AWS Open Data mirror) remove limits | **Yes**, explicitly CORS-enabled, designed for browser use | **CC-BY 4.0** on the data, attribution required |
-| **Copernicus CAMS Radiation Service** (via SoDa / ADS) <br> `https://api.soda-solardata.com/service/wps` | Meteosat field of view: **−66° to +66° lat/lon** (Europe, Africa, Middle East, Atlantic) | ~3–5 km effective | **1-min to monthly**, 2004–present | GHI, BHI, DHI, BNI + matching clear-sky (McClear) | Free registration; SOAP/WPS or CSV endpoints, modest quota (~40–100 calls/day free tier) | No | Copernicus licence, free with attribution |
+| **PVGIS 5.3** (EC JRC) <br> `https://re.jrc.ec.europa.eu/api/v5_3/{tmy,seriescalc,PVcalc,MRcalc,DRcalc,printhorizon}` | SARAH-3: Europe, Africa, W+S Asia, parts of S. America (Meteosat disk). PVGIS-ERA5: **global**. NSRDB: Americas. | SARAH-3 0.05° (~5 km), ERA5 0.28° | Hourly 2005–2023, **TMY** generator, monthly, also returns a horizon profile | GHI, DNI (Gb(n)), DHI, GTI, T2m, WS10m, RH, pressure, plus full PV yield | No key. **30 calls/s per IP**, HTTP 429 above | **No.** "Access to PVGIS APIs via AJAX is not allowed, and requests to change the CORS policy will be rejected." Must proxy. | EC reuse / CC-BY 4.0 with attribution |
+| **NASA POWER** <br> `https://power.larc.nasa.gov/api/temporal/{hourly,daily,monthly}/point` | **Global**, poles included | 0.5° × 0.625° (MERRA-2 meteo), solar from CERES/SYN1deg regridded, effectively ~0.5–1° | Hourly 2001–NRT, daily 1981–NRT | `ALLSKY_SFC_SW_DWN` (GHI), `ALLSKY_SFC_SW_DNI`, `ALLSKY_SFC_SW_DIFF`, `CLRSKY_*`, `T2M`, `RH2M`, `WS2M`, `PS`, `ALLSKY_SRF_ALB`, `PRECTOTCORR` | No key. **No published hard rate limit**, NASA monitors and throttles abusive use. Max **20 parameters per point request**, 1 parameter per regional request | **Yes** in practice (`Access-Control-Allow-Origin: *`) | US Government public domain, free, attribution requested |
+| **NSRDB / GOES PSM v4** <br> `https://developer.nlr.gov/api/nsrdb/v2/solar/nsrdb-GOES-tmy-v4-0-0-download.csv` (`developer.nrel.gov` was retired 29 May 2026, PSM v3.2.2 was replaced by GOES v4.0.0) | Americas: **175° W – 25° W, 20° S – 60° N**, plus separate international products (Himawari, MSG) | 0.038° ≈ **4 km** | **30-min** and 60-min, 1998–2023 | GHI, DNI, DHI, clearsky variants, `Temperature`, `Dew Point`, `Surface Albedo`, `Precipitable Water`, `Wind Speed`, `Pressure`, `Cloud Type`, `Solar Zenith Angle` | **Free API key required.** Rate-limited per key (default order ~1 000 requests/hour, download endpoints have low concurrency limits and can return 429) | Technically reachable, but the key would be exposed client-side. **Proxy.** | Public / freely available, cite Sengupta et al. 2018, *Renew. Sustain. Energy Rev.* 89, 51–60 |
+| **Open-Meteo** <br> `https://archive-api.open-meteo.com/v1/archive`, `https://api.open-meteo.com/v1/forecast` | **Global** | ERA5 0.25° (from 1940), **ERA5-Land 0.1°** (from 1950), forecast models 1–11 km, separate **Satellite Radiation API** (Meteosat/GOES/Himawari, ~5 km, 15-min) | Hourly archive 1940–present (5-day lag), 15-min for forecast and satellite products | `shortwave_radiation` (GHI), `direct_radiation`, `diffuse_radiation`, `direct_normal_irradiance`, `global_tilted_irradiance`, `terrestrial_radiation`, `temperature_2m`, `relative_humidity_2m`, `wind_speed_10m`, `precipitation`, `soil_temperature/moisture` | **No key.** Free for non-commercial use, soft limits ~10 000 calls/day, 5 000/hour, 600/min. Paid tier and self-hosting (AGPLv3 server, AWS Open Data mirror) remove limits | **Yes**, explicitly CORS-enabled, designed for browser use | **CC-BY 4.0** on the data, attribution required |
+| **Copernicus CAMS Radiation Service** (via SoDa / ADS) <br> `https://api.soda-solardata.com/service/wps` | Meteosat field of view: **−66° to +66° lat/lon** (Europe, Africa, Middle East, Atlantic) | ~3–5 km effective | **1-min to monthly**, 2004–present | GHI, BHI, DHI, BNI + matching clear-sky (McClear) | Free registration, SOAP/WPS or CSV endpoints, modest quota (~40–100 calls/day free tier) | No | Copernicus licence, free with attribution |
 | **Meteonorm** | Global (interpolated from ~8 300 stations + 5 satellites) | station-interpolated | TMY, hourly, 1-min synthetic | full meteorological set, bankable | Commercial licence, desktop/API | No | Proprietary |
 | **SolarGIS** | Global 60°N–50°S high-res, extended coverage beyond | 250 m – 1 km | 10–15 min, 1994/1999–present | GHI, DNI, DIF, GTI, PVOUT, soiling, T, WS | Commercial, paid API | Yes (paid) | Proprietary, bankable (P50/P90) |
 
 ### 6.2 Recommended chain
 
-Quality ranking on irradiance accuracy, best first, within their domains: **NSRDB PSM3 (Americas) ≳ SolarGIS/Meteonorm (commercial) ≳ PVGIS-SARAH-3 (Meteosat domain) ≈ CAMS ≳ Open-Meteo satellite radiation ≳ Open-Meteo/PVGIS ERA5 (reanalysis) ≳ NASA POWER.** Satellite-derived products beat reanalysis by roughly a factor of two in hourly GHI RMSE; ERA5 in particular has a known positive GHI bias in cloudy maritime climates and misses aerosol events.
+Quality ranking on irradiance accuracy, best first, within their domains: **NSRDB PSM3 (Americas) ≳
+SolarGIS/Meteonorm (commercial) ≳ PVGIS-SARAH-3 (Meteosat domain) ≈ CAMS ≳ Open-Meteo satellite
+radiation ≳ Open-Meteo/PVGIS ERA5 (reanalysis) ≳ NASA POWER.** Satellite-derived products beat
+reanalysis by roughly a factor of two in hourly GHI RMSE, ERA5 in particular has a known positive
+GHI bias in cloudy maritime climates and misses aerosol events.
 
 **Deployment-pragmatic chain for a no-backend-required browser tool:**
 
@@ -750,9 +826,15 @@ Quality ranking on irradiance accuracy, best first, within their domains: **NSRD
              Route through the §2.3 separation adapter if DNI/DHI are absent.
 ```
 
-**Caching and consent.** Cache by `round(lat,2), round(lon,2)` in IndexedDB with a 90-day TTL; a TMY does not change. Show the data provenance (source, dataset, grid cell, years) in the UI next to every result. Reproduce the required attribution strings for Open-Meteo (CC-BY 4.0), PVGIS (EC JRC) and NSRDB.
+**Caching and consent.** Cache by `round(lat,2), round(lon,2)` in IndexedDB with a 90-day TTL, a TMY
+does not change. Show the data provenance (source, dataset, grid cell, years) in the UI next to
+every result. Reproduce the required attribution strings for Open-Meteo (CC-BY 4.0), PVGIS (EC JRC)
+and NSRDB.
 
-**Elevation and horizon.** Get terrain elevation from Open-Meteo's `/v1/elevation` (Copernicus DEM 90 m, keyless, CORS) for the barometric pressure used by air mass and by DIRINT. For a far-horizon profile, PVGIS `printhorizon` returns one but is CORS-blocked; behind the proxy it is worth having, since a 10° south horizon can cost 15 % of winter DLI.
+**Elevation and horizon.** Get terrain elevation from Open-Meteo's `/v1/elevation` (Copernicus DEM
+90 m, keyless, CORS) for the barometric pressure used by air mass and by DIRINT. For a far-horizon
+profile, PVGIS `printhorizon` returns one but is CORS-blocked, behind the proxy it is worth having,
+since a 10° south horizon can cost 15 % of winter DLI.
 
 ---
 
@@ -774,7 +856,9 @@ Quality ranking on irradiance accuracy, best first, within their domains: **NSRD
 | Asphalt | 0.08–0.12 |
 | Water (high sun) | 0.05–0.10 |
 
-NSRDB PSM3 provides a time-varying `Surface Albedo` channel and NASA POWER provides `ALLSKY_SRF_ALB`; prefer the measured series over a constant when available, especially for snow-affected sites where winter bifacial gain roughly doubles.
+NSRDB PSM3 provides a time-varying `Surface Albedo` channel and NASA POWER provides
+`ALLSKY_SRF_ALB`, prefer the measured series over a constant when available, especially for
+snow-affected sites where winter bifacial gain roughly doubles.
 
 **What shipped, and why it is not the measured series.** The presets are in `src/types/ground.ts`,
 offered to the grower as a ground cover rather than as a number, and the values sit inside the
@@ -795,9 +879,14 @@ cover further than a bright one.
 BG = ( Y_bifacial − Y_monofacial ) / Y_monofacial
 ```
 
-Typical annual values: **5–10 %** over grass (`ρ_g ≈ 0.2`) at conventional GCR; **10–20 %** at APV-typical low GCR (0.25–0.35) with high clearance, because both the rear view factor to the ground and the unshaded ground fraction are large; **20–35 %** over high-albedo surfaces or snow; **25–40 %** for vertical E-W bifacial, where both faces are near-optimally illuminated at different times of day.
+Typical annual values: **5–10 %** over grass (`ρ_g ≈ 0.2`) at conventional GCR, **10–20 %** at
+APV-typical low GCR (0.25–0.35) with high clearance, because both the rear view factor to the ground
+and the unshaded ground fraction are large, **20–35 %** over high-albedo surfaces or snow, **25–40
+%** for vertical E-W bifacial, where both faces are near-optimally illuminated at different times of
+day.
 
-Rear-side POA in the infinite-shed formulation (Marion et al. 2017; `pvlib.bifacial.infinite_sheds`):
+Rear-side POA in the infinite-shed formulation (Marion et al. 2017,
+`pvlib.bifacial.infinite_sheds`):
 
 ```
 POA_rear = Σ_over_ground_strips  ρ_g · E_gnd(u) · F_{module←strip}(u)
@@ -806,7 +895,9 @@ POA_rear = Σ_over_ground_strips  ρ_g · E_gnd(u) · F_{module←strip}(u)
 P_rear_effective = φ_bi · POA_rear                             φ_bi ≈ 0.65–0.90 for modern n-type
 ```
 
-The ground-to-module view-factor kernel `F_{module←strip}` uses the same crossed-strings 2D formulation as §4.2; this is the reciprocal of the ground SVF calculation, so **implement one routine and reuse it**, which is the single-source-of-truth win here.
+The ground-to-module view-factor kernel `F_{module←strip}` uses the same crossed-strings 2D
+formulation as §4.2, this is the reciprocal of the ground SVF calculation, so **implement one
+routine and reuse it**, which is the single-source-of-truth win here.
 
 ### 7.3 Effect on the ground light distribution
 
@@ -817,14 +908,26 @@ Three distinct effects, in decreasing order of importance for the crop:
    ```
    E_gnd_total(p) = [ E_beam(p) + SVF(p)·E_sky_diffuse ] / ( 1 − ρ_g · (1 − SVF(p)) · ρ_m )
    ```
-   with `ρ_m` the module underside reflectance: **0.04–0.08** for glass-glass bifacial (mostly Fresnel), **0.6–0.8** for a white backsheet, **0.75–0.9** for a deliberately white-painted torque tube / underside. Over grass (`ρ_g = 0.2`) with glass-glass rear, the correction is under 1 % and is safely ignorable. With a white backsheet and `ρ_g = 0.25`, it adds **3–8 %** to the shaded-zone diffuse light, which is exactly where the crop is light-limited, so it is worth implementing (it is one divide). Higher-order terms are already summed by the geometric series; no iteration needed.
+with `ρ_m` the module underside reflectance: **0.04–0.08** for glass-glass bifacial (mostly
+Fresnel), **0.6–0.8** for a white backsheet, **0.75–0.9** for a deliberately white-painted torque
+tube / underside. Over grass (`ρ_g = 0.2`) with glass-glass rear, the correction is under 1 % and is
+safely ignorable. With a white backsheet and `ρ_g = 0.25`, it adds **3–8 %** to the shaded-zone
+diffuse light, which is exactly where the crop is light-limited, so it is worth implementing (it is
+one divide). Higher-order terms are already summed by the geometric series, no iteration needed.
 3. **Spatial redistribution / uniformity.** Higher albedo raises the diffuse floor everywhere but raises it *most* in the deep-shade strip, because that is where `1 − SVF` is largest. Net effect: albedo increases the **minimum** ground DLI more than the mean, i.e. it improves the uniformity index `DLI_min/DLI_mean`. Under a vertical E-W bifacial array with elevation ≥ 1 m, ground global reflection becomes spatially homogeneous (arXiv:1806.06666), which is the most crop-favourable configuration in the design space.
 
-**What bifaciality does NOT do:** a bifacial module is still opaque, so bifaciality alone transmits no extra light to the crop. Any claim of "bifacial panels let more light through" in the UI copy would be wrong; the mechanism is entirely (1) above. Semi-transparent or spaced/checkerboard modules are the mechanism that actually transmits light, via the `τ` term in §4.
+**What bifaciality does NOT do:** a bifacial module is still opaque, so bifaciality alone transmits
+no extra light to the crop. Any claim of "bifacial panels let more light through" in the UI copy
+would be wrong, the mechanism is entirely (1) above. Semi-transparent or spaced/checkerboard modules
+are the mechanism that actually transmits light, via the `τ` term in §4.
 
 ### 7.4 Ground-surface modelling in the renderer
 
-Model the ground as Lambertian with albedo `ρ_g`; specular soil/water is not worth the complexity. For the **visual** render, drive the ground BRDF albedo from the same `ρ_g` used in the physics so the picture and the numbers cannot diverge. For crop canopies, note that `ρ_g` should be the *canopy* albedo once the crop is established, and expose a growth-stage slider if seasonal fidelity is wanted (bare soil in spring at 0.25, closed canopy in summer at 0.18).
+Model the ground as Lambertian with albedo `ρ_g`, specular soil/water is not worth the complexity.
+For the **visual** render, drive the ground BRDF albedo from the same `ρ_g` used in the physics so
+the picture and the numbers cannot diverge. For crop canopies, note that `ρ_g` should be the
+*canopy* albedo once the crop is established, and expose a growth-stage slider if seasonal fidelity
+is wanted (bare soil in spring at 0.25, closed canopy in summer at 0.18).
 
 ---
 

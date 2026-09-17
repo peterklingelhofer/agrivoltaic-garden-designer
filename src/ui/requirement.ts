@@ -86,7 +86,7 @@ export const siteRequirement = (s: AppState): Requirement => ({
 /** Somewhere to plant. Drawn on the canvas, so there is no button that can do it */
 export const bedsRequirement = (s: AppState): Requirement => ({
   met: (s.plot?.beds.length ?? 0) > 0,
-  reason: 'No bed yet. Everything below is worked out for a bed, so draw one with Draw bed',
+  reason: 'No bed yet. Everything below is computed for a bed, so draw one with Draw bed',
   remedy: null,
 })
 
@@ -98,10 +98,10 @@ export const bedsRequirement = (s: AppState): Requirement => ({
  */
 export const lightRequirement = (s: AppState): Requirement => ({
   met: s.bedLight.length > 0,
-  reason: "How much light reaches each bed hasn't been worked out yet",
+  reason: "How much light reaches each bed hasn't been computed yet",
   remedy: {
-    label: 'Work out the light',
-    busyLabel: 'Working it out...',
+    label: 'Compute the light',
+    busyLabel: 'Computing...',
     disabled: s.raster.status === 'loading',
     // the full check, the same one `useAutoLight` runs by itself: the quick one hands back a
     // different crop list, and a press here is what a grower reaches for when the automatic run
@@ -127,7 +127,7 @@ export const rankingChain = (s: AppState): readonly Requirement[] => [
  *
  * The REASON is the season's own, from `state/simulation.ts`, because the store refuses a run on
  * that sentence and the panel must not offer a second version of it. The REMEDY is borrowed from
- * whichever step above already owns the fix, so "work it out again" here and "work out the light"
+ * whichever step above already owns the fix, so "compute it again" here and "compute the light"
  * on the light step are one press with one label.
  *
  * The one a grower actually meets is stale light: the first three lock the step before the panel

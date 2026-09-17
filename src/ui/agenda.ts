@@ -89,4 +89,4 @@ export const AGENDA_EMPTY =
  * garden with no jobs
  */
 export const AGENDA_UNDATED =
-  "These beds are planted, and their dates haven't been worked out for this visit. The plants are saved with the garden. The calendar behind them is worked out again from the light and the season"
+  "These beds are planted, and their dates haven't been computed for this visit. The plants are saved with the garden. The calendar behind them is computed again from the light and the season"

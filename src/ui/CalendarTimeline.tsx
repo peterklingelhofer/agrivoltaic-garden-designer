@@ -385,7 +385,7 @@ export const CalendarTimeline = ({
       </p>
       {said.size > 0 ? (
         <details className="wizard-advanced" data-testid="details-calendar-method">
-          <summary>How these dates were worked out</summary>
+          <summary>How these dates were computed</summary>
           {[...said].map((note) => (
             <p key={note} className="cal-note" data-testid="readout-calendar-method">
               {note}

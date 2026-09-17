@@ -45,7 +45,7 @@ const SUN_DIRECTION_HELP =
  * the numbers mean anything; the fuller gloss stays on the overlay's channel tip
  */
 const DLI_SENTENCE =
-  'DLI counts the light that lands on a square metre in one day; a woodland floor is about 5, an open field in midsummer about 40.'
+  'DLI counts the light that lands on a square metre in one day, a woodland floor is about 5, an open field in midsummer about 40.'
 
 export const SimPanel = (): ReactElement => {
   const raster = useAppStore((s) => s.raster)
@@ -116,14 +116,14 @@ export const SimPanel = (): ReactElement => {
             : raster.status === 'ready'
               ? stale
                 ? autoRun
-                  ? 'The light is ready, for the layout before your last change. It is being worked out again for the garden as it stands'
+                  ? 'The light is ready, for the layout before your last change. It is being computed again for the garden as it stands'
                   : 'The light is ready, for the layout before your last change. Run it again to bring the light, the crop ranking and the compliance checks back onto the garden as it stands'
                 : 'The light is ready'
               : missing
-                ? 'The light is about to be worked out'
+                ? 'The light is about to be computed'
                 : held
-                  ? 'The light is not worked out for this arrangement. Run the check now, or change the panels or the beds and it runs by itself'
-                  : 'The light will be worked out once the place has been looked up and there is a bed'}
+                  ? 'The light is not computed for this arrangement. Run the check now, or change the panels or the beds and it runs by itself'
+                  : 'The light will be computed once the place has been looked up and there is a bed'}
       </div>
       {raster.status === 'loading' ? (
         <progress data-testid="readout-sim-progress" value={percent} max={100} />
@@ -139,13 +139,13 @@ export const SimPanel = (): ReactElement => {
         from this panel
       */}
       <details className="wizard-advanced" data-testid="details-sim-how">
-        <summary data-testid="action-sim-how">How the light was worked out</summary>
+        <summary data-testid="action-sim-how">How the light was computed</summary>
         <p className="readout-note" data-testid="readout-sim-quality">
           {QUALITY_SENTENCE}
         </p>
         <SelectField
           testId="control-sim-backend"
-          label="Worked out by"
+          label="Computed by"
           value={options.backend}
           options={BACKENDS}
           onChange={(backend) => setOptions({ backend })}

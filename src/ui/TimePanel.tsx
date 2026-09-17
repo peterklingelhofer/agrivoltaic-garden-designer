@@ -83,7 +83,7 @@ export const TimePanel = (): ReactElement => {
             label="Direction of the sun"
             value={formatDegrees(sun.azimuthDeg)}
           />
-          <Readout id="sun-source" label="Sun position worked out by" value={sun.source} />
+          <Readout id="sun-source" label="Sun position computed by" value={sun.source} />
           <Readout
             id="sun-daylight"
             label={`Sunrise / sunset (${zone})`}

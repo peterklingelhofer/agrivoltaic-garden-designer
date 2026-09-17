@@ -25,7 +25,7 @@ A second framing decision: **the evidence quality across these domains is wildly
 
 | System | What it measures | Resolution / coverage | Machine-readable? | License | Role in this engine |
 |---|---|---|---|---|---|
-| **USDA PHZM 2023** | Mean annual extreme minimum temperature, 1991–2020 | 800 m raster; US + PR | Yes (GeoTIFF rasters) | US Gov / public domain | **Hard gate, perennials only** |
+| **USDA PHZM 2023** | Mean annual extreme minimum temperature, 1991–2020 | 800 m raster, US + PR | Yes (GeoTIFF rasters) | US Gov / public domain | **Hard gate, perennials only** |
 | **AHS Heat Zones** | Mean annual days ≥ 86 °F (30 °C) | Static map image, US | No open GIS | AHS, unclear | Recompute equivalent ourselves |
 | **Sunset Climate Zones** | Composite (winter lows, summer highs, season length, humidity, marine influence) | ~45 zones, US | No | Proprietary (Sunset/Regents) | **Do not use** — no license |
 | **Köppen–Geiger (Beck 2018)** | Composite temp/precip climate class | 1 km global GeoTIFF | Yes | CC (Figshare, open) | Global fallback + analogue matching |
@@ -33,7 +33,7 @@ A second framing decision: **the evidence quality across these domains is wildly
 | **Canadian PHZ (NRCan)** | Multivariate (Ouellet & Sherk model) | Raster/vector, Canada | Yes | Open Government Licence – Canada | Hard gate, Canada |
 | **Australian ANHZ** | 7 zones, winter minima | Coarse map, AU | No | ANBG | Advisory only, AU |
 | **GDD (base-T accumulation)** | Thermal time available | Derived from any daily T source | Yes (compute) | Depends on source | **Hard gate, annuals** |
-| **Frost-free period / frost dates** | Season length + planting windows | NCEI station normals; interpolable | Yes | Public domain | **Hard gate + scheduling** |
+| **Frost-free period / frost dates** | Season length + planting windows | NCEI station normals, interpolable | Yes | Public domain | **Hard gate + scheduling** |
 | **Chill hours / Chill Portions** | Winter dormancy satisfaction | Derived from hourly T | Yes (compute) | Depends on source | **Hard gate, deciduous fruit** |
 
 ### 1.2 USDA Plant Hardiness Zone Map (2023)
@@ -56,7 +56,13 @@ The 2023 PHZM, released November 2023, is the first revision since 2012. It was 
 
 ### 1.3 AHS Plant Heat Zone Map
 
-The American Horticultural Society Heat Zone map, published 1997, classifies locations by the **mean annual number of days with maximum temperature ≥ 86 °F (30 °C)** — 86 °F being cited as the threshold above which cellular protein damage begins in many plants. Twelve zones: Zone 1 (<1 heat day/yr) to Zone 12 (>210 heat days/yr). The original was built from National Weather Service daily maxima for 1974–1995 (<https://www.usbg.gov/blog/heat-zones-plant-health-and-ahs-heat-zone-map>; PDF of the map at <https://www.usbg.gov/sites/default/files/2024-06/AHS-heat-zone-map.pdf>). The USBG version has been re-derived against the 1991–2020 normals.
+The American Horticultural Society Heat Zone map, published 1997, classifies locations by the **mean
+annual number of days with maximum temperature ≥ 86 °F (30 °C)** — 86 °F being cited as the
+threshold above which cellular protein damage begins in many plants. Twelve zones: Zone 1 (<1 heat
+day/yr) to Zone 12 (>210 heat days/yr). The original was built from National Weather Service daily
+maxima for 1974–1995 (<https://www.usbg.gov/blog/heat-zones-plant-health-and-ahs-heat-zone-map>, PDF
+of the map at <https://www.usbg.gov/sites/default/files/2024-06/AHS-heat-zone-map.pdf>). The USBG
+version has been re-derived against the 1991–2020 normals.
 
 **There is no openly licensed GIS product.** Recommendation: **compute the heat-day count yourself.** `days_tmax_ge_30C` is a trivial reduction over any daily-maximum-temperature series, and computing it from the same reanalysis you use for GDD gives you (a) global coverage, (b) a defensible provenance, (c) freedom from AHS licensing, and (d) the ability to expose the raw count rather than a bucketed zone. Label it "heat days (≥30 °C/yr), AHS-equivalent" rather than claiming to *be* the AHS zone.
 
@@ -75,7 +81,9 @@ Beck, H.E., Zimmermann, N.E., McVicar, T.R., Vergopolan, N., Berg, A., Wood, E.F
 - **Present-day map:** 1980–2016, derived from an ensemble of four high-resolution topographically corrected climatologies.
 - **Future map:** 2071–2100, ensemble of 32 CMIP5 projections under RCP8.5.
 - **Format:** GeoTIFF, unsigned 8-bit, 1 km global, with a `legend.txt` mapping integer codes to Köppen symbols.
-- **Download:** <https://figshare.com/articles/dataset/Present_and_future_Köppen-Geiger_climate_classification_maps_at_1-km_resolution/6396959> (openly licensed on Figshare; cite the paper).
+- **Download:**
+  <https://figshare.com/articles/dataset/Present_and_future_Köppen-Geiger_climate_classification_maps_at_1-km_resolution/6396959>
+  (openly licensed on Figshare, cite the paper).
 - A corrected/extended version exists (Publisher Correction, Sci Data 2020, <https://www.ncbi.nlm.nih.gov/pmc/articles/PMC7431407/>).
 
 **Role in the engine:** two jobs.
@@ -99,7 +107,11 @@ The RHS introduced its rating scheme in 2012. Crucially, **RHS ratings are prope
 
 Reference: <https://www.rhs.org.uk/advice/rhs-hardiness-rating> and the RHS Plant Finder methodology PDF <https://www.rhs.org.uk/plants/pdfs/plant-finder/2013/008-009_plant_finder_2013.pdf>.
 
-**The critical semantic difference:** RHS ratings are keyed to *absolute* minimum temperature; USDA zones are keyed to the *long-term average of annual extreme* minima. These are not the same statistic, and a naive H↔zone crosswalk is systematically optimistic on the USDA side. Store both as separate attributes; if you must crosswalk, do it through °C and label the result approximate. (This distinction is well-documented; see e.g. <https://en.wikipedia.org/wiki/Hardiness_zone>.)
+**The critical semantic difference:** RHS ratings are keyed to *absolute* minimum temperature, USDA
+zones are keyed to the *long-term average of annual extreme* minima. These are not the same
+statistic, and a naive H↔zone crosswalk is systematically optimistic on the USDA side. Store both as
+separate attributes, if you must crosswalk, do it through °C and label the result approximate. (This
+distinction is well-documented, see e.g. <https://en.wikipedia.org/wiki/Hardiness_zone>.)
 
 RHS Plant Finder data is not openly licensed for bulk reuse. For a UK/EU deployment, compute an internal hardiness rating from the same absolute-minimum statistic and present it *alongside* an H-rating crosswalk with a disclaimer.
 
@@ -115,7 +127,11 @@ Because the Canadian model is *multivariate*, Canadian zone N and USDA zone N ar
 
 ### 1.8 Australia
 
-The Australian National Botanic Gardens defines **7 zones** for Australia, on metric winter-minimum bands: Zone 1 = alpine SE Australia; Zone 2 = tablelands; Zone 3 = much of the southern half of the continent away from the coast; up to Zone 7 = northern offshore islands. The whole continent (excluding Macquarie Island) spans only about four USDA zones, roughly **USDA 7b–11**. Reference: <https://www.anbg.gov.au/gardens/research/hort.research/zones.html>.
+The Australian National Botanic Gardens defines **7 zones** for Australia, on metric winter-minimum
+bands: Zone 1 = alpine SE Australia, Zone 2 = tablelands, Zone 3 = much of the southern half of the
+continent away from the coast, up to Zone 7 = northern offshore islands. The whole continent
+(excluding Macquarie Island) spans only about four USDA zones, roughly **USDA 7b–11**. Reference:
+<https://www.anbg.gov.au/gardens/research/hort.research/zones.html>.
 
 Australia's binding constraints are heat, drought, and rainfall seasonality, not winter cold. **For AU, deprioritise the hardiness gate entirely** and lead with heat-day count, aridity, and Köppen class.
 
@@ -131,7 +147,12 @@ where Tmax' = min(Tmax, T_upper)   # upper cutoff, if the model uses one
       Tmin' = max(Tmin, T_base)    # lower clip ("horizontal cutoff")
 ```
 
-Three families are in common use — **simple average with clipping**, **single-sine**, and **double-sine/double-triangle**. The sine methods interpolate a diurnal curve between Tmin and Tmax and integrate the area above T_base; they are materially more accurate when the daily range straddles the base temperature. UC IPM's single-sine is the de facto standard for pest models. See Penn State Extension, <https://extension.psu.edu/understanding-growing-degree-days>, and MRCC, <https://mrcc.geddes.rcac.purdue.edu/resources/growing-degree-day-description>.
+Three families are in common use — **simple average with clipping**, **single-sine**, and
+**double-sine/double-triangle**. The sine methods interpolate a diurnal curve between Tmin and Tmax
+and integrate the area above T_base, they are materially more accurate when the daily range
+straddles the base temperature. UC IPM's single-sine is the de facto standard for pest models. See
+Penn State Extension, <https://extension.psu.edu/understanding-growing-degree-days>, and MRCC,
+<https://mrcc.geddes.rcac.purdue.edu/resources/growing-degree-day-description>.
 
 **Base temperatures are crop-specific and must be stored per species.** Documented values:
 
@@ -145,7 +166,11 @@ Three families are in common use — **simple average with clipping**, **single-
 
 The authoritative applied resource for *vegetable* GDD models is **OSU Extension EM 9305, "Vegetable degree-day models: An introduction for farmers and gardeners"** (<https://extension.oregonstate.edu/catalog/em-9305-vegetable-degree-day-models-introduction-farmers-gardeners>) and the associated **Croptime** project, which publishes cultivar-level degree-day phenology models for a set of Pacific-Northwest vegetables. A general base-temperature reference table is at <https://www.trackgdd.com/guides/gdd-base-temperatures> (secondary source — verify individual values against primary literature before shipping).
 
-**Engine use:** store `gdd_base_c`, `gdd_to_maturity` and `days_to_maturity` per cultivar. GDD-to-maturity is strictly better than days-to-maturity because it transfers across latitudes and years; days-to-maturity is a cultivar catalogue value valid only near where it was measured. Where you only have DTM, convert it to an approximate GDD requirement using the climate of the seed company's trial region and flag the derivation.
+**Engine use:** store `gdd_base_c`, `gdd_to_maturity` and `days_to_maturity` per cultivar.
+GDD-to-maturity is strictly better than days-to-maturity because it transfers across latitudes and
+years, days-to-maturity is a cultivar catalogue value valid only near where it was measured. Where
+you only have DTM, convert it to an approximate GDD requirement using the climate of the seed
+company's trial region and flag the derivation.
 
 > **Caveat:** most seed-catalogue "days to maturity" figures are *days from transplant* for transplanted crops and *days from direct sowing* for direct-sown crops, and vendors are inconsistent. The schema needs `dtm_reference: {sow|transplant}`.
 
@@ -159,7 +184,10 @@ Source of record for the US: **NOAA NCEI 1991–2020 U.S. Climate Normals**, whi
 
 **Critically, the Normals do not just give "the" frost date.** They give the dates at which the probability of a freeze drops below **50, 40, 30, 20, and 10 percent** (see <https://www.ncei.noaa.gov/news/last-spring-freeze> and the Climate.gov interactive map <https://www.climate.gov/news-features/understanding-climate/interactive-map-average-date-last-spring-freeze-across-united>).
 
-**This is a product feature, not a footnote.** The engine should expose a **risk-tolerance slider**: a conservative gardener plants tender crops after the 10%-exceedance date; an aggressive one plants at 50% and accepts a one-in-two chance of needing row cover. Every planting-calendar recommendation should be generated from a chosen exceedance percentile, and the UI should say which.
+**This is a product feature, not a footnote.** The engine should expose a **risk-tolerance slider**:
+a conservative gardener plants tender crops after the 10%-exceedance date, an aggressive one plants
+at 50% and accepts a one-in-two chance of needing row cover. Every planting-calendar recommendation
+should be generated from a chosen exceedance percentile, and the UI should say which.
 
 Derived quantities to store per site:
 - `last_spring_freeze_p50`, `_p10`, `_p20` (0 °C and −2.2 °C thresholds)
@@ -175,18 +203,26 @@ If the app recommends apples, pears, peaches, plums, cherries, apricots, currant
 
 1. **Chilling Hours (CH), Weinberger.** Count of hours with 0 °C ≤ T ≤ 7.2 °C. Trivial to compute, universally quoted in nursery catalogues, and physiologically the weakest.
 2. **Chill Units (CU), Utah model (Richardson et al. 1974).** A weighted function assigning different chilling efficiencies to different temperature bands, **including negative contributions from warm temperatures**. Better than CH but can go negative and behaves badly in mild-winter climates.
-3. **Chill Portions (CP), Dynamic model (Fishman et al. 1987a,b; Erez).** Two-step: cold temperatures form a thermally labile intermediate that warm spells can destroy; once enough accumulates it converts irreversibly to a stable dormancy-breaking factor. Because the second step is irreversible, CP is robust in warm-winter climates where the Utah model collapses.
+3. **Chill Portions (CP), Dynamic model (Fishman et al. 1987a,b, Erez).** Two-step: cold
+   temperatures form a thermally labile intermediate that warm spells can destroy, once enough
+   accumulates it converts irreversibly to a stable dormancy-breaking factor. Because the second
+   step is irreversible, CP is robust in warm-winter climates where the Utah model collapses.
 
 Reference: UC Davis Fruit & Nut Research and Information Center, "About Chilling Hours, Units & Portions," <https://ucanr.edu/site/fruit-nut-research-information-center/about-chilling-hoursunits-portions>.
 
 **Model choice — the evidence is clear.** Luedeling & Brown, *"A global analysis of the comparability of winter chill models for fruit and nut trees,"* Int. J. Biometeorology (2011), <https://pmc.ncbi.nlm.nih.gov/articles/PMC3077742/>: *all* studies that have compared chill model accuracy and included the Dynamic model found it superior or equivalent to every alternative. The same paper shows the metrics are **not interconvertible**: across global sites the CH/CP ratio ranges 0–34, UCU/CP ranges −155 to +20, and UCU/CH ranges −10 to +5. See also Luedeling et al., *HortScience* 46(3):420–425 (2011), "The Dynamic Model Provides the Best Description of the Chill Process."
 
-**Practical consequence for the engine:** you cannot store one chill number and convert. Nursery catalogues quote **chilling hours**; the science says use **chill portions**. Therefore:
+**Practical consequence for the engine:** you cannot store one chill number and convert. Nursery
+catalogues quote **chilling hours**, the science says use **chill portions**. Therefore:
 
 - Compute **all three** metrics for the site from hourly (or hourly-interpolated) temperature.
 - Store cultivar chill requirements in whatever unit the source used, with an explicit `chill_metric` field.
 - Compare like-with-like. Only fall back to a regional CH↔CP ratio when the metrics mismatch, and surface a low-confidence flag when you do.
-- Implementation: the Dynamic model is written from the equations of Fishman et al. 1987a,b with the constants of Erez et al. 1990, and the Utah model from the bands of Richardson et al. 1974. The **`chillR`** R package (Luedeling), <https://rdrr.io/cran/chillR/man/chilling.html>, implements all three plus hourly interpolation from daily Tmin/Tmax and is the independent implementation to compare a result against; it is GPL-3, so nothing here is copied from it.
+- Implementation: the Dynamic model is written from the equations of Fishman et al. 1987a,b with the
+  constants of Erez et al. 1990, and the Utah model from the bands of Richardson et al. 1974. The
+  **`chillR`** R package (Luedeling), <https://rdrr.io/cran/chillR/man/chilling.html>, implements
+  all three plus hourly interpolation from daily Tmin/Tmax and is the independent implementation to
+  compare a result against, it is GPL-3, so nothing here is copied from it.
 
 ### 1.12 Obtaining all of this from a lat/lon
 
@@ -197,9 +233,9 @@ Reference: UC Davis Fruit & Nut Research and Information Center, "About Chilling
 | Köppen class | Beck 2018 1 km GeoTIFF | Point sample | Open (Figshare) |
 | Daily Tmin/Tmax history (global) | **Open-Meteo Historical Weather API** (ERA5 0.25°, ERA5-Land 0.1°, from 1940/1950) | JSON over HTTP GET, **no API key** | **CC BY 4.0**, commercial use permitted with attribution |
 | Long-run climate projections | Open-Meteo Climate API (1950–2050 daily) | Same | CC BY 4.0 |
-| US high-res gridded climate | PRISM (OSU), Daymet (ORNL) | Bulk / THREDDS | PRISM has use restrictions; Daymet is open |
+| US high-res gridded climate | PRISM (OSU), Daymet (ORNL) | Bulk / THREDDS | PRISM has use restrictions, Daymet is open |
 | US station freeze normals | NCEI 1991–2020 Normals | Bulk files / CDO | Public domain |
-| Solar radiation for DLI baseline | NSRDB (NREL), or Open-Meteo `shortwave_radiation` | API | NSRDB open; Open-Meteo CC BY 4.0 |
+| Solar radiation for DLI baseline | NSRDB (NREL), or Open-Meteo `shortwave_radiation` | API | NSRDB open, Open-Meteo CC BY 4.0 |
 
 **Open-Meteo is the strategic pick for the derived climate layer.** It is a plain JSON HTTP GET with **no authentication**, global 1 km-to-11 km resolution, 80+ years of reanalysis, and — decisively — **CC BY 4.0 including commercial redistribution**. See <https://open-meteo.com/en/docs/historical-weather-api>, <https://open-meteo.com/en/docs/climate-api>, and <https://open-meteo.com/en/features>. Bulk raw data is also on AWS Open Data (<https://github.com/open-meteo/open-data>) if you outgrow the API.
 
@@ -249,16 +285,16 @@ Attributes scored: **HZ** hardiness zone range · **SUN** sun requirement · **D
 
 | Source | Coverage | Machine-readable | License | Attributes present | Verdict |
 |---|---|---|---|---|---|
-| **USDA PLANTS** | ~50k N. American taxa | Bulk CSV downloads; no official API (community APIs exist) | **Public domain** (US Gov work) | LIFE, growth habit, HZ (coarse), some SPC/H₂O/pH/NFX via Characteristics extract | **Adopt.** Taxonomic + native-status spine for NA |
-| **GBIF** | ~2–3 bn occurrences | Excellent REST API + Darwin Core downloads | CC0/CC-BY/CC-BY-NC per dataset; API terms require citation | Occurrences and taxonomy only — **no cultivation traits** | **Adopt** for name resolution and realised-range checks; useless for traits |
-| **Trefle** | ~400k+ species claimed | REST/JSON | Open-ish, unclear | HZ, SUN, SPC, LIFE, some soil | **Do not depend on.** Announced a shutdown May 2021, has intermittently returned in beta; the repo issue tracker documents repeated outages (<https://github.com/treflehq/trefle-api/issues/71>). Unacceptable as a runtime dependency |
-| **Perenual** | ~10k species | REST/JSON, keyed, tiered | Commercial ToS, freemium | HZ, SUN, H₂O, LIFE, care text, images | Usable for **images and consumer copy**; provenance of trait values is undocumented — do not treat as evidence |
+| **USDA PLANTS** | ~50k N. American taxa | Bulk CSV downloads, no official API (community APIs exist) | **Public domain** (US Gov work) | LIFE, growth habit, HZ (coarse), some SPC/H₂O/pH/NFX via Characteristics extract | **Adopt.** Taxonomic + native-status spine for NA |
+| **GBIF** | ~2–3 bn occurrences | Excellent REST API + Darwin Core downloads | CC0/CC-BY/CC-BY-NC per dataset, API terms require citation | Occurrences and taxonomy only — **no cultivation traits** | **Adopt** for name resolution and realised-range checks, useless for traits |
+| **Trefle** | ~400k+ species claimed | REST/JSON | Open-ish, unclear | HZ, SUN, SPC, LIFE, some soil | **Do not depend on.** Announced a shutdown May 2021, has intermittently returned in beta, the repo issue tracker documents repeated outages (<https://github.com/treflehq/trefle-api/issues/71>). Unacceptable as a runtime dependency |
+| **Perenual** | ~10k species | REST/JSON, keyed, tiered | Commercial ToS, freemium | HZ, SUN, H₂O, LIFE, care text, images | Usable for **images and consumer copy**, provenance of trait values is undocumented — do not treat as evidence |
 | **Permapeople** | Community, thousands | REST API + CSV | **CC BY-SA 4.0** | HZ, SUN, EAT, LIFE, some companion relations | **Adopt with care.** Genuinely open, but **share-alike is viral** — if you ingest it into a derivative database you may be obliged to redistribute under CC BY-SA. Isolate in its own table with clear licence tagging, or skip |
 | **OpenFarm** | ~thousands of crop guides | Alpha REST API | CC BY-SA / open | SPC, DTM, SUN, H₂O, sowing depth | Data is thin and the project explicitly acknowledges it never reached self-sustaining traction. **Seed data only** |
-| **PFAF** | ~7,000–7,400 temperate species | Web DB; **paid** downloadable editions ($30 student / $50 home / $150 commercial) | Content **CC BY-SA** (attribution + share-alike); images CC BY-NC-ND | **Best-in-class for edible/useful species:** shade tolerance codes (F/SS/FS), edibility & medicinal ratings 1–5, soil type, pH, moisture, hardiness, habit | **Adopt for forest-garden/perennial coverage** — but budget for the licence review. Share-alike + non-commercial image terms are a real constraint |
+| **PFAF** | ~7,000–7,400 temperate species | Web DB, **paid** downloadable editions ($30 student / $50 home / $150 commercial) | Content **CC BY-SA** (attribution + share-alike), images CC BY-NC-ND | **Best-in-class for edible/useful species:** shade tolerance codes (F/SS/FS), edibility & medicinal ratings 1–5, soil type, pH, moisture, hardiness, habit | **Adopt for forest-garden/perennial coverage** — but budget for the licence review. Share-alike + non-commercial image terms are a real constraint |
 | **Wikidata** | Broad but shallow | SPARQL + REST, excellent | **CC0** | Taxonomy, common names, some HZ/EAT | **Adopt** as the multilingual common-name and identifier hub. CC0 makes it frictionless |
 | **World Flora Online** | ~1.4M names | Bulk Darwin Core Archive | Open (CC BY) | Nomenclature only | **Adopt** as the taxonomic backbone alongside POWO |
-| **Kew POWO** | Global vascular plants | **No public API**; extractable via the `expowo` R package to CSV; metadata CC BY (<https://www.kew.org/science/collections-and-resources/data-and-digital/terms-of-use>) | CC BY for metadata | Accepted names, distribution, some traits | **Adopt** for accepted-name arbitration and native/introduced status |
+| **Kew POWO** | Global vascular plants | **No public API**, extractable via the `expowo` R package to CSV, metadata CC BY (<https://www.kew.org/science/collections-and-resources/data-and-digital/terms-of-use>) | CC BY for metadata | Accepted names, distribution, some traits | **Adopt** for accepted-name arbitration and native/introduced status |
 | **EOL TraitBank** | Aggregated traits | Bulk downloads + API | Mostly CC BY / CC BY-NC per record | Heterogeneous ecological traits | Marginal. Coverage of *cultivation* attributes is poor |
 | **TRY** | 12M+ trait records, 280k taxa | Request-based download | **Open access data policy** since Kattge et al. 2020, *Glob. Change Biol.* 26(1):119–188 (CC BY) — but **per-request approval** and per-dataset restrictions | SLA, leaf N, height, seed mass, rooting depth, shade tolerance indices | **Adopt for ecophysiology only** (rooting depth, shade tolerance indices, canopy height). Not a horticultural database — it has almost nothing on cultivars, DTM, or spacing |
 | **FAO ECOCROP** | ~2,568 crop species | CSV (`EcoCrop_DB.csv`) | FAO open data | **Climate envelope per crop:** TMIN/TMAX/TOPMN/TOPMX, RMIN/RMAX/ROPMN/ROPMX, pH min/opt/max, GMIN/GMAX (growing period days), light intensity, Köppen zones, photoperiod, latitude, altitude | **Adopt — highest value-per-byte source in this list** |
@@ -347,7 +383,7 @@ Extension and nursery labels are defined in **hours of direct sun**, and the def
 |---|---|---|
 | Full sun | ≥ 6 h (many crops do better at 8–10 h) | |
 | Part sun | 4–6 h | Emphasis on tolerating some direct sun |
-| Part shade | 4–6 h, but preferentially **morning** sun | Same hours as part sun; the distinction is heat, not light |
+| Part shade | 4–6 h, but preferentially **morning** sun | Same hours as part sun, the distinction is heat, not light |
 | Full shade | ≤ 2 h direct sun | Usually bright indirect / dappled |
 | Dappled shade | Filtered through a canopy all day | |
 
@@ -357,7 +393,9 @@ These labels fail badly for an agrivoltaic designer for three reasons:
 
 1. **They ignore diffuse light.** A plant under a fixed-tilt PV row in overcast Ohio may receive zero hours of *direct* beam and still get 12 mol·m⁻²·d⁻¹ of diffuse and reflected PAR — enough for lettuce. "Full shade" is a wildly misleading label for that cell.
 2. **They ignore latitude and season.** Six hours of June sun in Minneapolis and six hours of December sun in Minneapolis differ by roughly a factor of four in delivered photons.
-3. **Panel shade is intermittent, not constant.** A single-axis tracker sweeps a moving shadow. A row-gap cell may get full sun for 90 minutes, deep shade for 30, repeatedly. Hour-counting is meaningless here; only an integral is meaningful.
+3. **Panel shade is intermittent, not constant.** A single-axis tracker sweeps a moving shadow. A
+   row-gap cell may get full sun for 90 minutes, deep shade for 30, repeatedly. Hour-counting is
+   meaningless here, only an integral is meaningful.
 
 **Daily Light Integral solves all three.** DLI = total photosynthetically active photons (400–700 nm) delivered per m² per day, in mol·m⁻²·d⁻¹. It is an integral, so it handles intermittency, diffuse light, and seasonality natively. And it is exactly what the app's ray-tracer already computes.
 
@@ -377,11 +415,19 @@ PPFD         ≈ PAR_energy [W·m⁻²] × 4.57             (µmol·J⁻¹ for d
 DLI_open_sky = Σ PPFD × Δt × 1e-6
 ```
 
-The 4.57 µmol·J⁻¹ conversion and the ~0.45–0.5 PAR fraction are the standard horticultural approximations; see Virginia Cooperative Extension SPES-720, *"Calculating and Using Daily Light Integral (DLI): An Introductory Guide"*, <https://www.pubs.ext.vt.edu/SPES/spes-720/spes-720.html>, and Purdue HO-238-B-W, *"Measuring Daily Light Integral (DLI)"*, <https://mdc.itap.purdue.edu/item.asp?Item_Number=HO-238-B-W> (Torres & Lopez).
+The 4.57 µmol·J⁻¹ conversion and the ~0.45–0.5 PAR fraction are the standard horticultural
+approximations, see Virginia Cooperative Extension SPES-720, *"Calculating and Using Daily Light
+Integral (DLI): An Introductory Guide"*, <https://www.pubs.ext.vt.edu/SPES/spes-720/spes-720.html>,
+and Purdue HO-238-B-W, *"Measuring Daily Light Integral (DLI)"*,
+<https://mdc.itap.purdue.edu/item.asp?Item_Number=HO-238-B-W> (Torres & Lopez).
 
 **Reference DLI surface for the US:** Faust, J.E. & Logan, J. (2018). *"Daily Light Integral: A Research Review and High-resolution Maps of the United States."* **HortScience 53(9):1250–1257.** <https://journals.ashs.org/view/journals/hortsci/53/9/article-p1250.xml>. Twelve monthly high-resolution national DLI maps derived from 1998–2012 solar radiation data. Overview and map access: <https://endowment.org/news/daily-light-integral-maps-for-the-u-s> and <https://ag.tennessee.edu/news/Pages/NR-2018-08JoanneLoganMapWin.aspx>. Equivalent products now exist for other regions (e.g. Spain, <https://www.sciencedirect.com/science/article/pii/S2772375524002867>).
 
-> **Verification note:** the ASHS full text returns HTTP 403 to automated fetch. The bibliographic details, method (1998–2012 solar radiation data, twelve monthly maps), and authorship are confirmed from multiple secondary sources listed above; the specific numeric contour values in the published maps were **not** directly verified for this document. Obtain the PDF before hard-coding any map-derived constants.
+> **Verification note:** the ASHS full text returns HTTP 403 to automated fetch. The bibliographic
+> details, method (1998–2012 solar radiation data, twelve monthly maps), and authorship are
+> confirmed from multiple secondary sources listed above, the specific numeric contour values in the
+> published maps were **not** directly verified for this document. Obtain the PDF before hard-coding
+> any map-derived constants.
 
 **Use Faust & Logan as the validation reference, not the runtime source.** At runtime, compute `DLI_open_sky` per month from Open-Meteo's `shortwave_radiation` (CC BY 4.0, global, no key) so that you get worldwide coverage with one code path, and check the US output against Faust & Logan's maps as a regression test.
 
@@ -413,7 +459,9 @@ This is the central computation of the whole product. It must be run per garden 
 
 ### 3.4 DLI classification bands
 
-Torres & Lopez's widely used greenhouse classification (Purdue/MSU Extension; see <https://www.greenhousemag.com/article/2025-lighting-market-report-measuring-daily-light-integral-greenhouse-production-/> and the DLI requirements list at <https://www.canr.msu.edu/resources/dli-requirements>):
+Torres & Lopez's widely used greenhouse classification (Purdue/MSU Extension, see
+<https://www.greenhousemag.com/article/2025-lighting-market-report-measuring-daily-light-integral-greenhouse-production-/>
+and the DLI requirements list at <https://www.canr.msu.edu/resources/dli-requirements>):
 
 | Class | DLI (mol·m⁻²·d⁻¹) |
 |---|---|
@@ -424,7 +472,10 @@ Torres & Lopez's widely used greenhouse classification (Purdue/MSU Extension; se
 
 Runkle (MSU) gives the commercial rule of thumb that most **ornamental** crops target **≥ 10–12 mol·m⁻²·d⁻¹**, and that **vegetable crops are typically higher** (<https://gpnmag.com/article/daily-light-integral-defined/>, <https://www.canr.msu.edu/uploads/resources/pdfs/doyouknowwhatyourdliis.pdf>). For **transplant/propagation** phases the consensus target is **8–10 mol·m⁻²·d⁻¹** during root development (Torres & Lopez, Purdue Vegetable Crops Hotline, <https://vegcropshotline.org/article/managing-daily-light-integral-to-improve-vegetable-transplant-quality/>).
 
-An important **upper** bound also exists: Cornell work found that a sustained DLI above **17 mol·m⁻²·d⁻¹** for more than three consecutive days induces **tipburn in lettuce**. DLI is not monotonically good; the schema needs `dli_max_before_disorder` for the crops where this is documented.
+An important **upper** bound also exists: Cornell work found that a sustained DLI above **17
+mol·m⁻²·d⁻¹** for more than three consecutive days induces **tipburn in lettuce**. DLI is not
+monotonically good, the schema needs `dli_max_before_disorder` for the crops where this is
+documented.
 
 ### 3.5 Shade tolerance and the agrivoltaic-specific evidence
 
@@ -432,12 +483,20 @@ This is where the product's core claim lives, so it deserves care.
 
 Documented findings from the agrivoltaic literature:
 
-- **Lettuce is the most shade-tolerant common crop; maize is the most shade-susceptible.** Some lettuce cultivars yield *more* under partial PV shade than in the open; others are unchanged.
+- **Lettuce is the most shade-tolerant common crop, maize is the most shade-susceptible.** Some
+  lettuce cultivars yield *more* under partial PV shade than in the open, others are unchanged.
 - **~50% shading is the approximate tipping point** at which even shade-tolerant crops such as lettuce and potato begin to lose yield (attributed in the agrivoltaic reviews to Beck et al. 2012).
 - **C3 cereals are shade-tolerant up to about 50% reduction in solar radiation and shade-sensitive beyond that.** Forages are shade-*benefiting* up to ~25% and shade-tolerant above that.
 - The mechanism for the frequent *positive* response is **reduced heat stress and reduced evaporative demand**, not more light — which is why the benefit is concentrated in hot, high-irradiance, water-limited settings and in summer, and reverses in cool, cloudy, or shoulder-season conditions.
 
-Primary/review sources: *"Climatic and design tipping points in agrivoltaic crop production systems. A meta-analysis,"* Agronomy for Sustainable Development (2025), <https://link.springer.com/article/10.1007/s13593-025-01060-z>; *"Optimizing agrivoltaic systems: A comprehensive analysis of design, crop productivity and energy performance in open-field configurations,"* Applied Energy (2025), <https://www.sciencedirect.com/science/article/pii/S0306261925004805>; and pv magazine's summary of the leafy-green/root-crop findings, <https://www.pv-magazine.com/2020/06/08/agrivoltaics-works-better-with-leafy-greens-root-crops/>.
+Primary/review sources: *"Climatic and design tipping points in agrivoltaic crop production systems.
+A meta-analysis,"* Agronomy for Sustainable Development (2025),
+<https://link.springer.com/article/10.1007/s13593-025-01060-z>, *"Optimizing agrivoltaic systems: A
+comprehensive analysis of design, crop productivity and energy performance in open-field
+configurations,"* Applied Energy (2025),
+<https://www.sciencedirect.com/science/article/pii/S0306261925004805>, and pv magazine's summary of
+the leafy-green/root-crop findings,
+<https://www.pv-magazine.com/2020/06/08/agrivoltaics-works-better-with-leafy-greens-root-crops/>.
 
 > **Verification note:** the Springer article is paywalled to automated fetch (303 to an IdP). The tipping-point figures above are reported consistently across the review literature but the exact meta-analysis sample sizes and confidence intervals were **not** directly verified here. Obtain the full text before quoting effect sizes in the product UI.
 
@@ -454,7 +513,8 @@ Primary/review sources: *"Climatic and design tipping points in agrivoltaic crop
 - **Label** — conventional garden sun requirement.
 - **DLI min** — below this, expect failure or commercially unacceptable quality/yield.
 - **DLI target** — range for good performance.
-- **Shade OK** — documented to tolerate or benefit from **30–50% shade** (✔ = yes; ✔✔ = frequently *improved* by partial shade in hot climates; blank = no).
+- **Shade OK** — documented to tolerate or benefit from **30–50% shade** (✔ = yes, ✔✔ = frequently
+  *improved* by partial shade in hot climates, blank = no).
 - **Tier** — evidence tier for the DLI numbers:
   - **A** — published DLI-controlled experiment or greenhouse DLI recommendation for this species.
   - **B** — published shade-cloth or agrivoltaic trial reporting yield vs. % shading, converted to DLI.
@@ -467,11 +527,11 @@ Primary/review sources: *"Climatic and design tipping points in agrivoltaic crop
 | # | Crop | Botanical name | Label | DLI min | DLI target | Shade OK (30–50%) | Tier | Source / note |
 |---|---|---|---|---|---|---|---|---|
 | **Fruiting vegetables** |
-| 1 | Tomato | *Solanum lycopersicum* | Full sun | 15 | 20–30 | | C | 15, preferably >20, for vine crops as a group (Runkle 2011, `runkle2011-vegetable-dli`); the former ≥22 was ReduSystems vendor copy and is deleted (records 7 and 23) |
+| 1 | Tomato | *Solanum lycopersicum* | Full sun | 15 | 20–30 |  | C | 15, preferably >20, for vine crops as a group (Runkle 2011, `runkle2011-vegetable-dli`), the former ≥22 was ReduSystems vendor copy and is deleted (records 7 and 23) |
 | 2 | Pepper, sweet | *Capsicum annuum* | Full sun | 15 | 20–30 | ✔✔ hot climates | C | Runkle's vine-crop figure, as tomato. Fruit sunscald reduced by afternoon shade |
 | 3 | Pepper, hot | *Capsicum* spp. | Full sun | 15 | 20–30 | ✔ | C | Runkle's vine-crop figure, as tomato |
 | 4 | Eggplant | *Solanum melongena* | Full sun | 14 | 20–28 | | C | |
-| 5 | Cucumber | *Cucumis sativus* | Full sun | 15 | 20–30 | ✔ | C | Runkle's vine-crop figure, as tomato; the former 12 / 18–26 had no per-crop source (record 23) |
+| 5 | Cucumber | *Cucumis sativus* | Full sun | 15 | 20–30 | ✔ | C | Runkle's vine-crop figure, as tomato, the former 12 / 18–26 had no per-crop source (record 23) |
 | 6 | Summer squash / zucchini | *Cucurbita pepo* | Full sun | 12 | 18–25 | ✔ | C | |
 | 7 | Winter squash | *Cucurbita* spp. | Full sun | 14 | 20–28 | | C | Long season, high assimilate demand |
 | 8 | Pumpkin | *Cucurbita pepo/maxima* | Full sun | 14 | 20–28 | | C | |
@@ -482,7 +542,7 @@ Primary/review sources: *"Climatic and design tipping points in agrivoltaic crop
 | 13 | Sweet corn | *Zea mays* | Full sun | 18 | 25–35 | ✘ **avoid** | B | Most shade-**susceptible** common crop |
 | 14 | Bean, bush | *Phaseolus vulgaris* | Full sun | 12 | 18–25 | ✔ marginal | C | |
 | 15 | Bean, pole | *Phaseolus vulgaris* | Full sun | 12 | 18–25 | ✔ marginal | C | |
-| 16 | Pea, garden/snap | *Pisum sativum* | Full/part sun | 8 | 14–20 | ✔ | C | Cool-season; tolerates spring shade |
+| 16 | Pea, garden/snap | *Pisum sativum* | Full/part sun | 8 | 14–20 | ✔ | C | Cool-season, tolerates spring shade |
 | 17 | Cowpea / southern pea | *Vigna unguiculata* | Full sun | 14 | 20–28 | | C | |
 | 18 | Fava bean | *Vicia faba* | Full/part sun | 8 | 14–20 | ✔ | C | |
 | 19 | Runner bean | *Phaseolus coccineus* | Full sun | 12 | 18–25 | ✔ | C | |
@@ -491,7 +551,7 @@ Primary/review sources: *"Climatic and design tipping points in agrivoltaic crop
 | 21 | Sweet potato | *Ipomoea batatas* | Full sun | 14 | 20–28 | | C | |
 | 22 | Carrot | *Daucus carota* | Full/part sun | 8 | 14–20 | ✔ | B | Root crops perform well under PV |
 | 23 | Beet | *Beta vulgaris* | Full/part sun | 8 | 14–20 | ✔ | B | |
-| 24 | Radish | *Raphanus sativus* | Full/part sun | 6 | 12–18 | ✔ | C | Fast; bolts in heat, benefits from shade |
+| 24 | Radish | *Raphanus sativus* | Full/part sun | 6 | 12–18 | ✔ | C | Fast, bolts in heat, benefits from shade |
 | 25 | Turnip | *Brassica rapa* | Full/part sun | 8 | 12–18 | ✔ | C | |
 | 26 | Rutabaga | *Brassica napus* | Full sun | 10 | 14–20 | ✔ | C | |
 | 27 | Parsnip | *Pastinaca sativa* | Full/part sun | 8 | 14–20 | ✔ | C | |
@@ -505,9 +565,9 @@ Primary/review sources: *"Climatic and design tipping points in agrivoltaic crop
 | 35 | Jerusalem artichoke | *Helianthus tuberosus* | Full sun | 12 | 18–26 | | C | |
 | 36 | Horseradish | *Armoracia rusticana* | Full/part sun | 8 | 14–20 | ✔ | C | |
 | **Leafy greens & brassicas** |
-| 37 | Lettuce, leaf | *Lactuca sativa* | Part sun | 5.8 | 14.4–17 | ✔✔ | A | 5.8 is the lowest level Pennisi et al. 2020 grew lettuce at, 14.4 their optimum, 17 the Cornell CEA target (Both et al. 1997; Brechner & Both 2013); Kelly et al. 2020 grew two cultivars from 6.9. No trial places a failure point (record 23). **>17 sustained → tipburn** |
+| 37 | Lettuce, leaf | *Lactuca sativa* | Part sun | 5.8 | 14.4–17 | ✔✔ | A | 5.8 is the lowest level Pennisi et al. 2020 grew lettuce at, 14.4 their optimum, 17 the Cornell CEA target (Both et al. 1997, Brechner & Both 2013), Kelly et al. 2020 grew two cultivars from 6.9. No trial places a failure point (record 23). **>17 sustained → tipburn** |
 | 38 | Lettuce, head/romaine | *Lactuca sativa* | Part sun | 5.8 | 14.4–17 | ✔✔ | A | As leaf lettuce: Kelly's 'Rex' is a butterhead and Cornell's 17 was set on boston bibb. Most shade-tolerant common crop |
-| 39 | Spinach | *Spinacia oleracea* | Part sun | 6 | 14–20 | ✔✔ | C | Gao et al. 2020 (`gao2020-spinach-dli`) grew spinach at 11.5–20.2 with the optimum at 17.3 and less at 20.2; the trial starts too high to place a minimum, so the row stays a class inference (record 23). Shade delays bolting |
+| 39 | Spinach | *Spinacia oleracea* | Part sun | 6 | 14–20 | ✔✔ | C | Gao et al. 2020 (`gao2020-spinach-dli`) grew spinach at 11.5–20.2 with the optimum at 17.3 and less at 20.2, the trial starts too high to place a minimum, so the row stays a class inference (record 23). Shade delays bolting |
 | 40 | Swiss chard | *Beta vulgaris* Cicla | Part sun | 6 | 12–18 | ✔✔ | C | |
 | 41 | Kale | *Brassica oleracea* Acephala | Part sun | 6 | 12–18 | ✔✔ | B | |
 | 42 | Collards | *Brassica oleracea* Acephala | Part sun | 6 | 12–18 | ✔ | C | |
@@ -522,19 +582,19 @@ Primary/review sources: *"Climatic and design tipping points in agrivoltaic crop
 | 51 | Brussels sprouts | *Brassica oleracea* Gemmifera | Full sun | 10 | 16–22 | ✔ marginal | C | Long season |
 | 52 | Endive / escarole | *Cichorium endivia* | Part sun | 6 | 12–17 | ✔✔ | C | |
 | 53 | Radicchio | *Cichorium intybus* | Part sun | 6 | 12–17 | ✔ | C | |
-| 54 | Celery | *Apium graveolens* | Part sun | 8 | 14–20 | ✔ | C | High water demand; shade reduces stress |
+| 54 | Celery | *Apium graveolens* | Part sun | 8 | 14–20 | ✔ | C | High water demand, shade reduces stress |
 | 55 | New Zealand spinach | *Tetragonia tetragonioides* | Full/part sun | 8 | 14–20 | ✔ | C | Heat-tolerant spinach substitute |
 | 56 | Sorrel | *Rumex acetosa* | Part shade | 4 | 8–14 | ✔✔ | C | |
 | 57 | Mâche / corn salad | *Valerianella locusta* | Part shade | 4 | 8–14 | ✔✔ | C | Cool-season, low-light |
 | 58 | Claytonia / miner's lettuce | *Claytonia perfoliata* | Part/full shade | 3 | 6–12 | ✔✔ | C | Genuinely shade-adapted |
 | 59 | Watercress | *Nasturtium officinale* | Part shade | 4 | 8–14 | ✔✔ | C | Streamside species |
 | **Herbs** |
-| 60 | Basil | *Ocimum basilicum* | Full sun | 12.9 | 14.4–17.8 | ✔ marginal | A | 12.9 is Dou et al. 2018's suggested production DLI (tested 9.3–17.8, shoot mass highest at 17.8); 14.4 is Pennisi et al. 2020's optimum; Walters & Currey 2018 found 59% less mass at ≤7 than at ~15 (record 23) |
+| 60 | Basil | *Ocimum basilicum* | Full sun | 12.9 | 14.4–17.8 | ✔ marginal | A | 12.9 is Dou et al. 2018's suggested production DLI (tested 9.3–17.8, shoot mass highest at 17.8), 14.4 is Pennisi et al. 2020's optimum, Walters & Currey 2018 found 59% less mass at ≤7 than at ~15 (record 23) |
 | 61 | Parsley | *Petroselinum crispum* | Part sun/part shade | 5 | 10–16 | ✔✔ | C | |
 | 62 | Cilantro / coriander | *Coriandrum sativum* | Part sun/part shade | 5 | 10–16 | ✔✔ | C | Shade strongly delays bolting |
 | 63 | Dill | *Anethum graveolens* | Full sun | 10 | 16–22 | | C | |
 | 64 | Chives | *Allium schoenoprasum* | Full/part sun | 6 | 12–18 | ✔ | C | |
-| 65 | Mint | *Mentha* spp. | Part shade | 4 | 8–14 | ✔✔ | C | Classic shade herb; **rhizomatous — contain** |
+| 65 | Mint | *Mentha* spp. | Part shade | 4 | 8–14 | ✔✔ | C | Classic shade herb, **rhizomatous — contain** |
 | 66 | Oregano | *Origanum vulgare* | Full sun | 12 | 18–25 | | C | Essential-oil content is light-driven |
 | 67 | Thyme | *Thymus vulgaris* | Full sun | 12 | 18–25 | | C | |
 | 68 | Rosemary | *Salvia rosmarinus* | Full sun | 14 | 20–28 | | C | |
@@ -549,8 +609,8 @@ Primary/review sources: *"Climatic and design tipping points in agrivoltaic crop
 | 77 | Summer savory | *Satureja hortensis* | Full sun | 12 | 18–25 | | C | |
 | 78 | Bay laurel | *Laurus nobilis* | Full/part sun | 8 | 14–22 | ✔ | C | |
 | **Fruits & perennials** |
-| 79 | Strawberry (June/day-neutral) | *Fragaria* × *ananassa* | Full sun | 25 | 25–30 | ✔✔ | C | 25 is Widmer et al. 2026's agrivoltaic average-yield convention, the only APV DLI source; 30 is where the OSU Kubota Lab's greenhouse guidance (`kubota-osu-strawberry-dli`) says plants are stressed, and that page's greenhouse minimum 12 and optimum 20–25 are a different quantity. The former 10 was a sun-hour guess (record 23) |
-| 80 | Raspberry | *Rubus idaeus* | Full/part sun | 15 | 18–25 | ✔ | C | 15 is Widmer et al. 2026's average-yield convention for raspberry; the band is inference. Afternoon shade helps in hot climates |
+| 79 | Strawberry (June/day-neutral) | *Fragaria* × *ananassa* | Full sun | 25 | 25–30 | ✔✔ | C | 25 is Widmer et al. 2026's agrivoltaic average-yield convention, the only APV DLI source, 30 is where the OSU Kubota Lab's greenhouse guidance (`kubota-osu-strawberry-dli`) says plants are stressed, and that page's greenhouse minimum 12 and optimum 20–25 are a different quantity. The former 10 was a sun-hour guess (record 23) |
+| 80 | Raspberry | *Rubus idaeus* | Full/part sun | 15 | 18–25 | ✔ | C | 15 is Widmer et al. 2026's average-yield convention for raspberry, the band is inference. Afternoon shade helps in hot climates |
 | 81 | Blackberry | *Rubus* spp. | Full sun | 12 | 18–26 | ✔ marginal | C | |
 | 82 | Blueberry | *Vaccinium corymbosum* | Full sun | 12 | 20–26 | ✔ marginal | C | Also needs pH 4.5–5.5 — hard constraint |
 | 83 | Red/white currant | *Ribes rubrum* | Part shade | 5 | 10–16 | ✔✔ | C | Genuinely shade-tolerant fruit |
@@ -561,9 +621,9 @@ Primary/review sources: *"Climatic and design tipping points in agrivoltaic crop
 | 88 | Asparagus | *Asparagus officinalis* | Full sun | 14 | 20–28 | ✘ | C | Fern must build crown reserves |
 | 89 | Globe artichoke | *Cynara cardunculus* | Full sun | 14 | 20–28 | | C | |
 | 90 | Grape | *Vitis* spp. | Full sun | 18 | 25–35 | ✘ | C | Fruit-zone light drives sugar & phenolics |
-| 91 | Apple | *Malus domestica* | Full sun | 16 | 22–32 | ✘ | C | Also needs chill; see §1.11 |
+| 91 | Apple | *Malus domestica* | Full sun | 16 | 22–32 | ✘ | C | Also needs chill, see §1.11 |
 | 92 | Pear | *Pyrus communis* | Full sun | 16 | 22–32 | ✘ | C | Chill-limited |
-| 93 | Peach / nectarine | *Prunus persica* | Full sun | 18 | 25–35 | ✘ | C | Chill-limited; high light for fruit quality |
+| 93 | Peach / nectarine | *Prunus persica* | Full sun | 18 | 25–35 | ✘ | C | Chill-limited, high light for fruit quality |
 | 94 | Plum | *Prunus domestica* | Full sun | 16 | 22–32 | ✘ | C | Chill-limited |
 | 95 | Sweet/sour cherry | *Prunus avium* / *cerasus* | Full sun | 16 | 22–32 | ✘ | C | Chill-limited |
 | 96 | Fig | *Ficus carica* | Full sun | 16 | 22–32 | | C | |
@@ -575,7 +635,7 @@ Primary/review sources: *"Climatic and design tipping points in agrivoltaic crop
 | 102 | Hops | *Humulus lupulus* | Full sun | 14 | 20–30 | | C | |
 | **Companion / insectary / cover** |
 | 103 | Marigold | *Tagetes* spp. | Full sun | 10 | 16–24 | ✔ marginal | C | Nematode use requires full-season stand (§4.6) |
-| 104 | Nasturtium | *Tropaeolum majus* | Full/part sun | 6 | 12–20 | ✔✔ | C | Edible; flowers less in deep shade |
+| 104 | Nasturtium | *Tropaeolum majus* | Full/part sun | 6 | 12–20 | ✔✔ | C | Edible, flowers less in deep shade |
 | 105 | Borage | *Borago officinalis* | Full sun | 10 | 16–24 | ✔ | C | Strong bee forage |
 | 106 | Calendula | *Calendula officinalis* | Full/part sun | 8 | 14–20 | ✔ | C | |
 | 107 | Sunflower | *Helianthus annuus* | Full sun | 18 | 25–35 | ✘ | C | Also a competitor — see §5.1 |
@@ -595,7 +655,13 @@ Primary/review sources: *"Climatic and design tipping points in agrivoltaic crop
 
 ### 4.1 The baseline problem
 
-The canonical popular source, Louise Riotte's *Carrots Love Tomatoes*, presents pairings with **no supporting evidence and frequently no proposed mechanism**. Most of the pairings that circulate in blog posts, printable charts, and app "companion" features trace back to that book, to Rudolf Steiner's biodynamics, or to unattributed repetition. Critical reviews: *The Myth of Companion Planting* (<https://www.gardenmyths.com/companion-planting-truth-myth/>); Laidback Gardener's literature survey (<https://laidbackgardener.blog/2026/06/04/not-another-article-on-companion-planting-or-what-science-has-to-say-about-it/>).
+The canonical popular source, Louise Riotte's *Carrots Love Tomatoes*, presents pairings with **no
+supporting evidence and frequently no proposed mechanism**. Most of the pairings that circulate in
+blog posts, printable charts, and app "companion" features trace back to that book, to Rudolf
+Steiner's biodynamics, or to unattributed repetition. Critical reviews: *The Myth of Companion
+Planting* (<https://www.gardenmyths.com/companion-planting-truth-myth/>), Laidback Gardener's
+literature survey
+(<https://laidbackgardener.blog/2026/06/04/not-another-article-on-companion-planting-or-what-science-has-to-say-about-it/>).
 
 At the same time, **there is a real and substantial agroecological literature** on plant–plant and plant–insect interactions with well-characterised mechanisms and measured effect sizes. The engine's job is to encode the second and refuse to encode the first — and to be honest with users about which is which.
 
@@ -605,7 +671,13 @@ At the same time, **there is a real and substantial agroecological literature** 
 
 The Khan et al. push–pull system for East African maize is the best-documented companion-planting technology in existence. Maize is intercropped with *Desmodium* spp. (the "push") and bordered with Napier grass, *Pennisetum purpureum* (the "pull"). Stemborer moths are drawn to the Napier border, which does not support full larval development, so most larvae die. *Desmodium* additionally suppresses *Striga hermonthica* through root exudates that trigger suicidal germination and inhibit *Striga* radicle attachment, plus shading and N-fixation.
 
-Measured on-farm outcomes: **8–20 stemborers per 40 maize plants in push–pull plots vs. 39–57 in controls**, and maize yields of **4–7 t/ha vs. 2–5 t/ha in controls**. Key references: Khan et al., on-farm evaluation, <https://ir-library.ku.ac.ke/items/44c40115-e6ed-42cd-88ad-e2eaa16047e9>; Khan et al., *"Exploiting phytochemicals for developing a 'push–pull' crop protection strategy for cereal farmers in Africa,"* J. Exp. Bot. 61(15):4185 (2010), <https://academic.oup.com/jxb/article/61/15/4185/428504>; economic evaluation, <https://www.sciencedirect.com/science/article/abs/pii/S0261219408000069>.
+Measured on-farm outcomes: **8–20 stemborers per 40 maize plants in push–pull plots vs. 39–57 in
+controls**, and maize yields of **4–7 t/ha vs. 2–5 t/ha in controls**. Key references: Khan et al.,
+on-farm evaluation, <https://ir-library.ku.ac.ke/items/44c40115-e6ed-42cd-88ad-e2eaa16047e9>, Khan
+et al., *"Exploiting phytochemicals for developing a 'push–pull' crop protection strategy for cereal
+farmers in Africa,"* J. Exp. Bot. 61(15):4185 (2010),
+<https://academic.oup.com/jxb/article/61/15/4185/428504>, economic evaluation,
+<https://www.sciencedirect.com/science/article/abs/pii/S0261219408000069>.
 
 **Important recent revision.** The mechanism is contested. *"The push–pull intercrop Desmodium does not repel, but intercepts and kills pests,"* eLife (2023/2024), <https://elifesciences.org/articles/88695>, reports that the effect is physical interception and mortality on *Desmodium*'s sticky trichomes rather than volatile repellence. A companion paper re-examines *Desmodium* volatiles against fall armyworm, <https://elifesciences.org/articles/100981>. Grade the *outcome* A and the *mechanism* B, and record both.
 
@@ -630,13 +702,22 @@ LER = Σ(intercrop yield of species i / monoculture yield of species i). LER > 1
 
 This is the **strongest quantitative evidence in the whole companion-planting domain** — a consistent 20–30% land-efficiency gain across hundreds of trials. It is the intellectual justification for polyculture in the garden designer.
 
-**But note what LER does and does not say.** LER > 1 is a *land efficiency* statement, not a per-species yield statement. Each component species almost always yields **less** in the intercrop than in monoculture; the mixture wins on total output per unit area. Users optimising for "as many tomatoes as possible" will not benefit. Users optimising for "most food from this bed" will. The UI must make this distinction, or the recommendation will feel like a lie.
+**But note what LER does and does not say.** LER > 1 is a *land efficiency* statement, not a
+per-species yield statement. Each component species almost always yields **less** in the intercrop
+than in monoculture, the mixture wins on total output per unit area. Users optimising for "as many
+tomatoes as possible" will not benefit. Users optimising for "most food from this bed" will. The UI
+must make this distinction, or the recommendation will feel like a lie.
 
 ### 4.5 Host-finding disruption: Finch & Collier's appropriate/inappropriate landings — Grade A for the theory, D/E for the folk version
 
 Finch, S. & Collier, R.H. (2000). *"Host-plant selection by insects – a theory based on 'appropriate/inappropriate landings' by pest insects of cruciferous plants."* **Entomologia Experimentalis et Applicata 96:91–102.** <https://onlinelibrary.wiley.com/doi/pdf/10.1046/j.1570-7458.2000.00684.x>
 
-The model: host-finding is a three-stage sequence. (1) The insect is drawn into the vicinity by host volatiles. (2) It responds to a **visual** cue and lands on a green surface. (3) It makes short exploratory flights among neighbouring leaves, accumulating "appropriate" (host) or "inappropriate" (non-host) landings; egg-laying requires enough appropriate landings in sequence. In a monoculture nearly every landing is appropriate. In a polyculture, non-host green surfaces dilute the sequence and many insects leave before ovipositing.
+The model: host-finding is a three-stage sequence. (1) The insect is drawn into the vicinity by host
+volatiles. (2) It responds to a **visual** cue and lands on a green surface. (3) It makes short
+exploratory flights among neighbouring leaves, accumulating "appropriate" (host) or "inappropriate"
+(non-host) landings, egg-laying requires enough appropriate landings in sequence. In a monoculture
+nearly every landing is appropriate. In a polyculture, non-host green surfaces dilute the sequence
+and many insects leave before ovipositing.
 
 **The finding that kills most companion-planting folklore:** Finch & Collier (2003), *"Companion planting – do aromatic plants disrupt host-plant finding by the cabbage root fly and the onion fly more effectively than non-aromatic plants?"*, Ent. Exp. Appl., <https://onlinelibrary.wiley.com/doi/abs/10.1046/j.0013-8703.2003.00102.x> — **aromatic plants were no more effective than non-aromatic plants.** The mechanism is *green surface area*, not smell. Earlier, Uvah & Coaker (1984), *"Effect of mixed cropping on some insect pests of carrots and onions,"* Ent. Exp. Appl. 36:159–167, found that onions selected specifically for pungency **failed to deter insects from landing on their host plants**.
 
@@ -651,9 +732,22 @@ Finch's own summary of the practical corollary — that **undersowing with clove
 
 ### 4.6 Marigold and root-knot nematodes — Grade A for the practice, E for the garden version
 
-**The effect is real and the mechanism is characterised.** The principal nematicidal compound in *Tagetes* root exudate is **α-terthienyl**, a thiophene. Mechanism: under dark conditions (i.e. in soil, without photoactivation) α-terthienyl acts as an oxidative-stress inducer that penetrates the nematode hypodermis; induction of glutathione S-transferase and superoxide dismutase in the hypodermis is suppressed, and nematode susceptibility tracks GST/SOD expression. Primary paper: *"Nematicidal actions of the marigold exudate α-terthienyl: oxidative stress-inducing compound penetrates nematode hypodermis,"* <https://pmc.ncbi.nlm.nih.gov/articles/PMC6504006/>.
+**The effect is real and the mechanism is characterised.** The principal nematicidal compound in
+*Tagetes* root exudate is **α-terthienyl**, a thiophene. Mechanism: under dark conditions (i.e. in
+soil, without photoactivation) α-terthienyl acts as an oxidative-stress inducer that penetrates the
+nematode hypodermis, induction of glutathione S-transferase and superoxide dismutase in the
+hypodermis is suppressed, and nematode susceptibility tracks GST/SOD expression. Primary paper:
+*"Nematicidal actions of the marigold exudate α-terthienyl: oxidative stress-inducing compound
+penetrates nematode hypodermis,"* <https://pmc.ncbi.nlm.nih.gov/articles/PMC6504006/>.
 
-Marigold suppresses *Meloidogyne* by **at least four routes**: α-terthienyl allelochemistry, being a **poor host** (so populations decline for lack of reproduction), acting as a **dead-end trap crop** (juveniles enter but cannot develop), and enhancing nematode-antagonistic soil microbiota. Reviews: Hooks et al., *"Using marigold (Tagetes spp.) as a cover crop to protect crops from plant-parasitic nematodes,"* Applied Soil Ecology, <https://www.sciencedirect.com/science/article/abs/pii/S092913931000168X>; UH-CTAHR PD-35, *"Using Marigold as an Alternative to Chemical Nematicides,"* <https://www.ctahr.hawaii.edu/oc/freepubs/pdf/pd-35.pdf>.
+Marigold suppresses *Meloidogyne* by **at least four routes**: α-terthienyl allelochemistry, being a
+**poor host** (so populations decline for lack of reproduction), acting as a **dead-end trap crop**
+(juveniles enter but cannot develop), and enhancing nematode-antagonistic soil microbiota. Reviews:
+Hooks et al., *"Using marigold (Tagetes spp.) as a cover crop to protect crops from plant-parasitic
+nematodes,"* Applied Soil Ecology,
+<https://www.sciencedirect.com/science/article/abs/pii/S092913931000168X>, UH-CTAHR PD-35, *"Using
+Marigold as an Alternative to Chemical Nematicides,"*
+<https://www.ctahr.hawaii.edu/oc/freepubs/pdf/pd-35.pdf>.
 
 **The decisive management constraint:** α-terthienyl has **limited nematicidal activity when marigold tissue is incorporated into soil — only living marigold root systems exhibit significant nematicidal properties.** The effect therefore requires a **dense, full-season, near-monoculture stand of marigold occupying the bed as a cover crop**, typically for 2–3 months, *before* the susceptible crop.
 
@@ -680,7 +774,16 @@ Additional support: above-ground, the polyculture **promotes both direct and ind
 
 Symbiotic N₂ fixation by legumes is Grade A settled science. **Transfer of that N to a neighbouring non-legume within the same season is a different and much weaker claim.**
 
-Thilakarathna et al. (2016), *"Belowground nitrogen transfer from legumes to non-legumes under managed herbaceous cropping systems"* — synthesis: N transferred from legume to non-legume in **annual intercrops is typically below 15% of the legume's N**. Individual studies report more under favourable conditions: 14–20% of associated wheat's N uptake from gram and 16–32% for maize from cowpea under greenhouse conditions; 28% of maize N of atmospheric origin via cowpea transfer in one field study. Review: *"Nitrogen fixation and transfer between legumes and cereals under various cropping regimes,"* <https://www.sciencedirect.com/science/article/abs/pii/S2452219822000763>; also *"Interspecific Nitrogen Transfer and Nutrient Exchange in Legume–Cereal Intercropping Systems: A Review,"* <https://www.sciltp.com/journals/rem/articles/2602003125>, and *Agronomy* 12:1900, <https://doi.org/10.3390/agronomy12081900>.
+Thilakarathna et al. (2016), *"Belowground nitrogen transfer from legumes to non-legumes under
+managed herbaceous cropping systems"* — synthesis: N transferred from legume to non-legume in
+**annual intercrops is typically below 15% of the legume's N**. Individual studies report more under
+favourable conditions: 14–20% of associated wheat's N uptake from gram and 16–32% for maize from
+cowpea under greenhouse conditions, 28% of maize N of atmospheric origin via cowpea transfer in one
+field study. Review: *"Nitrogen fixation and transfer between legumes and cereals under various
+cropping regimes,"* <https://www.sciencedirect.com/science/article/abs/pii/S2452219822000763>, also
+*"Interspecific Nitrogen Transfer and Nutrient Exchange in Legume–Cereal Intercropping Systems: A
+Review,"* <https://www.sciltp.com/journals/rem/articles/2602003125>, and *Agronomy* 12:1900,
+<https://doi.org/10.3390/agronomy12081900>.
 
 Mechanism: Nicolardot/Chapagain-type work finds **considerable C and N transfer from peas to cereals via direct root contact but not via mycorrhizal networks** (*Scientific Reports* 2021, <https://www.nature.com/articles/s41598-021-90436-8>) — so proximity and root intermingling matter, and the common-mycorrhizal-network story is not supported.
 
@@ -692,7 +795,21 @@ Methodological warning: transfer estimates depend heavily on the ¹⁵N techniqu
 
 **Black walnut / juglone — Grade C, and the textbook example is shakier than the textbooks admit.**
 
-Juglone (5-hydroxy-1,4-naphthoquinone) from *Juglans nigra* is the paradigmatic allelopathy case, yet **the field evidence is weak**. Key points from the critical literature: juglone in its toxic form **is not present in intact black walnut tissues** (it is produced from hydrojuglone on oxidation after tissue damage); many early studies **lacked manipulation controls** and did not test the other, non-toxic compounds present in walnut extracts; numerous studies find **no significant adverse effect** on various species. Carefully controlled laboratory experiments do show toxicity to many species, especially at the seedling stage, **but there is little landscape-scale evidence that allelopathy is why plants near walnuts do poorly** — competition for light, water, and nutrients from a large tree is a sufficient and simpler explanation. Sources: *"Black walnut and juglone toxicity: How strong is the evidence for the paradigmatic example of allelopathy?"* <https://www.researchgate.net/publication/267283799_Black_walnut_and_juglone_toxicity_How_strong_is_the_evidence_for_the_paradigmatic_example_of_allelopathy>; Chalker-Scott, WSU Extension home-garden fact sheet, <https://pubs.extension.wsu.edu/product/do-black-walnut-trees-have-allelopathic-effects-on-other-plants-home-garden-series/>; Jose, *"Black Walnut Allelopathy: Implications for Intercropping,"* <https://link.springer.com/chapter/10.1007/978-0-387-77337-7_16>.
+Juglone (5-hydroxy-1,4-naphthoquinone) from *Juglans nigra* is the paradigmatic allelopathy case,
+yet **the field evidence is weak**. Key points from the critical literature: juglone in its toxic
+form **is not present in intact black walnut tissues** (it is produced from hydrojuglone on
+oxidation after tissue damage), many early studies **lacked manipulation controls** and did not test
+the other, non-toxic compounds present in walnut extracts, numerous studies find **no significant
+adverse effect** on various species. Carefully controlled laboratory experiments do show toxicity to
+many species, especially at the seedling stage, **but there is little landscape-scale evidence that
+allelopathy is why plants near walnuts do poorly** — competition for light, water, and nutrients
+from a large tree is a sufficient and simpler explanation. Sources: *"Black walnut and juglone
+toxicity: How strong is the evidence for the paradigmatic example of allelopathy?"*
+<https://www.researchgate.net/publication/267283799_Black_walnut_and_juglone_toxicity_How_strong_is_the_evidence_for_the_paradigmatic_example_of_allelopathy>,
+Chalker-Scott, WSU Extension home-garden fact sheet,
+<https://pubs.extension.wsu.edu/product/do-black-walnut-trees-have-allelopathic-effects-on-other-plants-home-garden-series/>,
+Jose, *"Black Walnut Allelopathy: Implications for Intercropping,"*
+<https://link.springer.com/chapter/10.1007/978-0-387-77337-7_16>.
 
 **Engine handling:** keep the walnut exclusion zone as a *warning* with a stated confidence, and attribute the likely cause to combined competition + possible allelopathy. Do not present a hard "juglone kill radius." This is a case where the honest answer improves the product: users near a walnut are better advised to address shade and root competition than to hunt for juglone-resistant cultivars.
 
@@ -703,13 +820,27 @@ Glucosinolates in Brassicaceae tissue are hydrolysed by myrosinase on cell ruptu
 - Soil glucosinolate and ITC concentrations peak **immediately (~30 min) after incorporation**, and are detectable for up to **8 days (GSL) and 12 days (ITC)** respectively (*Soil Biology & Biochemistry*, <https://www.sciencedirect.com/science/article/abs/pii/S0038071706001246>).
 - **Conversion efficiency is the crux.** With simple incorporation, **≤1% of the ITC predicted from tissue glucosinolate content is actually measured in soil.** With cell-level tissue disruption (freeze–thaw), maximum ITC reached 40–75 nmol ITC g⁻¹ soil, raising release efficiency to **14–26%** (<https://www.sciencedirect.com/science/article/abs/pii/S0038071702001530>).
 - *Brassica juncea* is generally preferred for its higher convertible glucosinolate content vs. *B. nigra*, *B. napus*, or *Sinapis alba*.
-- Efficacy across studies is highly variable; a 2020 meta-analysis of 46 studies found high study-to-study variability confounding the relationship between plant part and efficacy. See also <https://pmc.ncbi.nlm.nih.gov/articles/PMC12029985/> on ITC-mediated alleviation of soil-borne disease and <https://www.ncbi.nlm.nih.gov/pmc/articles/PMC4505889/> on degradation dynamics.
+- Efficacy across studies is highly variable, a 2020 meta-analysis of 46 studies found high
+  study-to-study variability confounding the relationship between plant part and efficacy. See also
+  <https://pmc.ncbi.nlm.nih.gov/articles/PMC12029985/> on ITC-mediated alleviation of soil-borne
+  disease and <https://www.ncbi.nlm.nih.gov/pmc/articles/PMC4505889/> on degradation dynamics.
 
-**So biofumigation requires: high-glucosinolate species, maximum biomass, finely macerated tissue, immediate incorporation, moist soil, and ideally tarping.** It is **not** a passive neighbour effect. "Plant mustard near your tomatoes for disease control" is Grade E; "grow a *B. juncea* cover crop, flail-mow and incorporate at flowering, irrigate and tarp" is Grade B.
+**So biofumigation requires: high-glucosinolate species, maximum biomass, finely macerated tissue,
+immediate incorporation, moist soil, and ideally tarping.** It is **not** a passive neighbour
+effect. "Plant mustard near your tomatoes for disease control" is Grade E, "grow a *B. juncea* cover
+crop, flail-mow and incorporate at flowering, irrigate and tarp" is Grade B.
 
 **Sorghum / sorgoleone — Grade B for residue-based weed suppression.**
 
-Sorghum produces phenolics, the cyanogenic glycoside dhurrin, and the hydrophobic p-benzoquinone **sorgoleone** in root exudates. Sorgoleone is hydrophobic, adsorbs to soil, and therefore persists — herbicidal activity lasting up to **seven weeks after incorporation**. Sorghum residue incorporation has been measured to reduce weed density by **62%** and weed dry weight by **65%**. Reviews: *"Sorghum allelopathy — from ecosystem to molecule,"* J. Chem. Ecol., <https://pubmed.ncbi.nlm.nih.gov/23393005/>; *"Unraveling Sorghum Allelopathy in Agriculture: Concepts and Implications,"* <https://www.ncbi.nlm.nih.gov/pmc/articles/PMC8470078/>; *"Sorghum Allelopathy: Alternative Weed Management Strategy…"*, <https://pmc.ncbi.nlm.nih.gov/articles/PMC9501246/>.
+Sorghum produces phenolics, the cyanogenic glycoside dhurrin, and the hydrophobic p-benzoquinone
+**sorgoleone** in root exudates. Sorgoleone is hydrophobic, adsorbs to soil, and therefore persists
+— herbicidal activity lasting up to **seven weeks after incorporation**. Sorghum residue
+incorporation has been measured to reduce weed density by **62%** and weed dry weight by **65%**.
+Reviews: *"Sorghum allelopathy — from ecosystem to molecule,"* J. Chem. Ecol.,
+<https://pubmed.ncbi.nlm.nih.gov/23393005/>, *"Unraveling Sorghum Allelopathy in Agriculture:
+Concepts and Implications,"* <https://www.ncbi.nlm.nih.gov/pmc/articles/PMC8470078/>, *"Sorghum
+Allelopathy: Alternative Weed Management Strategy…"*,
+<https://pmc.ncbi.nlm.nih.gov/articles/PMC9501246/>.
 
 **Warning to encode:** the same allelochemistry causes **autotoxicity and injury to small-seeded vegetables**. A sorghum-sudangrass cover crop needs a 3–6 week interval before direct-seeding small-seeded crops. This is a *negative* interaction edge with a temporal offset.
 
@@ -719,23 +850,65 @@ Sorghum produces phenolics, the cyanogenic glycoside dhurrin, and the hydrophobi
 
 Fiedler, A.K. & Landis, D.A. (2007). *"Attractiveness of Michigan Native Plants to Arthropod Natural Enemies and Herbivores."* **Environmental Entomology 36(4):751–765.** <https://academic.oup.com/ee/article/36/4/751/465441>
 
-Forty-three native perennial flowering species were screened over 2003–2004 for attractiveness to natural enemies and pollinators; **26 species** were identified as most attractive to beneficials with bloom spread across the growing season. A group of **24 native perennials attracted high numbers of natural enemies**, including *Eupatorium perfoliatum*, *Monarda punctata*, *Silphium perfoliatum*, *Potentilla fruticosa*, *Coreopsis lanceolata*, *Spiraea alba*, *Agastache nepetoides*, *Anemone canadensis*, and *Angelica atropurpurea*. Practitioner version: MSU Extension Bulletin **E-2973**, *"Attracting Beneficial Insects with Native Flowering Plants,"* <https://www.canr.msu.edu/resources/attracting_beneficial_insects_with_native_flowering_plants_e2973> (PDF: <https://sanweb.lib.msu.edu/DMC/extension_publications/e2973/E2973-2007.PDF>).
+Forty-three native perennial flowering species were screened over 2003–2004 for attractiveness to
+natural enemies and pollinators, **26 species** were identified as most attractive to beneficials
+with bloom spread across the growing season. A group of **24 native perennials attracted high
+numbers of natural enemies**, including *Eupatorium perfoliatum*, *Monarda punctata*, *Silphium
+perfoliatum*, *Potentilla fruticosa*, *Coreopsis lanceolata*, *Spiraea alba*, *Agastache
+nepetoides*, *Anemone canadensis*, and *Angelica atropurpurea*. Practitioner version: MSU Extension
+Bulletin **E-2973**, *"Attracting Beneficial Insects with Native Flowering Plants,"*
+<https://www.canr.msu.edu/resources/attracting_beneficial_insects_with_native_flowering_plants_e2973>
+(PDF: <https://sanweb.lib.msu.edu/DMC/extension_publications/e2973/E2973-2007.PDF>).
 
 Extension into adjacent crops: wildflower plantings enhance natural-enemy abundance **and their services** in adjacent blueberry fields (<https://www.sciencedirect.com/science/article/abs/pii/S1049964415300207>).
 
-**The honest gap:** attracting natural enemies is reliably demonstrated; translating that into measurable pest suppression and yield in a small garden is much less certain and context-dependent. A 2024 meta-analysis of intercropping and agri-environment schemes on biological pest control (*Agronomy for Sustainable Development*, <https://link.springer.com/article/10.1007/s13593-024-00947-7>) is the right reference for effect sizes.
+**The honest gap:** attracting natural enemies is reliably demonstrated, translating that into
+measurable pest suppression and yield in a small garden is much less certain and context-dependent.
+A 2024 meta-analysis of intercropping and agri-environment schemes on biological pest control
+(*Agronomy for Sustainable Development*,
+<https://link.springer.com/article/10.1007/s13593-024-00947-7>) is the right reference for effect
+sizes.
 
-**Design rules the engine should encode:** (i) **bloom-succession coverage** — the value of an insectary is continuity, so score a garden plan on whether something attractive is in flower in every 2-week window of the season; (ii) prefer **regionally native** species where evidence exists; (iii) **umbellifers and asters** (small, accessible florets) serve parasitoids and hoverflies specifically; (iv) recommend strips/blocks, not scattered individuals.
+**Design rules the engine should encode:** (i) **bloom-succession coverage** — the value of an
+insectary is continuity, so score a garden plan on whether something attractive is in flower in
+every 2-week window of the season, (ii) prefer **regionally native** species where evidence exists,
+(iii) **umbellifers and asters** (small, accessible florets) serve parasitoids and hoverflies
+specifically, (iv) recommend strips/blocks, not scattered individuals.
 
 ### 4.11 Crop rotation and soil-borne disease — Grade A, and these are *hard* constraints
 
 Rotation is the one part of "companion planting" folklore that is fully supported, and it is a **temporal** constraint that most garden apps get wrong or omit.
 
-**Brassicas — clubroot (*Plasmodiophora brassicae*).** Resting spores survive in soil **up to 20 years**, but viability declines sharply in the first two years without a host and then slowly over the next 10–20. A **>2-year break** from host crops significantly reduces soil resting-spore concentration — reported at roughly **90% reduction with a two-year break**. Sources: Peng et al., *"A >2-year crop rotation reduces resting spores of Plasmodiophora brassicae in soil and the impact of clubroot on canola,"* Eur. J. Agronomy, <https://www.sciencedirect.com/science/article/abs/pii/S1161030115300125>; Ernst et al., *Plant Pathology* (2019), <https://bsppjournals.onlinelibrary.wiley.com/doi/10.1111/ppa.12949>; *"Clubroot Disease: 145 Years Post-Discovery,"* Annu. Rev. Phytopathol., <https://www.annualreviews.org/content/journals/10.1146/annurev-phyto-121323-020949>. **Encode: minimum 3-year interval between Brassicaceae in the same bed (2-year break).**
+**Brassicas — clubroot (*Plasmodiophora brassicae*).** Resting spores survive in soil **up to 20
+years**, but viability declines sharply in the first two years without a host and then slowly over
+the next 10–20. A **>2-year break** from host crops significantly reduces soil resting-spore
+concentration — reported at roughly **90% reduction with a two-year break**. Sources: Peng et al.,
+*"A >2-year crop rotation reduces resting spores of Plasmodiophora brassicae in soil and the impact
+of clubroot on canola,"* Eur. J. Agronomy,
+<https://www.sciencedirect.com/science/article/abs/pii/S1161030115300125>, Ernst et al., *Plant
+Pathology* (2019), <https://bsppjournals.onlinelibrary.wiley.com/doi/10.1111/ppa.12949>, *"Clubroot
+Disease: 145 Years Post-Discovery,"* Annu. Rev. Phytopathol.,
+<https://www.annualreviews.org/content/journals/10.1146/annurev-phyto-121323-020949>. **Encode:
+minimum 3-year interval between Brassicaceae in the same bed (2-year break).**
 
-**Alliums — white rot (*Sclerotium cepivorum* / *Stromatinia cepivora*).** Sclerotia survive **20–40 years**. **Rotation alone does not work**; UC IPM and multiple extension services state that the long survival period makes rotation impractical and that the pathogen is effectively impossible to eliminate once introduced. Sources: UC IPM, <https://ipm.ucanr.edu/agriculture/onion-and-garlic/white-rot/>; UMass, <https://www.umass.edu/agriculture-food-environment/vegetable/fact-sheets/alliums-white-rot>; RHS, <https://www.rhs.org.uk/disease/onion-white-rot>. Management is exclusion (clean sets, clean tools, clean soil movement) and, experimentally, repeated application of **sclerotial germination stimulants** (diallyl disulfide) or bait crops to deplete inoculum in the absence of a host — see <https://www.ncbi.nlm.nih.gov/pmc/articles/PMC6356189/> and <https://apsjournals.apsnet.org/doi/10.1094/PDIS-04-23-0688-RE>. **Encode: if white rot is reported at a site, exclude Alliums indefinitely and surface a sanitation protocol — do not offer a rotation interval, because there isn't one that works.**
+**Alliums — white rot (*Sclerotium cepivorum* / *Stromatinia cepivora*).** Sclerotia survive **20–40
+years**. **Rotation alone does not work**, UC IPM and multiple extension services state that the
+long survival period makes rotation impractical and that the pathogen is effectively impossible to
+eliminate once introduced. Sources: UC IPM,
+<https://ipm.ucanr.edu/agriculture/onion-and-garlic/white-rot/>, UMass,
+<https://www.umass.edu/agriculture-food-environment/vegetable/fact-sheets/alliums-white-rot>, RHS,
+<https://www.rhs.org.uk/disease/onion-white-rot>. Management is exclusion (clean sets, clean tools,
+clean soil movement) and, experimentally, repeated application of **sclerotial germination
+stimulants** (diallyl disulfide) or bait crops to deplete inoculum in the absence of a host — see
+<https://www.ncbi.nlm.nih.gov/pmc/articles/PMC6356189/> and
+<https://apsjournals.apsnet.org/doi/10.1094/PDIS-04-23-0688-RE>. **Encode: if white rot is reported
+at a site, exclude Alliums indefinitely and surface a sanitation protocol — do not offer a rotation
+interval, because there isn't one that works.**
 
-**Solanaceae.** Verticillium and Fusarium wilts, early blight (*Alternaria*), and bacterial canker persist in soil and residue. Standard extension guidance is a **3–4 year rotation** away from tomato/potato/pepper/eggplant. (Guidance level; effectiveness is pathogen-specific and Verticillium's wide host range limits it.)
+**Solanaceae.** Verticillium and Fusarium wilts, early blight (*Alternaria*), and bacterial canker
+persist in soil and residue. Standard extension guidance is a **3–4 year rotation** away from
+tomato/potato/pepper/eggplant. (Guidance level, effectiveness is pathogen-specific and
+Verticillium's wide host range limits it.)
 
 **Rotation is a hard constraint on the *temporal* dimension of the design.** It also interacts with agrivoltaics: fixed panel geometry means shade patterns are stable year to year, so a bed suited to lettuce this year is suited to lettuce next year — which creates *pressure toward monoculture in place* and makes rotation harder. This is a genuine design tension the engine should surface: rotation groups need to be assigned to bed *sets* of similar DLI so they can be rotated among themselves.
 
@@ -746,18 +919,18 @@ The following are commonly published in companion charts and should be **exclude
 | Claim | Status | Why |
 |---|---|---|
 | Basil improves the **flavour** of tomatoes | **E** | No controlled evidence. The pairing is a culinary and cultural association |
-| "Carrots love tomatoes" (and most pairings in that book) | **D/E** | Anecdotal, untested, or debunked; no proposed mechanism |
-| Aromatic herbs repel pests from neighbouring crops via scent | **E** | Directly contradicted — Finch & Collier 2003 found aromatic plants no better than non-aromatic; Uvah & Coaker 1984 found pungent onions did not deter landing |
-| A few marigolds interplanted among tomatoes control nematodes | **E** | Requires a dense full-season stand of living roots; scattered plants have no measurable effect |
+| "Carrots love tomatoes" (and most pairings in that book) | **D/E** | Anecdotal, untested, or debunked, no proposed mechanism |
+| Aromatic herbs repel pests from neighbouring crops via scent | **E** | Directly contradicted — Finch & Collier 2003 found aromatic plants no better than non-aromatic, Uvah & Coaker 1984 found pungent onions did not deter landing |
+| A few marigolds interplanted among tomatoes control nematodes | **E** | Requires a dense full-season stand of living roots, scattered plants have no measurable effect |
 | Borage "improves the flavour/growth" of strawberries | **D** | No controlled evidence (borage *is* a genuine bee forage — that part is Grade B) |
 | Chamomile as a "physician plant" improving neighbours' health | **E** | Biodynamic origin, no mechanism, no evidence |
 | Garlic/chives planted near roses prevent black spot / aphids | **D/E** | Not supported by controlled trials |
 | Nasturtium as an aphid "sacrifice" that protects neighbours | **C** | It is genuinely attractive to aphids, but without destruction it is a **nursery**, not a trap — see §4.3 |
 | Legumes "feed" adjacent heavy feeders in the same season | **D** | Overstated: same-season transfer typically <15% of legume N (§4.8) |
-| Do not plant X near Y because of "root incompatibility" | **E** | No mechanism; usually a restatement of ordinary competition |
+| Do not plant X near Y because of "root incompatibility" | **E** | No mechanism, usually a restatement of ordinary competition |
 | Planting by moon phase / biodynamic preparations | **E** | No supported mechanism |
-| Dill/fennel "harms" tomatoes | **D** | Fennel allelopathy is weakly supported; dill is a good insectary plant |
-| Onions "stunt" beans and peas | **D** | Widely repeated; no controlled support located |
+| Dill/fennel "harms" tomatoes | **D** | Fennel allelopathy is weakly supported, dill is a good insectary plant |
+| Onions "stunt" beans and peas | **D** | Widely repeated, no controlled support located |
 
 **Product principle:** the folklore has real user demand. The right response is not to hide it but to **label it**. Show a "traditional pairing" badge distinct from an "evidence-based" badge, with the evidence grade and citations one tap away. This is both honest and a differentiator — every competitor presents folklore as fact.
 
@@ -870,7 +1043,8 @@ CREATE TABLE rotation_constraint (
 
 1. Only **grade A and B** interactions generate positive recommendations.
 2. **Grade C** appears as "experimental / worth trying," never as a scoring input.
-3. **Grades D and E** are excluded from scoring entirely; render only in a labelled "traditional practice" panel with the grade visible.
+3. **Grades D and E** are excluded from scoring entirely, render only in a labelled "traditional
+   practice" panel with the grade visible.
 4. Any interaction with non-empty `requires_management` renders those steps **inline with the recommendation**, not in a tooltip.
 5. Every recommendation surfaces `competition_penalty` alongside the benefit. A companion that reduces pest damage 30% but costs 25% yield to competition is not obviously a win.
 6. `valid_climate` / `valid_region` / `valid_scale` are filters, not metadata. A result from 1-ha maize plots in Kenya does not fire for a 2 m² raised bed in Ohio.
@@ -882,7 +1056,11 @@ CREATE TABLE rotation_constraint (
 
 ### 5.1 Plant spacing and competition
 
-The classical agronomic result is the **law of constant final yield**: above a threshold density, total biomass per unit area is approximately independent of planting density; only yield *per plant* changes (Kira, Ogawa & Shinozaki 1953). What varies with density is the **partitioning** — and for vegetables the harvested organ is usually size-graded, so density controls product size, not total mass.
+The classical agronomic result is the **law of constant final yield**: above a threshold density,
+total biomass per unit area is approximately independent of planting density, only yield *per plant*
+changes (Kira, Ogawa & Shinozaki 1953). What varies with density is the **partitioning** — and for
+vegetables the harvested organ is usually size-graded, so density controls product size, not total
+mass.
 
 The workhorse model is the **reciprocal yield law**:
 
@@ -894,7 +1072,15 @@ The workhorse model is the **reciprocal yield law**:
 Total yield per area:  Y = d·w = d / (a + b·d)
 ```
 
-Independently derived by Shinozaki & Kira (1956), de Wit & Ennik (1958), Bleasdale & Nelder (1960), and Holliday (1960). Bleasdale & Nelder generalised it to `w^(-θ) = a + b·d` to accommodate the yield *decline* at very high density that the simple form cannot represent (the law of constant final yield is not always satisfied). Reviews: *"Yield-density equations and their application for agronomic research: a review,"* <https://www.researchgate.net/publication/284034177_Yield-density_equations_and_their_application_for_agronomic_research_a_review>; Bleasdale & Nelder, *Nature* 188:342 (1960), <https://www.nature.com/articles/188342a0>; Holliday, *Nature* 217:289 (1968), <https://www.nature.com/articles/217289a0>; and the competition review at <https://raco.cat/index.php/TreballsSCBiologia/article/download/14924/320425/0>.
+Independently derived by Shinozaki & Kira (1956), de Wit & Ennik (1958), Bleasdale & Nelder (1960),
+and Holliday (1960). Bleasdale & Nelder generalised it to `w^(-θ) = a + b·d` to accommodate the
+yield *decline* at very high density that the simple form cannot represent (the law of constant
+final yield is not always satisfied). Reviews: *"Yield-density equations and their application for
+agronomic research: a review,"*
+<https://www.researchgate.net/publication/284034177_Yield-density_equations_and_their_application_for_agronomic_research_a_review>,
+Bleasdale & Nelder, *Nature* 188:342 (1960), <https://www.nature.com/articles/188342a0>, Holliday,
+*Nature* 217:289 (1968), <https://www.nature.com/articles/217289a0>, and the competition review at
+<https://raco.cat/index.php/TreballsSCBiologia/article/download/14924/320425/0>.
 
 **Recommended implementation.** Do not try to fit reciprocal-yield parameters for 200 crops — the data does not exist at garden scale. Instead:
 
@@ -1006,7 +1192,9 @@ Root-depth complementarity is one of the few companion mechanisms with direct ex
 - **Medium** (0.5–1.0 m): brassicas, carrot, pepper, bean, pea, squash, potato
 - **Deep** (> 1.0 m): tomato, sweet maize, melon, sweet potato, most perennials and trees
 
-**Guild rule:** favour combinations spanning at least two strata; penalise combinations concentrated in one, especially the shallow stratum (they compete head-on for the same water and nutrient pool and dry the surface fastest).
+**Guild rule:** favour combinations spanning at least two strata, penalise combinations concentrated
+in one, especially the shallow stratum (they compete head-on for the same water and nutrient pool
+and dry the surface fastest).
 
 `p` (depletion fraction) is a second, underused signal: it is the fraction of available soil water the crop can deplete before stress. Crops with **low p** (spinach 0.20, pepper 0.30, lettuce 0.30) are **drought-sensitive** and should be flagged as needing consistent irrigation — and are precisely the crops that benefit most from PV shade reducing evaporative demand. That is a genuinely useful, evidence-backed recommendation the engine can make that no conventional garden app can.
 
@@ -1066,15 +1254,21 @@ STAGE 6  RANK AND EXPLAIN
   contributing interaction, and the citations.
 ```
 
-**Design rule: never return an unexplained exclusion.** ECOCROP's minimum-across-parameters structure gives you the limiting factor for free; use it. "Not recommended: only 8 mol·m⁻²·d⁻¹ available in this bed in July, tomatoes need 14+" is a good answer. A silently missing tomato is not.
+**Design rule: never return an unexplained exclusion.** ECOCROP's minimum-across-parameters
+structure gives you the limiting factor for free, use it. "Not recommended: only 8 mol·m⁻²·d⁻¹
+available in this bed in July, tomatoes need 14+" is a good answer. A silently missing tomato is
+not.
 
 ---
 
 ## 7. Known gaps and things to verify before shipping
 
-1. **Faust & Logan (2018) full text was not retrievable** (ASHS returns 403 to automated fetch). Bibliographic details and method are confirmed from multiple secondary sources; the map's numeric contours are not. Obtain the PDF before using it as a calibration reference.
+1. **Faust & Logan (2018) full text was not retrievable** (ASHS returns 403 to automated fetch).
+   Bibliographic details and method are confirmed from multiple secondary sources, the map's numeric
+   contours are not. Obtain the PDF before using it as a calibration reference.
 2. **The agrivoltaics meta-analysis (Agron. Sustain. Dev. 2025) is paywalled to automated fetch.** The 50% shade tipping point and the shade-tolerant/sensitive crop groupings are consistently reported across reviews, but sample sizes and confidence intervals were not verified here. Get the full text before quoting effect sizes.
-3. **The "Beck et al. 2012" 50%-shade threshold** is cited *within* the agrivoltaic reviews; the primary reference was not located and should be traced.
+3. **The "Beck et al. 2012" 50%-shade threshold** is cited *within* the agrivoltaic reviews, the
+   primary reference was not located and should be traced.
 4. **Most DLI values in §3.6 are Tier C inferences.** This is a genuine gap in the horticultural literature, not a research failure here. Treat the ordinal ranking as reliable and the absolute values as provisional. Highest-value follow-up: a systematic review of shade-cloth trials (which report % shading and can be converted to DLI given site radiation) would upgrade 20–30 rows from C to B.
 5. **Soil data sources (SoilGrids, SSURGO) have not been researched.** Verify licence terms and resolution before committing.
 6. **OSU Croptime's actual crop and cultivar coverage** was not enumerated (search budget exhausted). Confirm which vegetables have published GDD models before designing around GDD-based scheduling.
@@ -1101,7 +1295,7 @@ Full URLs are inline throughout. Principal primary sources:
 - Khan, Z.R. et al. (2010). Exploiting phytochemicals for developing a 'push–pull' crop protection strategy. *J. Exp. Bot.* 61(15):4185.
 - Luedeling, E. & Brown, P.H. (2011). A global analysis of the comparability of winter chill models. *Int. J. Biometeorol.*
 - Luedeling, E. et al. (2011). The Dynamic Model provides the best description of the chill process. *HortScience* 46(3):420–425.
-- Martin-Guay, M.-O. et al. (2018); Yu, Y. et al. (2015) — LER meta-analyses.
+- Martin-Guay, M.-O. et al. (2018), Yu, Y. et al. (2015) — LER meta-analyses.
 - McKenney, D.W. et al. (2001). Canada's plant hardiness zones revisited. *Can. J. Plant Sci.*
 - Ouellet, C.E. & Sherk, L.C. (1967). Woody ornamental plant zonation indices of winter hardiness.
 - Shelton, A.M. & Badenes-Pérez, F.R. (2006). Concepts and applications of trap cropping. *Annu. Rev. Entomol.* 51.

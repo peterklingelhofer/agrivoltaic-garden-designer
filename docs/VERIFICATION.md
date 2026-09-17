@@ -3,20 +3,20 @@
 Resolution pass on the highest-risk unsourced claims in `00-DECISIONS.md`, against the gaps
 ledger in `CITATIONS.md` §A/§B. Date: 2026-07-30.
 
-Verdict vocabulary: **RESOLVED** = primary text obtained and quoted. **PARTIALLY RESOLVED** =
-some sub-claims proven, others not. **UNRESOLVABLE** = searched properly, not found; say so in
-the product rather than implying a source exists.
+Verdict vocabulary: **RESOLVED** = primary text obtained and quoted. **PARTIALLY RESOLVED** = some
+sub-claims proven, others not. **UNRESOLVABLE** = searched properly, not found, say so in the
+product rather than implying a source exists.
 
 | # | Item | Verdict |
 |---|---|---|
 | 1 | Massachusetts SMART dual-use | RESOLVED, and the decision record is materially wrong/stale |
 | 2 | DIN SPEC 91434 (3 negatives + 4 positives) | RESOLVED, all seven correct |
-| 3 | Dehesa / montado distance template | PARTIALLY RESOLVED, "Marcos et al." is unverifiable; `tek.ts` fixed 2026-08-09 |
+| 3 | Dehesa / montado distance template | PARTIALLY RESOLVED, "Marcos et al." is unverifiable, `tek.ts` fixed 2026-08-09 |
 | 4 | Desmodium mechanism revision | RESOLVED |
-| 5a | Penumbra ~7.5 cm at 4 m | RESOLVED as WRONG, off by 2x; correct derivation below |
+| 5a | Penumbra ~7.5 cm at 4 m | RESOLVED as WRONG, off by 2x, correct derivation below |
 | 5b | Inter-reflection 3-8% | UNRESOLVABLE (formula PARTIAL, magnitude unverifiable) |
-| 6 | Faust & Logan 2018; Zhang et al. 2025 | RESOLVED, both full texts retrieved |
-| 7 | trackgdd / hydroponics / ReduSystems values | RESOLVED 2026-09-11 by decision record 23; the base temperatures stay open |
+| 6 | Faust & Logan 2018, Zhang et al. 2025 | RESOLVED, both full texts retrieved |
+| 7 | trackgdd / hydroponics / ReduSystems values | RESOLVED 2026-09-11 by decision record 23, the base temperatures stay open |
 
 ---
 
@@ -30,9 +30,9 @@ stale in another, and incomplete in three. The compliance check must be downgrad
 Failed:
 
 - `https://www.mass.gov/doc/*/download` through any automated client: HTTP 403. The documents are
-  public and need no account; mass.gov simply does not serve them to scripted requests, so they
-  have to be opened and read in an ordinary browser. Anyone re-checking these citations should
-  plan for that rather than assume the URLs are dead
+  public and need no account, mass.gov simply does not serve them to scripted requests, so they have
+  to be opened and read in an ordinary browser. Anyone re-checking these citations should plan for
+  that rather than assume the URLs are dead
 - `web.archive.org` CDX API and `/web/<ts>id_/` replay: HTTP 429 on every attempt across ~15 min
 - `https://www.agrisolarclearinghouse.org/massachusetts-policy-guide/`: 301 off-host
 
@@ -56,14 +56,14 @@ Succeeded:
 
 ### 1.2 The regime is now SMART 3.0 / 225 CMR 28.00, not 225 CMR 20.00
 
-`00-DECISIONS.md` §8 and `CITATIONS.md` B3 both cite 225 CMR 20.00. That is the legacy program.
-DOER filed SMART 3.0 as a **new** regulation, **225 CMR 28.00**, in August 2025; mass.gov now
-labels the old page "SMART 1.0 & 2.0 Program Details". The clean version currently served is
-dated June 2026. The defined term also changed: **ASTGU is now "Dual-use Agricultural Solar
-Tariff Generation Unit"**, and the numeric parameters moved out of the guideline and **into the
-regulation** at 225 CMR 28.07(5)(b)3.
+`00-DECISIONS.md` §8 and `CITATIONS.md` B3 both cite 225 CMR 20.00. That is the legacy program. DOER
+filed SMART 3.0 as a **new** regulation, **225 CMR 28.00**, in August 2025, mass.gov now labels the
+old page "SMART 1.0 & 2.0 Program Details". The clean version currently served is dated June 2026.
+The defined term also changed: **ASTGU is now "Dual-use Agricultural Solar Tariff Generation
+Unit"**, and the numeric parameters moved out of the guideline and **into the regulation** at 225
+CMR 28.07(5)(b)3.
 
-Both regimes were read. The numbers agree; the citation in our docs does not.
+Both regimes were read. The numbers agree, the citation in our docs does not.
 
 ### 1.3 (a) The >=50% sunlight requirement, verbatim
 
@@ -111,8 +111,8 @@ Three things our record gets wrong or omits:
 Our 8 ft / 10 ft is **correct**, and the 2022 guideline text is word-for-word the same on both
 numbers. SMART 3.0 adds a conditional 10 ft -> 8 ft reduction for trackers that our record lacks.
 
-Note the exact referents: fixed tilt is the **lowest panel point**; tracking is the panel **at
-its horizontal position**. A geometric checker must use those two definitions, not a generic
+Note the exact referents: fixed tilt is the **lowest panel point**, tracking is the panel **at its
+horizontal position**. A geometric checker must use those two definitions, not a generic
 "clearance".
 
 ### 1.5 (c) Capacity cap, verbatim
@@ -181,21 +181,20 @@ The tool is a public web app at `s3.us-east-2.amazonaws.com/bluewave-shade/jan23
 `js/app.js` exposes a per-month checkbox set (JAN..DEC) and bins results in 10% shade increments.
 Its own page footer reads "UNDER CONSTRUCTION".
 
-**This is decisive.** Compliance is defined as the output of a specific DOER-published program,
-"as calculated by the SMART Tool". An independent shading engine, however accurate, does not
-demonstrate compliance. Our tool can predict what the SMART Tool will say; it cannot substitute
-for it.
+**This is decisive.** Compliance is defined as the output of a specific DOER-published program, "as
+calculated by the SMART Tool". An independent shading engine, however accurate, does not demonstrate
+compliance. Our tool can predict what the SMART Tool will say, it cannot substitute for it.
 
 ### 1.8 Exception pathway
 
 Every project specification requirement is waivable. 225 CMR 28.07(5)(b)3.b.iv provides for an
-exception from "one or more of the Project Specification Requirements in 225 CMR
-28.07(5)(b)3.b.i. through iii." The guideline requires the applicant to > "demonstrate how each
-square foot of land will be used for agriculture production, including at least 51% of the area
-directly beneath the solar modules" and to show the design yields "equal or greater total
-agricultural yields than if both the agricultural crop and solar array were grown and installed
-separately". A design failing the 50%/8 ft/10 ft parameters is therefore **not** non-compliant;
-it is a design that needs an exception request.
+exception from "one or more of the Project Specification Requirements in 225 CMR 28.07(5)(b)3.b.i.
+through iii." The guideline requires the applicant to > "demonstrate how each square foot of land
+will be used for agriculture production, including at least 51% of the area directly beneath the
+solar modules" and to show the design yields "equal or greater total agricultural yields than if
+both the agricultural crop and solar array were grown and installed separately". A design failing
+the 50%/8 ft/10 ft parameters is therefore **not** non-compliant, it is a design that needs an
+exception request.
 
 ### 1.9 RECOMMENDATION
 
@@ -211,7 +210,7 @@ disqualify a self-certifying check:
    geometry.
 
 Ship it as: *"Estimated against the Massachusetts SMART 3.0 dual-use design parameters. DOER
-requires its own Shading Analysis Tool for the actual determination; results below are indicative
+requires its own Shading Analysis Tool for the actual determination, results below are indicative
 only."* Two-state output ("meets the expedited design parameters" / "would require an exception
 request"), never "compliant" / "non-compliant".
 
@@ -240,9 +239,9 @@ Full 26-page text obtained and read. Two independent copies located:
   government, corroborating copy, also 26 pp)
 
 Also tried: `dinmedia.de/de/normen-produkte/din-spec-pas/din-spec-pas-kostenlos-1068050` (confirms
-the free-DIN-SPEC portal exists), `dinmedia.de/en/technical-rule/din-spec-91434/337886742`
-(product page only). Note the fetch could not parse the PDF binary; the file itself was fine once
-read directly. Free-download status confirmed from the standard's own Vorwort: *"Die kostenfreie
+the free-DIN-SPEC portal exists), `dinmedia.de/en/technical-rule/din-spec-91434/337886742` (product
+page only). Note the fetch could not parse the PDF binary, the file itself was fine once read
+directly. Free-download status confirmed from the standard's own Vorwort: *"Die kostenfreie
 Bereitstellung dieses Dokuments als PDF-Version über den Beuth WebShop wurde im Vorfeld
 finanziert."*
 
@@ -261,8 +260,8 @@ the rows, no minimum clearance at all** (5.2.2: *"Für Agri-PV-Anlagen der Kateg
 Aufständerung mit lichter Höhe nötig."*). Each category subdivides into use-classes A-D (Table 1).
 
 Reference yield basis, clause 5.2.11: average of the last 3 years for perennials/grassland, or
-averaged over 3 crop-rotation cycles for arable rotations; if the crop was not previously grown
-on site, three-year published statistics (Destatis or state agricultural statistics).
+averaged over 3 crop-rotation cycles for arable rotations, if the crop was not previously grown on
+site, three-year published statistics (Destatis or state agricultural statistics).
 
 ### Negatives
 
@@ -327,18 +326,18 @@ instantiated from what we hold today.
 
 Cubera, E. & Moreno, G. (2007). Effect of single *Quercus ilex* trees upon spatial and seasonal
 changes in soil water content in dehesas of central western Spain. *Annals of Forest Science*
-64:355-364. DOI [10.1051/forest:2007012](https://doi.org/10.1051/forest:2007012). Monthly TDR
-θ measurements 2002-2005, **2-30 m from trunk**, to 300 cm depth, four dehesas. Results are
-reported as beneath-canopy vs beyond-canopy contrasts by depth and season, not as a fitted
-distance function. Full text paywalled; no numeric gradient extracted.
+64:355-364. DOI [10.1051/forest:2007012](https://doi.org/10.1051/forest:2007012). Monthly TDR θ
+measurements 2002-2005, **2-30 m from trunk**, to 300 cm depth, four dehesas. Results are reported
+as beneath-canopy vs beyond-canopy contrasts by depth and season, not as a fitted distance function.
+Full text paywalled, no numeric gradient extracted.
 
 Companion: Cubera & Moreno (2007), *Catena* 71:298-308 (ScienceDirect Cloudflare 403).
 
 Also checked and found **not** to be distance-gradient studies: Joffre & Rambal (1993), *Ecology*
-74:570-582 (canopy vs open contrast); Moreno (2008), *Agric. Ecosyst. Environ.* 123:239-244
-(three discrete zones). A search summariser asserted "PAR reduced ~25% near the trunk" for the
-latter; that figure is **not** in the abstract and must not be used. Moreno et al. (2005), *Plant
-and Soil* 277:153-162 is real but is root biomass, not light or moisture.
+74:570-582 (canopy vs open contrast), Moreno (2008), *Agric. Ecosyst. Environ.* 123:239-244 (three
+discrete zones). A search summariser asserted "PAR reduced ~25% near the trunk" for the latter, that
+figure is **not** in the abstract and must not be used. Moreno et al. (2005), *Plant and Soil*
+277:153-162 is real but is root biomass, not light or moisture.
 
 Failed: academia.edu 403, researchgate 403 (multiple), sciencedirect 403 (multiple), Springer
 auth walls on all three Moreno/Cubera full texts.
@@ -355,17 +354,17 @@ shape**. Close `CITATIONS.md` A1 as "citation corrected, template not yet instan
 
 `src/data/tek.ts` no longer names "Marcos et al." anywhere, in comment or in the user-facing
 `DEHESA_GRADIENT_CAVEAT` string. The rewritten caveat keeps the true part of the old one, that the
-endpoints follow the published qualitative direction while the intermediate samples are
-interpolated rather than measured, and drops the instruction to replace the curve with a paper
-that does not exist. `montero2008-dehesa-light` (present in `docs/CITATIONS.csl.json`) has been
-added to `dehesaGradient`'s `citedDerived` citations alongside `moreno2009-dehesa` and
-`simionesei2018-montado-water`, because it genuinely backs the qualitative shape of the light
-half; its own corpus entry is explicit that the regression coefficients were never obtained, so it
-is cited as shape corroboration only, not as a source for these magnitudes. The soil-moisture half
+endpoints follow the published qualitative direction while the intermediate samples are interpolated
+rather than measured, and drops the instruction to replace the curve with a paper that does not
+exist. `montero2008-dehesa-light` (present in `docs/CITATIONS.csl.json`) has been added to
+`dehesaGradient`'s `citedDerived` citations alongside `moreno2009-dehesa` and
+`simionesei2018-montado-water`, because it genuinely backs the qualitative shape of the light half,
+its own corpus entry is explicit that the regression coefficients were never obtained, so it is
+cited as shape corroboration only, not as a source for these magnitudes. The soil-moisture half
 remains uncited to any distance-function paper, as this section already established, and the
-template stays geometry-derived rather than instantiated from Montero. Release blocker item 5
-below is closed for `tek.ts`; `00-DECISIONS.md`, `CITATIONS.md` and
-`docs/05-tek-agroecology.md` still name "Marcos et al." and were out of scope for this revision.
+template stays geometry-derived rather than instantiated from Montero. Release blocker item 5 below
+is closed for `tek.ts`, `00-DECISIONS.md`, `CITATIONS.md` and `docs/05-tek-agroecology.md` still
+name "Marcos et al." and were out of scope for this revision.
 
 ---
 
@@ -375,8 +374,8 @@ below is closed for `tek.ts`; `00-DECISIONS.md`, `CITATIONS.md` and
 
 Erdei, A.L., David, A.B., Savvidou, E.C., Džemedžionaitė, V., Chakravarthy, A., Molnár, B.P. &
 Dekker, T. (2024). The push-pull intercrop *Desmodium* does not repel, but intercepts and kills
-pests. *eLife* 13:e88695. DOI [10.7554/eLife.88695](https://doi.org/10.7554/eLife.88695). Version
-of Record 2024-04-16; reviewed preprint 2023; bioRxiv 2022.03.08.482778.
+pests. *eLife* 13:e88695. DOI [10.7554/eLife.88695](https://doi.org/10.7554/eLife.88695). Version of
+Record 2024-04-16, reviewed preprint 2023, bioRxiv 2022.03.08.482778.
 
 What the revision claims, precisely:
 
@@ -402,8 +401,8 @@ This is a parallel study, not a rebuttal.
 
 Separately, the **Striga** mechanism is a different pest guild and a different chemistry, and our
 docs risk merging them: Tsanuo, M.K. et al. (2003), *Phytochemistry* 64(1):265-273 (uncinanones
-A/B/C in root exudate; suicidal germination and radicle inhibition) and Hooper, A.M. et al.
-(2010), *Phytochemistry* 71(8-9):904-908 (isoschaftoside).
+A/B/C in root exudate, suicidal germination and radicle inhibition) and Hooper, A.M. et al. (2010),
+*Phytochemistry* 71(8-9):904-908 (isoschaftoside).
 
 **RECOMMENDATION:** In `00-DECISIONS.md` §11 replace the bare "(eLife)" with the full Erdei et
 al. 2024 citation and DOI. Keep the grade at "A outcome, non-transferable". State the mechanism
@@ -480,15 +479,15 @@ from 7.5 cm to 3.7 cm, elevation dependence added".
 
 ### 5b. Inter-reflection 3-8% in the shade strip for white backsheets
 
-**Verdict: formula PARTIALLY RESOLVED; the 3-8% magnitude is UNVERIFIABLE.**
+**Verdict: formula PARTIALLY RESOLVED, the 3-8% magnitude is UNVERIFIABLE.**
 
-Formula `E / (1 - rho_g (1 - SVF) rho_m)`: this is an instance of the standard two-surface
-enclosure radiosity result `B = (I - rho F)^-1 E` (Modest; Siegel & Howell), so the mathematics is
-legitimate. **No PV, bifacial or agrivoltaic publication was found stating it in this form.**
-Specifically checked and found to contain single-bounce terms only, with no iterative or
-infinite-series module<->ground term:
+Formula `E / (1 - rho_g (1 - SVF) rho_m)`: this is an instance of the standard two-surface enclosure
+radiosity result `B = (I - rho F)^-1 E` (Modest, Siegel & Howell), so the mathematics is legitimate.
+**No PV, bifacial or agrivoltaic publication was found stating it in this form.** Specifically
+checked and found to contain single-bounce terms only, with no iterative or infinite-series
+module<->ground term:
 
-- pvlib `bifacial/infinite_sheds.py` (single bounce; cites Mikofski et al. 2019 PVSC
+- pvlib `bifacial/infinite_sheds.py` (single bounce, cites Mikofski et al. 2019 PVSC
   `10.1109/PVSC40753.2019.8980572`)
 - Marion et al., A Practical Irradiance Model for Bifacial PV Modules, 44th IEEE PVSC 2017, full
   text via `https://www.osti.gov/servlets/purl/1460254`. Configuration factors only. **Not our
@@ -501,9 +500,9 @@ infinite-series module<->ground term:
 The 3-8% figure appears nowhere. Three superficially similar numbers were found and are all
 **different quantities**, and must not be substituted:
 
-1. ~8% simulated / ~25% measured increase in **module rear** irradiance from white ground cloth
-   in vertical bifacial systems (ground -> module, the opposite direction; driven by ground cover,
-   not backsheet)
+1. ~8% simulated / ~25% measured increase in **module rear** irradiance from white ground cloth in
+   vertical bifacial systems (ground -> module, the opposite direction, driven by ground cover, not
+   backsheet)
 2. ~1.5-2.5% module power gain from higher-reflectance PP vs PET backsheet (internal
    cell-to-module optical gain)
 3. ~2-3% "light recycling" from white backsheets reflecting through the front glass (also
@@ -530,9 +529,9 @@ sensitivity study. As written it is an unattributed number that reads as measure
 Faust, J.E. & Logan, J. (2018). Daily Light Integral: A Research Review and High-Resolution Maps
 of the United States. *HortScience* 53(9):1250-1257.
 
-Retrieved by rendering `https://journals.ashs.org/view/journals/hortsci/53/9/article-p1250.xml`
-in a JS-executing browser. The previously recorded 403 did not reproduce; plain HTTP clients get
-the empty SPA shell, which is not the same as a paywall. No login gate was hit.
+Retrieved by rendering `https://journals.ashs.org/view/journals/hortsci/53/9/article-p1250.xml` in a
+JS-executing browser. The previously recorded 403 did not reproduce, plain HTTP clients get the
+empty SPA shell, which is not the same as a paywall. No login gate was hit.
 
 - Map contour interval: **5 mol/m2/d bins**, 0-5 through 60-65
 - Summer peak, verbatim: > "The maximum DLI range in the original maps was 55-60 mol·m⁻²·d⁻¹
@@ -550,7 +549,7 @@ the empty SPA shell, which is not the same as a paywall. No login gate was hit.
   mol·m⁻²·d⁻¹."
 
 Note the paper's 0.45 PAR fraction and 4.48 umol/J agree with our `00-DECISIONS.md` §3 constants
-(0.45, 4.57 in-band). Our 4.57 is the McCree in-band value; Faust uses 4.48. Minor, but the
+(0.45, 4.57 in-band). Our 4.57 is the McCree in-band value, Faust uses 4.48. Minor, but the
 composite 2.06 umol/J figure should say which it derives from.
 
 **Attribution correction:** any "10-12 mol/m2/d minimum" in our docs traces to Purdue HO-238-W
@@ -559,10 +558,10 @@ composite 2.06 umol/J figure should say which it derives from.
 ### Zhang et al. 2025
 
 *Agronomy for Sustainable Development* 45:69, DOI
-[10.1007/s13593-025-01060-z](https://doi.org/10.1007/s13593-025-01060-z). Confirmed CC BY 4.0
-gold OA. Retrieved with `curl` and a browser UA from
-`https://link.springer.com/content/pdf/10.1007/s13593-025-01060-z.pdf`; an HTTP fetch on the same URL
-hit an `idp.springer.com` login redirect. 21 pp read.
+[10.1007/s13593-025-01060-z](https://doi.org/10.1007/s13593-025-01060-z). Confirmed CC BY 4.0 gold
+OA. Retrieved with `curl` and a browser UA from
+`https://link.springer.com/content/pdf/10.1007/s13593-025-01060-z.pdf`, an HTTP fetch on the same
+URL hit an `idp.springer.com` login redirect. 21 pp read.
 
 **Our "~50% shade tipping point" attribution is wrong on two counts.**
 
@@ -628,7 +627,7 @@ read as sourced.
 | Value | Status |
 |---|---|
 | Sweet corn Tbase 10 C, Tupper 30 C (`rows.ts` sweet-corn) | **CONFIRMED** against NDSU NDAWN corn GDD model. Standard agronomic value |
-| Pea Tbase 4.5 C (`rows.ts` pea-garden) | **Unverified.** Both cited primaries 403 (ScienceDirect S037837742500469X; Bierhuizen & Wagenvoort 1974, `0304423874900296`). Independent literature scatters roughly -1 to 6 C by stage and method, so 4.5 is plausible but unconfirmed |
+| Pea Tbase 4.5 C (`rows.ts` pea-garden) | **Unverified.** Both cited primaries 403 (ScienceDirect S037837742500469X, Bierhuizen & Wagenvoort 1974, `0304423874900296`). Independent literature scatters roughly -1 to 6 C by stage and method, so 4.5 is plausible but unconfirmed |
 | Tomato Tbase 10 C | **Plausible, unconfirmed.** Literature splits between 10 C (extension convention) and 5 C (a specific study). Cited review paywalled |
 | Cool-group Tbase 4.4 C (`schema.ts` ARCHETYPES.cool) | Literature clusters 3.5-5 C for lettuce, spinach and cole crops, so **4.4 is defensible**. Doc 04's stated range "0-4.4 C" is not: the 0 C lower bound is unsupported and should be dropped |
 
@@ -658,13 +657,13 @@ SPES-720NP) and the UI says the figure is this app's inference from the sun labe
 
 1. Strip the ReduSystems-derived numbers from the tomato, pepper and lettuce rows or relabel them
    Tier C, and **remove the extension citation IDs currently attached to them**. A wrong tier is
-   recoverable; a false citation is not.
+   recoverable, a false citation is not.
 2. Fix strawberry and raspberry in doc 04 to match Widmer, or delete those rows and let
    `00-DECISIONS.md` §6 be the single source.
 3. Keep sweet corn 10/30 C, keep cool archetype 4.4 C, drop doc 04's "0 C" lower bound.
 4. Pea and tomato Tbase need a human with journal access. Add them to A14 explicitly.
-5. Leave the Tier C rows in place but ensure the UI labels them as inference, per §7 of the
-   decision record. Ordinal ranking is the product; absolutes are not.
+5. Leave the Tier C rows in place but ensure the UI labels them as inference, per §7 of the decision
+   record. Ordinal ranking is the product, absolutes are not.
 
 ---
 
@@ -678,8 +677,8 @@ product rather than implied to have backing.
 2. **The `E / (1 - rho_g (1 - SVF) rho_m)` form as a PV-literature citation.** Valid radiosity,
    but no PV/bifacial/agrivoltaic paper states it. Marion 2017 is confirmed *not* to be it.
 3. **"Marcos et al.", dehesa radiation transmission.** No such paper found. Delete it. Deleted from
-   `src/data/tek.ts` 2026-08-09; still present in `00-DECISIONS.md`, `CITATIONS.md`
-   and `docs/05-tek-agroecology.md`.
+   `src/data/tek.ts` 2026-08-09, still present in `00-DECISIONS.md`, `CITATIONS.md` and
+   `docs/05-tek-agroecology.md`.
 4. **Montero et al. 2008 regression coefficients.** The paper is real and is the right shape, but
    the equation is behind the Springer paywall. The distance template cannot be instantiated from
    it yet.
@@ -693,27 +692,27 @@ product rather than implied to have backing.
    The regulation does not say.
 10. **RESOLVED, and no longer a constant.** The gap below which two designs are called tied is now
     derived per run by `scoreResolution`, from the bake's own error measured in raw units across
-    eight paired real-weather runs (Tromso, Bergen x2, Edinburgh, Amherst x2, Phoenix, Singapore;
-    preview against `FINAL_OPTIONS`). Season RSR moves under one percentage point everywhere;
-    crop share is a step and moves up to 0.0702. Both constants are the worst measured value, and
-    they are carried through the same min-max normalisation the score uses, which is what makes
-    the margin widen exactly where the candidates crowd together. It covers all eight, including
-    the Bergen courtyard that defeated the previous constant, and is tighter than that constant
-    wherever the set is well separated. **What remains open** is that both raw constants rest on
-    eight runs at one plot aspect ratio and one objective; the crop-share figure in particular is
-    a step whose size depends on how many crops sit near the light gate, so a catalogue change
-    moves it. Re-measure after any change to the light gate or to the crop DLI values. Note also
-    that Open-Meteo rate-limits (429) after a few dozen `resolveSite` calls, so gather in batches.
+    eight paired real-weather runs (Tromso, Bergen x2, Edinburgh, Amherst x2, Phoenix, Singapore,
+    preview against `FINAL_OPTIONS`). Season RSR moves under one percentage point everywhere, crop
+    share is a step and moves up to 0.0702. Both constants are the worst measured value, and they
+    are carried through the same min-max normalisation the score uses, which is what makes the
+    margin widen exactly where the candidates crowd together. It covers all eight, including the
+    Bergen courtyard that defeated the previous constant, and is tighter than that constant wherever
+    the set is well separated. **What remains open** is that both raw constants rest on eight runs
+    at one plot aspect ratio and one objective, the crop-share figure in particular is a step whose
+    size depends on how many crops sit near the light gate, so a catalogue change moves it.
+    Re-measure after any change to the light gate or to the crop DLI values. Note also that
+    Open-Meteo rate-limits (429) after a few dozen `resolveSite` calls, so gather in batches.
 11. Unchanged from the existing ledger and not re-examined: A2 wind reduction, A3
     frost/dew, A4 VPD deltas, A9 the 0.25 deg/min timestep justification, A15 soil data licensing,
     A16 Croptime coverage.
 
 ## Searched and not found: an upper DLI bound for anything but lettuce
 
-Asked because the recommender cannot rank on over-light, and a woodland ephemeral therefore
-scores a PERFECT light fit in full desert sun. `dliFit` in `recommend/stages/light-gate.ts` rises
-to 1.0 at the crop's target and stays there for any brighter bed; ramps' target is 9 mol/m2/d, a
-Phoenix bed reads 52.9, and it scores exactly as well on light as okra does.
+Asked because the recommender cannot rank on over-light, and a woodland ephemeral therefore scores a
+PERFECT light fit in full desert sun. `dliFit` in `recommend/stages/light-gate.ts` rises to 1.0 at
+the crop's target and stays there for any brighter bed, ramps' target is 9 mol/m2/d, a Phoenix bed
+reads 52.9, and it scores exactly as well on light as okra does.
 
 The obvious fix is to read `dliTargetHigh` as a ceiling. **That would reverse the sources.** Those
 values are the top of a stated RANGE, and several of the ranges were written from open-ended
@@ -733,8 +732,8 @@ What the corpus actually contains, after searching doc 04, doc 05 and the decisi
 
 The search was extended beyond the repo's own corpus to look for a shade requirement for ramps
 specifically, since ramps is the crop that raised this. The USDA National Agroforestry Center's
-*Forest Farming Ramps* (AF Note-47, December 2014; Chamberlain, Beegle and Lajeunesse Connette;
-US federal, public domain) was retrieved and its text extracted. Under **TREE COVER** it states,
+*Forest Farming Ramps* (AF Note-47, December 2014, Chamberlain, Beegle and Lajeunesse Connette, US
+federal, public domain) was retrieved and its text extracted. Under **TREE COVER** it states,
 verbatim:
 
 > Ramps need lots of sun early in the growing season, and they like shade when the growing season
@@ -770,10 +769,10 @@ ceiling* and *A shade plant on a bright bed is not automatically an error*.
 
 Things that must not ship as an assertion in their current form.
 
-1. **The Massachusetts overlay must not ship as a CHECK.** Downgrade to ESTIMATE. DOER mandates
-   its own Shading Analysis Tool as the compliance method; the test window is Growing Season
-   Hours, not the annual DLI our engine produces; and every parameter is waivable. Also update the
-   citation from 225 CMR 20.00 to 225 CMR 28.00 (SMART 3.0) before any of this reaches a user.
+1. **The Massachusetts overlay must not ship as a CHECK.** Downgrade to ESTIMATE. DOER mandates its
+   own Shading Analysis Tool as the compliance method, the test window is Growing Season Hours, not
+   the annual DLI our engine produces, and every parameter is waivable. Also update the citation
+   from 225 CMR 20.00 to 225 CMR 28.00 (SMART 3.0) before any of this reaches a user.
 2. **The penumbra constant is numerically wrong** (7.5 cm vs 3.7 cm at 4 m). Harmless to the
    annual DLI conclusion, fatal to credibility if a reviewer checks it. Replace with the
    derivation.

@@ -207,7 +207,7 @@ const StatusLine = (): ReactElement => {
           : `Planted for you from the ${ARCHETYPE_LABEL[generated.archetype]} layout`
   const light =
     rasterStatus === 'loading'
-      ? 'being worked out...'
+      ? 'being computed...'
       : fullCheck
         ? 'full check done'
         : hasLight
@@ -725,7 +725,7 @@ export const PlantsPanel = (): ReactElement => {
       id="plants"
       title="What goes in each bed?"
       titleVisible={false}
-      subtitle="Combinations worked out for your beds from the light they get. Change any of it"
+      subtitle="Combinations computed for your beds from the light they get. Change any of it"
     >
       <StatusLine />
       {blocker !== null ? (

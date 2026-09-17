@@ -291,7 +291,7 @@ const ROOT_DEPTH_REFUSED = 'the soil here is too shallow for it'
 
 const rootDepthDetail = (remedy: RootDepthRemedy): string =>
   remedy.shortfallM <= 0
-    ? `its roots would reach ${formatMeters(remedy.cropDepthM)} and this bed is ${formatMeters(remedy.bedDepthM)} deep now, so it has the room; the ranking is catching up`
+    ? `its roots would reach ${formatMeters(remedy.cropDepthM)} and this bed is ${formatMeters(remedy.bedDepthM)} deep now, so it has the room, the ranking is catching up`
     : remedy.bedDepthM < ROOT_DEPTH_FLOOR_M
       ? `${ROOT_DEPTH_REFUSED}: this bed is ${formatMeters(remedy.bedDepthM)} deep, under the ${formatMeters(ROOT_DEPTH_FLOOR_M)} a bed needs. Raising it by ${formatMeters(remedy.shortfallM)} would give its roots room`
       : `${ROOT_DEPTH_LIMITED}: its roots would reach ${formatMeters(remedy.cropDepthM)} in deep soil and this bed is ${formatMeters(remedy.bedDepthM)} deep. Raising the bed by ${formatMeters(remedy.shortfallM)} would give them room`
@@ -327,7 +327,7 @@ export const explainLimitingFactor = (
         : cause.kind === 'chill'
           ? "winters here aren't cold enough for it to break dormancy"
           : cause.kind === 'cold-winter'
-            ? "winters here aren't cold enough for it; it grows only where they are"
+            ? "winters here aren't cold enough for it, it grows only where they are"
             : cause.kind === 'season-gdd'
               ? 'the growing season here is too short for it to reach maturity'
               : cause.kind === 'dli-minimum'
@@ -517,7 +517,7 @@ export const NATIVE_PREFERENCE_REACH =
  * preference that silently does nothing reads exactly like one that worked
  */
 export const NATIVE_REGION_UNKNOWN =
-  "No botanical region has been worked out for this garden yet, because the place hasn't been looked up or its coordinates fall outside the region map. Until there is one, favouring natives changes nothing in the order below"
+  "No botanical region has been computed for this garden yet, because the place hasn't been looked up or its coordinates fall outside the region map. Until there is one, favouring natives changes nothing in the order below"
 
 /**
  * The standing of both pollinator traits, in front of every use of them. They are tier C
@@ -526,7 +526,7 @@ export const NATIVE_REGION_UNKNOWN =
  * presented without that is a measurement as far as any reader can tell
  */
 export const POLLINATOR_TRAIT_BASIS =
-  'Both of these are worked out from the plant family and what is harvested from it, following Klein et al. 2007 for what a crop needs and the garden flower-visitor counts for what it offers. Neither was measured on this crop, so read them as classes'
+  'Both of these are computed from the plant family and what is harvested from it, following Klein et al. 2007 for what a crop needs and the garden flower-visitor counts for what it offers. Neither was measured on this crop, so read them as classes'
 
 /**
  * Whether the checklist records this crop growing wild where the garden is, in words.

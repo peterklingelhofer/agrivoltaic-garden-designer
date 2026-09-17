@@ -19,7 +19,7 @@ import { RequirementNotice } from './RequirementNotice'
  * there would be the same press twice
  */
 export const MISSING_RASTER =
-  "How much light reaches the ground hasn't been worked out yet, and everything on this panel is read off it"
+  "How much light reaches the ground hasn't been computed yet, and everything on this panel is read off it"
 
 export const MissingRaster = ({ testId }: { readonly testId: string }): ReactElement | null => {
   // subscribed to the key, built from a read: a builder returns a fresh object every call and

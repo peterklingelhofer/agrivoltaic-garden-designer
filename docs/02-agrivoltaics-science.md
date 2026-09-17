@@ -10,7 +10,7 @@ quantitative claim.
 - **[C]** conference proceedings / preprint (peer-review status noted inline)
 - **[S]** standard, statute, or regulatory guidance document
 - **[E]** extension-service or industry guidance, *not* peer-reviewed field data
-- **[?]** number could not be verified against a primary source; treat as provisional
+- **[?]** number could not be verified against a primary source, treat as provisional
 - **THIN** marks places where the evidence base is genuinely weak and the tool should express uncertainty
 
 ---
@@ -43,7 +43,7 @@ land uses. `LER = 1` is the break-even line.
 |---|---|---|
 | Dupraz et al. 2011 **[P]** | Half-density fixed APV, Montpellier FR | **1.35** |
 | Dupraz et al. 2011 **[P]** | Full-density fixed APV, Montpellier FR | **1.73** |
-| Amaducci et al. 2018 **[P]** | Agrovoltaico tracking, maize, N. Italy | **>1 in all scenarios**; best scenario produced ~2× the energy per unit area of segregated PV + monoculture biogas maize |
+| Amaducci et al. 2018 **[P]** | Agrovoltaico tracking, maize, N. Italy | **>1 in all scenarios**, best scenario produced ~2× the energy per unit area of segregated PV + monoculture biogas maize |
 | Weselek et al. 2019 (review) **[P]** | APV generally | land productivity increase **up to 70%** (LER ≈ 1.7) |
 | Trommsdorff et al. 2021 **[P]** | Heggelbach DE, drought year 2018 | land-use efficiency **~180–186%** |
 
@@ -84,8 +84,8 @@ DOI [10.1016/0002-1571(71)90022-7](https://doi.org/10.1016/0002-1571(71)90022-7)
 | Source | PAR/GHI (energy basis) | Notes |
 |---|---|---|
 | Britton & Dodd (1976) **[P]** | **0.41–0.45** | *Agricultural Meteorology* 17:1–7. DOI [10.1016/0002-1571(76)90080-7](https://doi.org/10.1016/0002-1571(76)90080-7) |
-| Meek et al. (1984) **[P]** | **≈0.45** | *Agronomy Journal* 76:939–945. DOI [10.2134/agronj1984.00021962007600060018x](https://doi.org/10.2134/agronj1984.00021962007600060018x). Derived from paired year-long PAR/shortwave records, Fresno CA; band 0.285–2.8 µm |
-| Jacovides et al. (2004) **[P]** | **0.451 (winter) – 0.456 (summer)**, annual mean ≈0.454; up to **0.501** hourly under overcast sky | *Agricultural and Forest Meteorology* 121:135–140. DOI [10.1016/j.agrformet.2003.10.001](https://doi.org/10.1016/j.agrformet.2003.10.001) |
+| Meek et al. (1984) **[P]** | **≈0.45** | *Agronomy Journal* 76:939–945. DOI [10.2134/agronj1984.00021962007600060018x](https://doi.org/10.2134/agronj1984.00021962007600060018x). Derived from paired year-long PAR/shortwave records, Fresno CA, band 0.285–2.8 µm |
+| Jacovides et al. (2004) **[P]** | **0.451 (winter) – 0.456 (summer)**, annual mean ≈0.454, up to **0.501** hourly under overcast sky | *Agricultural and Forest Meteorology* 121:135–140. DOI [10.1016/j.agrformet.2003.10.001](https://doi.org/10.1016/j.agrformet.2003.10.001) |
 
 **Recommended tool default: PAR/GHI = 0.45 by energy, with a user-adjustable 0.42–0.50 range.**
 The ratio rises under overcast/diffuse conditions (water vapour and aerosol absorb preferentially in
@@ -123,19 +123,19 @@ DLI = GHI_daily (MJ m⁻² d⁻¹) × 1e6 (J/MJ) × f_PAR (0.45) × 4.57 (µmol/
 Example: a 20 MJ m⁻² d⁻¹ summer day → PAR energy 9 MJ m⁻² d⁻¹ → **DLI ≈ 18.5–18.9 mol m⁻² d⁻¹**
 at 100% transmission. Equivalent form for kWh: `DLI ≈ GHI (kWh m⁻² d⁻¹) × 7.4`.
 
-US ambient DLI reference maps: Faust, J.E. & Logan, J. (2018). Daily Light Integral: a research review
-and high-resolution maps of the United States. *HortScience* 53(9):1250–1257.
-DOI [10.21273/HORTSCI13144-18](https://doi.org/10.21273/HORTSCI13144-18) **[P]**. Earlier monthly maps:
+US ambient DLI reference maps: Faust, J.E. & Logan, J. (2018). Daily Light Integral: a research
+review and high-resolution maps of the United States. *HortScience* 53(9):1250–1257. DOI
+[10.21273/HORTSCI13144-18](https://doi.org/10.21273/HORTSCI13144-18) **[P]**. Earlier monthly maps:
 Korczynski, P.C., Logan, J., Faust, J.E. (2002), *HortTechnology* 12:12–16 **[P]**. Use these for
 the tool's "ambient DLI at your location" baseline. Note: the internal crop-specific DLI tables in
-Faust & Logan could not be extracted; cite these two for **ambient DLI maps only**,
-not for per-crop thresholds **[?]**.
+Faust & Logan could not be extracted, cite these two for **ambient DLI maps only**, not for per-crop
+thresholds **[?]**.
 
 ### 1.4 Light saturation and light compensation points
 
 | Quantity | C3 | C4 | Source class |
 |---|---|---|---|
-| Light compensation point (LCP) | **~8–16 µmol m⁻² s⁻¹** | **~6–14 µmol m⁻² s⁻¹** | plant-physiology consensus (Taiz & Zeiger framing); shade leaves at low end, sun leaves at high end **[E/P]** |
+| Light compensation point (LCP) | **~8–16 µmol m⁻² s⁻¹** | **~6–14 µmol m⁻² s⁻¹** | plant-physiology consensus (Taiz & Zeiger framing), shade leaves at low end, sun leaves at high end **[E/P]** |
 | Light saturation point (LSP), leaf level | **~500 µmol m⁻² s⁻¹** (~25% of the ~2000 µmol m⁻² s⁻¹ midday clear-sky maximum) | **rarely saturates even at full sunlight** | see below |
 | LSP as fraction of full sun, canopy level, C3 crops | **25–60% of maximum sunlight** | n/a | Pang et al. (2019) and Carrier et al. (2019), as cited in Laub et al. 2022 §4.3 **[P, secondary citation]** |
 
@@ -171,7 +171,7 @@ Underlying dataset: Zenodo DOI [10.5281/zenodo.5716091](https://doi.org/10.5281/
 
 **Method.** 613 records screened → **58 studies**, **38 crop species**, **428 data points** (340
 excluding controls), aggregated to **nine crop groups**. Temperate and subtropical sites only
-(tropics excluded); greenhouse experiments excluded; studies with confounded treatments (e.g.
+(tropics excluded), greenhouse experiments excluded, studies with confounded treatments (e.g.
 simultaneous irrigation reduction) excluded. Response variable = relative crop yield vs unshaded
 control, log10-transformed, regressed on **RSR** (relative reduction in solar radiation, %) with a
 quadratic term, forced through the origin (0% RSR ≡ 100% yield), with random slopes for site.
@@ -195,9 +195,9 @@ quadratic term, forced through the origin (0% RSR ≡ 100% yield), with random s
 | Forages | 11 | — (benefit to ~25% RSR) | **103%** | **93% (75–117)** | shade-benefiting → tolerant |
 | Leafy vegetables | 4 | — | ~100% | **86% (61–120)** | shade-tolerant |
 | Tubers / root crops | 2 | — | — | disproportionate losses begin shortly after C3 cereals | tolerant → susceptible |
-| C3 cereals | 10 | — | less-than-proportional decline **only to 15% RSR**; disproportionate losses begin at **10% RSR**; shade-tolerant to 50% RSR, susceptible above | — | tolerant to 50%, then susceptible |
+| C3 cereals | 10 | — | less-than-proportional decline **only to 15% RSR**, disproportionate losses begin at **10% RSR**, shade-tolerant to 50% RSR, susceptible above | — | tolerant to 50%, then susceptible |
 | Grain legumes | 14 | — | — | **50% (41–61)** | **shade-susceptible from ~1% RSR** |
-| Maize (C4) | 10 | — | — | **45% (37–56)** | **most susceptible; disproportionate loss from ~1% RSR** |
+| Maize (C4) | 10 | — | — | **45% (37–56)** | **most susceptible, disproportionate loss from ~1% RSR** |
 
 Additional statements from the paper:
 
@@ -206,8 +206,8 @@ Additional statements from the paper:
 - "At around **50% of shading, all crops show susceptibility.**"
 - Berries reach their **highest** predicted yield at **~30% RSR**.
 - Forages are shade-benefiting to **25% RSR** and shade-tolerant above that.
-- Typical RSR ranges in real APV: **half-density fixed panels 28–50% RSR**; **tracking systems
-  15–36% RSR**; **full-density fixed 50%+ RSR** (Laub §4.3, citing Dupraz 2011, Elamri 2018,
+- Typical RSR ranges in real APV: **half-density fixed panels 28–50% RSR**, **tracking systems
+  15–36% RSR**, **full-density fixed 50%+ RSR** (Laub §4.3, citing Dupraz 2011, Elamri 2018,
   Amaducci 2018, Marrou 2013a, Valle 2017, Majumdar & Pasqualetti 2018).
 
 **Limitations the tool must not paper over:**
@@ -217,7 +217,7 @@ Additional statements from the paper:
 2. **n = 2 for tubers/root crops, n = 3 for fruity vegetables, n = 4 for leafy vegetables.** These
    three groups — precisely the ones a home-garden tool cares most about — rest on the thinnest data
    in the entire meta-analysis. **THIN.**
-3. **Reporting-basis bias.** Cereals and grain legumes are reported on a *dry matter* basis; fruits,
+3. **Reporting-basis bias.** Cereals and grain legumes are reported on a *dry matter* basis, fruits,
    berries and fruity vegetables on a *fresh biomass* basis. Shade reduces evapotranspiration, which
    raises tissue water content. Part of the apparent "shade benefit" for fresh-weight crops may be
    water, not carbon. Laub et al. explicitly flag this. Artru et al. (2018) found sugar beet under
@@ -242,11 +242,12 @@ Additional statements from the paper:
   expanded, total and specific leaf area increased — while radiation *conversion* efficiency (RCE)
   fell. Net: partial compensation.
 - Marrou, H., Guilioni, L., Dufour, L., Dupraz, C., Wery, J. (2013b). Microclimate under agrivoltaic
-  systems: is crop growth rate affected in the partial shade of solar panels? *Agricultural and Forest
-  Meteorology* 177:117–132. DOI [10.1016/j.agrformet.2013.04.012](https://doi.org/10.1016/j.agrformet.2013.04.012) **[P]**
-  Lettuce, cucumber, durum wheat, bean. Leaf-emission-rate differences appeared only in the **juvenile
-  phase (first ~3 weeks)**; crops largely acclimated thereafter. Water and nitrogen non-limiting in
-  this experiment, so it isolates the pure light effect.
+  systems: is crop growth rate affected in the partial shade of solar panels? *Agricultural and
+  Forest Meteorology* 177:117–132. DOI
+  [10.1016/j.agrformet.2013.04.012](https://doi.org/10.1016/j.agrformet.2013.04.012) **[P]**
+  Lettuce, cucumber, durum wheat, bean. Leaf-emission-rate differences appeared only in the
+  **juvenile phase (first ~3 weeks)**, crops largely acclimated thereafter. Water and nitrogen
+  non-limiting in this experiment, so it isolates the pure light effect.
 - Marrou, H., Dufour, L., Wery, J. (2013c). How does a shelter of solar panels influence water flows
   in a soil–crop system? *European Journal of Agronomy* 50:38–51.
   DOI [10.1016/j.eja.2013.05.004](https://doi.org/10.1016/j.eja.2013.05.004) **[P]**
@@ -262,13 +263,14 @@ Agrivoltaics provide mutual benefits across the food–energy–water nexus in d
 | Crop | Effect under panels |
 |---|---|
 | Chiltepín pepper (*Capsicum annuum* var. *glabriusculum*) | total fruit production **3× greater** |
-| Cherry tomato | production **2× greater**; CO₂ uptake and WUE each **+65%** |
-| Jalapeño | fruit production **similar** to control, achieved with **65% less transpirational water loss**; WUE **+157%** |
+| Cherry tomato | production **2× greater**, CO₂ uptake and WUE each **+65%** |
+| Jalapeño | fruit production **similar** to control, achieved with **65% less transpirational water loss**, WUE **+157%** |
 
-Microclimate: soil moisture **~15% higher** under panels on an alternate-day irrigation regime; air
-temperature **~1 °C cooler by day, ~0.5 °C warmer at night** (i.e. compressed diurnal range); lower
+Microclimate: soil moisture **~15% higher** under panels on an alternate-day irrigation regime, air
+temperature **~1 °C cooler by day, ~0.5 °C warmer at night** (i.e. compressed diurnal range), lower
 VPD and higher RH under panels. The daytime/nighttime temperature figures and the VPD/RH direction
-are from University of Arizona press materials rather than extracted from the paywalled tables **[?]**.
+are from University of Arizona press materials rather than extracted from the paywalled tables
+**[?]**.
 
 > **Critical caveat for a design tool.** This is the most-cited APV crop result and it is the *least*
 > generalisable. It is a semi-arid, irrigated, high-VPD site where the limiting factor is water and
@@ -289,16 +291,16 @@ and 2018 (hot, dry).
 | Winter wheat | **−19% to +3%** | **+2.7%** |
 | Potato | **−20% to +11%** | **+11%** |
 | Grass-clover | **−8% to −5%** | — |
-| Celeriac | not significantly reduced; **aerial biomass increased** | — |
+| Celeriac | not significantly reduced, **aerial biomass increased** | — |
 
 Plant height increased for all crops under APV (classic shade-avoidance). Soil temperature decreased
-in summer in both years; soil moisture reduced; **air temperature tended to be *higher* under the
+in summer in both years, soil moisture reduced, **air temperature tended to be *higher* under the
 array** — the opposite sign to the Arizona result, and an important contradiction (see §3).
 
-Companion design paper: Trommsdorff et al. (2021), *Renew. Sustain. Energy Rev.* 140:110694,
-DOI [10.1016/j.rser.2020.110694](https://doi.org/10.1016/j.rser.2020.110694) **[P]** — reports the
-as-built system delivered **~70% available PAR**, better than pre-construction simulation predicted;
-literature-wide light reductions of **12–40%** depending on module density and orientation; land-use
+Companion design paper: Trommsdorff et al. (2021), *Renew. Sustain. Energy Rev.* 140:110694, DOI
+[10.1016/j.rser.2020.110694](https://doi.org/10.1016/j.rser.2020.110694) **[P]** — reports the
+as-built system delivered **~70% available PAR**, better than pre-construction simulation predicted,
+literature-wide light reductions of **12–40%** depending on module density and orientation, land-use
 efficiency **~180–186%** in the 2018 drought year.
 
 Drought-mitigation mechanism confirmed in: Pataczek, L. et al. (2023). Agrivoltaics mitigate drought
@@ -306,13 +308,13 @@ effects in winter wheat. *Physiologia Plantarum*. DOI [10.1111/ppl.14081](https:
 
 **Amaducci / Ferrara, Piacenza IT (45°N) — the tracking-system modelling case**
 
-Amaducci, S., Yin, X., Colauzzi, M. (2018). *Applied Energy* 220:545–561.
-DOI [10.1016/j.apenergy.2018.03.081](https://doi.org/10.1016/j.apenergy.2018.03.081) **[P]**
-40-year climate record, rainfed maize, coupled radiation/shading model + GECROS crop model.
-Global radiation reduction: **29.5%** (double density) vs **13.4%** (single density); **23.2%**
-(sun-tracking) vs **20.0%** (static). Under **rainfed** conditions mean grain yield was **higher and
-more stable** under Agrovoltaico than in full light, and the advantage **increased proportionally with
-drought stress**. LER > 1 in all configurations, rising with panel density and with tracking.
+Amaducci, S., Yin, X., Colauzzi, M. (2018). *Applied Energy* 220:545–561. DOI
+[10.1016/j.apenergy.2018.03.081](https://doi.org/10.1016/j.apenergy.2018.03.081) **[P]** 40-year
+climate record, rainfed maize, coupled radiation/shading model + GECROS crop model. Global radiation
+reduction: **29.5%** (double density) vs **13.4%** (single density), **23.2%** (sun-tracking) vs
+**20.0%** (static). Under **rainfed** conditions mean grain yield was **higher and more stable**
+under Agrovoltaico than in full light, and the advantage **increased proportionally with drought
+stress**. LER > 1 in all configurations, rising with panel density and with tracking.
 
 > Note the apparent tension with Laub et al., who rank maize the most shade-susceptible crop. It is
 > resolvable: Laub's maize data are predominantly from experiments where water was **not** the limiting
@@ -323,12 +325,12 @@ drought stress**. LER > 1 in all configurations, rising with panel density and w
 **Hassanpour Adeh et al., Oregon (44.5°N, temperate, unirrigated pasture)**
 
 Hassanpour Adeh, E., Selker, J.S., Higgins, C.W. (2018). Remarkable agrivoltaic influence on soil
-moisture, micrometeorology and water-use efficiency. *PLOS ONE* 13(11):e0203256.
-DOI [10.1371/journal.pone.0203256](https://doi.org/10.1371/journal.pone.0203256) **[P]**
-Late-season biomass **+90%** under panels; **+126% dry biomass** in shaded zones specifically; WUE
-**+328%**; soil moisture nearly **2×** the open control by season end (~0.3 vs ~0.2 vol/vol at 0.6 m).
-Only 40 mm precipitation fell during the May–Aug 2015 study window, so this is effectively a
-drought-stress result in a nominally temperate climate.
+moisture, micrometeorology and water-use efficiency. *PLOS ONE* 13(11):e0203256. DOI
+[10.1371/journal.pone.0203256](https://doi.org/10.1371/journal.pone.0203256) **[P]** Late-season
+biomass **+90%** under panels, **+126% dry biomass** in shaded zones specifically, WUE **+328%**,
+soil moisture nearly **2×** the open control by season end (~0.3 vs ~0.2 vol/vol at 0.6 m). Only 40
+mm precipitation fell during the May–Aug 2015 study window, so this is effectively a drought-stress
+result in a nominally temperate climate.
 
 **Japanese "solar sharing"** — despite the scheme dating to 2013 and covering **6,137 approved sites
 on 1,361.6 ha by end of FY2023**, the peer-reviewed crop-response literature in English is very
@@ -346,7 +348,8 @@ figure traced to Chiba Prefecture trials is **industry commentary, not peer-revi
 - **Alfalfa** (*Medicago sativa*): maintains adequate photosynthetic activity at **50% RSR and above** —
   Varella et al. (2011), cited in Laub §4.2 **[P]**.
 - **Forages**: no effect on dry matter yield at **30% RSR** (Mercier et al. 2020) and **45% RSR**
-  (Pang et al. 2019); Pang et al. reported a slight *increase* at 45% RSR for some species **[P, via Laub]**.
+  (Pang et al. 2019), Pang et al. reported a slight *increase* at 45% RSR for some species **[P, via
+  Laub]**.
 - **Blueberry**: yield *increase* under shade in subtropical Chile, attributed by Retamales et al.
   (2008) to relief from heat stress improving fruit set **[P, via Laub]**.
 - **Blackberry** (*Rubus ulmifolius*): cumulative berry yield increased under shade in Italy via
@@ -354,11 +357,11 @@ figure traced to Chiba Prefecture trials is **industry commentary, not peer-revi
 - **Soybean**: seed yield **−30% under 33% shading** (intercropping literature, not APV) **[P, indirect]**.
 - **Strawberry / raspberry**: see §4 — the Swiss multi-site DLI thresholds are the most directly
   actionable numbers in the whole berry literature.
-- **Potato, Northern Italy, 4-year APV trial**: **~13% seasonal shading → ~12% yield penalty**; higher-shade
-  configurations **>30% reduction**; tuber initiation identified as the critical light-sensitive
-  stage **[P]**. This contradicts Weselek's **+11%** for potato — the difference is almost certainly
-  water status (drought year at Heggelbach vs adequate water in Italy), reinforcing the water-gating
-  rule above.
+- **Potato, Northern Italy, 4-year APV trial**: **~13% seasonal shading → ~12% yield penalty**,
+  higher-shade configurations **>30% reduction**, tuber initiation identified as the critical
+  light-sensitive stage **[P]**. This contradicts Weselek's **+11%** for potato — the difference is
+  almost certainly water status (drought year at Heggelbach vs adequate water in Italy), reinforcing
+  the water-gating rule above.
 - **Pears under semi-transparent panels, Belgium**: yield reduced **consistently**, fruit quality
   maintained — *Agronomy for Sustainable Development* (2025), DOI [10.1007/s13593-025-01019-0](https://doi.org/10.1007/s13593-025-01019-0) **[P]**.
   A useful counterweight to the meta-analytic optimism about "fruits".
@@ -371,14 +374,14 @@ drought index. EarthArXiv preprint, submitted to *Environmental Research Letters
 reviewed** **[C]**. <https://eartharxiv.org/repository/object/7354/>
 
 This work extends Laub's dataset to 84 studies (59 usable, 41 non-irrigated) and adds SPEI (drought
-index) as a covariate. Adding SPEI raised R² substantially across every crop category
-(C3 cereals 0.64→0.88; leafy vegetables 0.44→0.99; maize 0.19→0.79; grain legumes 0.52→0.91), which
-**strongly supports the design principle that water status must modulate the shade-response curve**.
+index) as a covariate. Adding SPEI raised R² substantially across every crop category (C3 cereals
+0.64→0.88, leafy vegetables 0.44→0.99, maize 0.19→0.79, grain legumes 0.52→0.91), which **strongly
+supports the design principle that water status must modulate the shade-response curve**.
 
 However, its published *linear* shade-only equations are not usable as a yield model. For example
-`Berries: Y = −13.36 + 2.22·X₁` predicts 0% yield at 0% shade and 209% at 100% shade; `Leafy
+`Berries: Y = −13.36 + 2.22·X₁` predicts 0% yield at 0% shade and 209% at 100% shade, `Leafy
 vegetables: Y = 58.49 + 1.31·X₁` (n = 5, p = 0.216, not significant). These are artefacts of fitting
-a line to a narrow, small-n, non-irrigated subset. **Cite this paper for the SPEI insight; do not
+a line to a narrow, small-n, non-irrigated subset. **Cite this paper for the SPEI insight, do not
 encode its coefficients.**
 
 ---
@@ -412,21 +415,22 @@ encode its coefficients.**
 | Air temperature, night (semi-arid AZ) | **~0.5 °C warmer** | Barron-Gafford et al. 2019 **[?]** |
 | Air temperature (temperate DE) | **tended to be higher** under array | Weselek et al. 2021 **[P]** |
 | Air temperature (temperate OR) | significant differences at 1.2 m and 2.0 m, but "magnitudes smaller" than the 3–5 °C some simulations predicted | Hassanpour Adeh et al. 2018 **[P]** |
-| Soil temperature, summer | **decreased** | Weselek et al. 2021 **[P]**; Amaducci et al. 2018 (modelled) **[P]** |
-| Aggregate "air and soil 1–4 °C lower" | widely repeated | attributed to Weselek et al. 2019 review; **could not be verified against the primary text and recurs verbatim across secondary sources — treat as a literature-wide range, not a measurement [?]** |
+| Soil temperature, summer | **decreased** | Weselek et al. 2021 **[P]**, Amaducci et al. 2018 (modelled) **[P]** |
+| Aggregate "air and soil 1–4 °C lower" | widely repeated | attributed to Weselek et al. 2019 review, **could not be verified against the primary text and recurs verbatim across secondary sources — treat as a literature-wide range, not a measurement [?]** |
 
-**Design implication:** soil-temperature cooling under panels is consistent across studies; air- and
-canopy-temperature effects are **not** and depend on climate. Encode soil cooling; make air-temperature
-moderation climate-conditional and label it low-confidence. **THIN.**
+**Design implication:** soil-temperature cooling under panels is consistent across studies, air- and
+canopy-temperature effects are **not** and depend on climate. Encode soil cooling, make
+air-temperature moderation climate-conditional and label it low-confidence. **THIN.**
 
 ### 3.3 Humidity and VPD
 
 Direction is consistent — **lower VPD, higher RH under panels** — in every study located
-(Barron-Gafford et al. 2019; Hassanpour Adeh et al. 2018, which found RH significantly different from
-control at all measurement heights). **Exact numeric deltas were not extractable from the accessible
-texts. THIN.** A secondary but practically important consequence: reduced wind plus elevated humidity
-under panels raises **fungal/mildew disease pressure** relative to open-field, a tradeoff reported in
-vineyard-APV commentary but not, to our knowledge, quantified in a controlled trial. **THIN.**
+(Barron-Gafford et al. 2019, Hassanpour Adeh et al. 2018, which found RH significantly different
+from control at all measurement heights). **Exact numeric deltas were not extractable from the
+accessible texts. THIN.** A secondary but practically important consequence: reduced wind plus
+elevated humidity under panels raises **fungal/mildew disease pressure** relative to open-field, a
+tradeoff reported in vineyard-APV commentary but not, to our knowledge, quantified in a controlled
+trial. **THIN.**
 
 ### 3.4 Rain shadow and drip-line redistribution
 
@@ -453,10 +457,10 @@ sheltering effect of solar panels on cultivated plots. *Hydrology and Earth Syst
 ### 3.5 Phenology delay
 
 - **Lettuce: 3–7 day maturity delay** under panel shade (Elamri et al. 2018, AWM) **[P]**.
-- Delayed flowering/podding in mungbean, delayed apple ripening under overhead APV, delayed bloom with
-  increased late-season floral abundance in a dryland APV system (the last a documented pollinator
-  co-benefit) — each is a **single study per crop**; no cross-crop "days delayed per % shade"
-  synthesis exists. **THIN.**
+- Delayed flowering/podding in mungbean, delayed apple ripening under overhead APV, delayed bloom
+  with increased late-season floral abundance in a dryland APV system (the last a documented
+  pollinator co-benefit) — each is a **single study per crop**, no cross-crop "days delayed per %
+  shade" synthesis exists. **THIN.**
 
 **Practical consequence for a garden tool:** shade shifts harvest windows. For succession planting and
 frost-date planning this matters as much as yield. A flat "+3 to +7 days per 30% RSR" heuristic for
@@ -464,7 +468,7 @@ fast-cycling leafy crops is the only defensible starting point, and should be la
 
 ### 3.6 Wind, dew, frost
 
-- Hassanpour Adeh et al. 2018 **[P]**: wind speed significantly altered at all heights; wind
+- Hassanpour Adeh et al. 2018 **[P]**: wind speed significantly altered at all heights, wind
   **direction** distribution substantially reoriented under the array.
 - Reported vertical-bifacial wind-speed reductions of **up to 40%** in the shelter zone (vs ~20% for
   tree windbreaks), and **up to 86%** under extreme gusts for a lowered-first-row elevated design —
@@ -501,21 +505,21 @@ DLI values are minimum / target **at the plant**, in mol m⁻² d⁻¹, averaged
 
 | Class | Min DLI | Target DLI | Max RSR (design) | Tolerance | Evidence |
 |---|---|---|---|---|---|
-| **Understory perennials / shade herbs** (mint, parsley, cilantro, chives, ramps, wild ginger, hosta, ostrich fern) | ~2–4 **[?]** | **4–10** **[?]** | **60–75%** | very high | ginseng only quantified species; herbs qualitative. **THIN** |
+| **Understory perennials / shade herbs** (mint, parsley, cilantro, chives, ramps, wild ginger, hosta, ostrich fern) | ~2–4 **[?]** | **4–10** **[?]** | **60–75%** | very high | ginseng only quantified species, herbs qualitative. **THIN** |
 | **American ginseng** (*Panax quinquefolius*) | — | — | **64–70%** (greenhouse optimum ~35.6% light) to **90%** (forest-farming practice) | very high | USDA Forest Service (2011) field guidance **[E]** vs greenhouse optimum **[P]** — two evidence types disagree |
-| **Leafy greens** (lettuce, spinach, chard, arugula, kale, mustard) | **6** (poor quality below) | **12–17** | **40–50%** | high | Marrou 2013a: relative yield ≥ relative radiation at 30% and 50% RSR **[P]**; Laub: 86% at 40% RSR (CI 61–120) **[P]**; DLI 12 target from MSU Extension **[E]**; >17 for >3 consecutive days causes tipburn (Cornell) **[P]** |
-| **Forages / C3 pasture & clover** | — | — | **45–50%** | high (benefiting to 25%) | Laub: 103% @20%, 93% @40% RSR **[P]**; no DM effect at 30% (Mercier 2020) or 45% RSR (Pang 2019) **[P]**; alfalfa photosynthesis adequate ≥50% RSR (Varella 2011) **[P]** |
-| **Berries / soft fruit — raspberry, currant, blackberry, blueberry** | **15** (raspberry) | **≥15** | **30–35%** | moderate–high | Widmer et al., 4-year 21-site 13-configuration Swiss APV study **[C, peer-reviewed proceedings]**; black currant maintains quality to **65% PAR reduction** **[P]**; berry meta-analysis: currant/blackberry/blueberry tolerate **~35% shade** without loss **[P, abstract only]** |
-| **Berries — strawberry** | **25** | **>25** | **~15–20%** | **low** | Widmer et al. **[C]** — positive linear DLI↔yield and DLI↔sugar; reduced firmness at low light (attributed to reduced UV) |
-| **Brassicas, heading** (broccoli, cabbage, cauliflower, kohlrabi) | not established | ~12–17 (inferred from leafy overlap) **[?]** | **30–40%** | moderate–high | head/curd quality maintained at 55–65% shade in shade-net trials **[P]**; **no DLI threshold exists in the literature. THIN** |
-| **Root & tuber crops** (potato, beet, celeriac, carrot, radish, turnip, sweet potato) | not established | — | **15–25%** | moderate (potato/celeriac) to low (carrot/turnip) | Laub group n=2, disproportionate losses begin early **[P]**; Weselek: potato **+11%**, celeriac n.s. at 30% RSR **[P]**; N. Italy: 13% shade → 12% loss, >30% shade → >30% loss **[P]**; turnip reported most sensitive (up to −40%) **[?]**. **THIN** |
-| **Fruiting solanaceae** (tomato, pepper, eggplant) | **10–12** (minimum for fruiting) | **20–30** | **20–25%** temperate; **up to 40%** in hot/arid or water-limited settings | low (temperate) / can be positive (arid) | Cockshull et al. 1992 *J. Hortic. Sci.* 67:11–24, DOI [10.1080/00221589.1992.11516215](https://doi.org/10.1080/00221589.1992.11516215) **[P]**; Marcelis et al. 2006 *Acta Hortic.* 711:97–103 **[P]**; Laub fruity vegetables 108% @20% RSR **[P]**; Barron-Gafford 2019 (arid, 2–3× gains) **[P]**; 20–30 target from extension **[E]** |
-| **Cucurbits** (cucumber, squash, melon, zucchini) | not firmly established | **20–30** **[E]** | **20–30%** | low–moderate | Marrou 2013b: cucumber effects confined to juvenile phase **[P]**; DLI target is extension guidance only. **THIN** |
+| **Leafy greens** (lettuce, spinach, chard, arugula, kale, mustard) | **6** (poor quality below) | **12–17** | **40–50%** | high | Marrou 2013a: relative yield ≥ relative radiation at 30% and 50% RSR **[P]**, Laub: 86% at 40% RSR (CI 61–120) **[P]**, DLI 12 target from MSU Extension **[E]**, >17 for >3 consecutive days causes tipburn (Cornell) **[P]** |
+| **Forages / C3 pasture & clover** | — | — | **45–50%** | high (benefiting to 25%) | Laub: 103% @20%, 93% @40% RSR **[P]**, no DM effect at 30% (Mercier 2020) or 45% RSR (Pang 2019) **[P]**, alfalfa photosynthesis adequate ≥50% RSR (Varella 2011) **[P]** |
+| **Berries / soft fruit — raspberry, currant, blackberry, blueberry** | **15** (raspberry) | **≥15** | **30–35%** | moderate–high | Widmer et al., 4-year 21-site 13-configuration Swiss APV study **[C, peer-reviewed proceedings]**, black currant maintains quality to **65% PAR reduction** **[P]**, berry meta-analysis: currant/blackberry/blueberry tolerate **~35% shade** without loss **[P, abstract only]** |
+| **Berries — strawberry** | **25** | **>25** | **~15–20%** | **low** | Widmer et al. **[C]** — positive linear DLI↔yield and DLI↔sugar, reduced firmness at low light (attributed to reduced UV) |
+| **Brassicas, heading** (broccoli, cabbage, cauliflower, kohlrabi) | not established | ~12–17 (inferred from leafy overlap) **[?]** | **30–40%** | moderate–high | head/curd quality maintained at 55–65% shade in shade-net trials **[P]**, **no DLI threshold exists in the literature. THIN** |
+| **Root & tuber crops** (potato, beet, celeriac, carrot, radish, turnip, sweet potato) | not established | — | **15–25%** | moderate (potato/celeriac) to low (carrot/turnip) | Laub group n=2, disproportionate losses begin early **[P]**, Weselek: potato **+11%**, celeriac n.s. at 30% RSR **[P]**, N. Italy: 13% shade → 12% loss, >30% shade → >30% loss **[P]**, turnip reported most sensitive (up to −40%) **[?]**. **THIN** |
+| **Fruiting solanaceae** (tomato, pepper, eggplant) | **10–12** (minimum for fruiting) | **20–30** | **20–25%** temperate, **up to 40%** in hot/arid or water-limited settings | low (temperate) / can be positive (arid) | Cockshull et al. 1992 *J. Hortic. Sci.* 67:11–24, DOI [10.1080/00221589.1992.11516215](https://doi.org/10.1080/00221589.1992.11516215) **[P]**, Marcelis et al. 2006 *Acta Hortic.* 711:97–103 **[P]**, Laub fruity vegetables 108% @20% RSR **[P]**, Barron-Gafford 2019 (arid, 2–3× gains) **[P]**, 20–30 target from extension **[E]** |
+| **Cucurbits** (cucumber, squash, melon, zucchini) | not firmly established | **20–30** **[E]** | **20–30%** | low–moderate | Marrou 2013b: cucumber effects confined to juvenile phase **[P]**, DLI target is extension guidance only. **THIN** |
 | **Alliums** (onion, garlic, leek, shallot) | not established | high | **≤15%** | **low** | bulb *initiation* is photoperiod-driven (≥12–13.75 h), but bulb *thickening* is inhibited by low light: in a 0/25/50/75% shade trial only the 0% and 25% treatments bulbed at all **[P]** |
-| **Grain legumes** (bean, pea, soybean) | not established | full sun | **≤10%** | **low** | Laub: 50% yield @40% RSR, disproportionate loss from ~1% RSR **[P]**; soybean −30% @33% shade **[P, intercropping]** |
-| **C3 cereals** (wheat, barley, oats) | not established | full sun | **≤15%** | moderate to 50%, then susceptible | Laub: less-than-proportional decline only to 15% RSR, disproportionate loss from 10% **[P]**; Weselek wheat −19% to +3% at 30% RSR **[P]** |
-| **Maize and C4 grasses** (sweetcorn, sorghum, bermudagrass) | not established | full sun | **≤10%** | **lowest** | Laub: 45% yield @40% RSR, worst of nine groups **[P]**; C4 does not light-saturate |
-| **Hops** | — | — | near 0 | none | require near-full sun for cone yield; no DLI figure found **[?] THIN** |
+| **Grain legumes** (bean, pea, soybean) | not established | full sun | **≤10%** | **low** | Laub: 50% yield @40% RSR, disproportionate loss from ~1% RSR **[P]**, soybean −30% @33% shade **[P, intercropping]** |
+| **C3 cereals** (wheat, barley, oats) | not established | full sun | **≤15%** | moderate to 50%, then susceptible | Laub: less-than-proportional decline only to 15% RSR, disproportionate loss from 10% **[P]**, Weselek wheat −19% to +3% at 30% RSR **[P]** |
+| **Maize and C4 grasses** (sweetcorn, sorghum, bermudagrass) | not established | full sun | **≤10%** | **lowest** | Laub: 45% yield @40% RSR, worst of nine groups **[P]**, C4 does not light-saturate |
+| **Hops** | — | — | near 0 | none | require near-full sun for cone yield, no DLI figure found **[?] THIN** |
 
 ### 4.2 The berry DLI thresholds — the most directly actionable numbers
 
@@ -538,15 +542,15 @@ strawberry specifically does not behave that way.
 - **Peer-reviewed, directly APV-relevant, high confidence:** Marrou 2013a/b/c, Weselek 2021,
   Barron-Gafford 2019, Laub 2022, Cockshull 1992, Marcelis 2006, Widmer et al.
 - **Extension guidance, not peer-reviewed:** all "target DLI 12 / 20–30" figures (MSU Extension via
-  Runkle; Purdue HO-238-W; GPN/ReduSystems); Dorais (2003) is Canadian Greenhouse Conference
+  Runkle, Purdue HO-238-W, GPN/ReduSystems), Dorais (2003) is Canadian Greenhouse Conference
   proceedings, frequently miscited as a journal article.
 - **No DLI threshold exists in the literature** for: heading brassicas, all root crops individually,
   alliums, grain legumes, most culinary herbs, hops, elderberry, pawpaw, hostas, forage species. Where
   the table above gives a number for these, it is inference, and the tool should present it as such.
 - The **"1% light = 1% yield" rule** for greenhouse fruiting vegetables originates with Cockshull et
   al. (1992) and was refined by Marcelis et al. (2006) to **0.7–1.0% yield decline per 1% radiation
-  reduction**, with the *relative* effect larger at low light, higher CO₂, and in winter. Note this is
-  a **greenhouse** relationship; Laub et al. explicitly excluded greenhouse experiments as too
+  reduction**, with the *relative* effect larger at low light, higher CO₂, and in winter. Note this
+  is a **greenhouse** relationship, Laub et al. explicitly excluded greenhouse experiments as too
   dissimilar to APV. Use it as an upper-bound sensitivity for protected-culture solanaceae only.
 
 ---
@@ -559,13 +563,13 @@ Four model classes appear in the literature, in increasing order of cost:
 
 | Class | What it does | Representative tools | Typical use in APV |
 |---|---|---|---|
-| **Analytic shading factors** | Projects panel geometry onto the ground for the beam component; integrates an analytic sky-view factor for the diffuse component | Zainali et al. 2023 model; NREL InSPIRE Agrivoltaics Shading Tool | ground PAR maps, DLI, homogeneity |
-| **2-D view factor (infinite sheds)** | Assumes infinitely long, identical, regularly spaced rows; computes VFs between ground segments, sky, and module faces | `pvlib.bifacial.infinite_sheds`, `pvfactors` | bifacial POA irradiance; ground irradiance as a by-product |
-| **Backward ray tracing / radiosity** | Monte Carlo path tracing through an explicit 3-D scene, with multi-bounce interreflection | RADIANCE (`rtrace`); Daysim (annual climate-based); NREL **bifacial_radiance** (a Python wrapper around RADIANCE) | ground irradiance maps, edge effects, non-uniform arrays |
-| **Coupled radiation + crop growth** | Feeds the light field into a mechanistic crop model | Amaducci et al. 2018 (shading model + GECROS); Elamri et al. 2018 (AVrain + water balance) | yield and water-budget prediction |
+| **Analytic shading factors** | Projects panel geometry onto the ground for the beam component, integrates an analytic sky-view factor for the diffuse component | Zainali et al. 2023 model, NREL InSPIRE Agrivoltaics Shading Tool | ground PAR maps, DLI, homogeneity |
+| **2-D view factor (infinite sheds)** | Assumes infinitely long, identical, regularly spaced rows, computes VFs between ground segments, sky, and module faces | `pvlib.bifacial.infinite_sheds`, `pvfactors` | bifacial POA irradiance, ground irradiance as a by-product |
+| **Backward ray tracing / radiosity** | Monte Carlo path tracing through an explicit 3-D scene, with multi-bounce interreflection | RADIANCE (`rtrace`), Daysim (annual climate-based), NREL **bifacial_radiance** (a Python wrapper around RADIANCE) | ground irradiance maps, edge effects, non-uniform arrays |
+| **Coupled radiation + crop growth** | Feeds the light field into a mechanistic crop model | Amaducci et al. 2018 (shading model + GECROS), Elamri et al. 2018 (AVrain + water balance) | yield and water-budget prediction |
 
-Solar position in nearly all of these comes from **pvlib** (which implements the NREL SPA algorithm);
-`bifacial_radiance` itself calls pvlib for sun position.
+Solar position in nearly all of these comes from **pvlib** (which implements the NREL SPA
+algorithm), `bifacial_radiance` itself calls pvlib for sun position.
 
 ### 5.2 Documented accuracy and cost
 
@@ -611,20 +615,21 @@ Zainali validation shows it is not needed for ground-level shading factors.
 
 **Algorithm:**
 
-1. **Solar position** per timestep from a standard algorithm (SPA, or Michalsky/PSA for compactness).
-   A JS port of pvlib's `solarposition` or NOAA's algorithm is adequate; sub-0.01° accuracy is far
-   beyond what the rest of the model justifies.
+1. **Solar position** per timestep from a standard algorithm (SPA, or Michalsky/PSA for
+   compactness). A JS port of pvlib's `solarposition` or NOAA's algorithm is adequate, sub-0.01°
+   accuracy is far beyond what the rest of the model justifies.
 2. **Split GHI into DNI + DHI** using an established decomposition model (Erbs, DISC, or DIRINT) if the
    weather source supplies only GHI. TMY3/PVGIS supply all three, which is preferable.
-3. **Beam component.** For each ground cell, project each panel rectangle along the solar vector onto
-   the ground plane and test point-in-polygon. This yields a binary (or, with sub-cell sampling,
-   fractional) beam shading factor `f_beam(x, y, t) ∈ [0,1]`. Cost is O(cells × panels) per timestep
-   and is trivially vectorisable; for a small garden this is milliseconds.
+3. **Beam component.** For each ground cell, project each panel rectangle along the solar vector
+   onto the ground plane and test point-in-polygon. This yields a binary (or, with sub-cell
+   sampling, fractional) beam shading factor `f_beam(x, y, t) ∈ [0,1]`. Cost is O(cells × panels)
+   per timestep and is trivially vectorisable, for a small garden this is milliseconds.
 4. **Diffuse component.** Compute a **sky view factor** `SVF(x, y)` once per geometry (it is
    time-invariant for fixed panels) by hemispherical sampling or by analytic solid-angle subtraction of
    each panel. Under an isotropic sky, `DHI_ground = SVF × DHI`.
-5. **Ground-reflected / interreflected component.** Set to zero at first order, or apply a single-bounce
-   albedo term. Panel rear faces are typically dark and low-reflectance; this term is small.
+5. **Ground-reflected / interreflected component.** Set to zero at first order, or apply a
+   single-bounce albedo term. Panel rear faces are typically dark and low-reflectance, this term is
+   small.
 6. **PAR conversion.** `PPFD(x,y,t) = [f_beam·DNI·cos θ_z + SVF·DHI] × 0.45 × 4.57`.
 7. **Integrate to DLI** per ground cell per day, then to a **growing-season mean DLI** and a
    **season-cumulative RSR** relative to an unshaded reference cell.
@@ -650,8 +655,8 @@ Zainali validation shows it is not needed for ground-level shading factors.
 
 **Error bounds to quote:**
 
-- Geometric shading factors: **R² 0.99–1.00** vs PVsyst/SketchUp; **0.3%** daily error vs a reference
-  cell on a clear-sky day (Zainali et al. 2023 **[P]**).
+- Geometric shading factors: **R² 0.99–1.00** vs PVsyst/SketchUp, **0.3%** daily error vs a
+  reference cell on a clear-sky day (Zainali et al. 2023 **[P]**).
 - Ground PAR under real (mixed) skies: **no published validation of an analytic model against
   distributed ground PAR sensors across a full season was located.** The 0.3% figure
   is a single clear-sky day. Honest guidance: **treat seasonal cumulative PAR estimates as ±10%, and
@@ -664,17 +669,17 @@ Zainali validation shows it is not needed for ground-level shading factors.
 **Temporal and spatial resolution:**
 
 - **Timestep ≤ 15 min**, preferably 5–10 min. Beam shadow bands sweep across the ground at roughly
-  0.25°/min of solar motion; hourly steps smear them and systematically misestimate cell-level
+  0.25°/min of solar motion, hourly steps smear them and systematically misestimate cell-level
   extremes while roughly preserving the plot mean.
-- **Grid ≤ 0.25 m** in the cross-row direction (the direction of steep gradients); 0.5–1 m along-row is
-  adequate for straight rows. At garden scale 0.1 m is affordable and better matches bed widths.
+- **Grid ≤ 0.25 m** in the cross-row direction (the direction of steep gradients), 0.5–1 m along-row
+  is adequate for straight rows. At garden scale 0.1 m is affordable and better matches bed widths.
 - A **typical meteorological year** (TMY3, PVGIS-TMY, or ERA5-derived) is the right weather input. A
   single year is not, because the Weselek and Amaducci results show the sign of the shade effect can
   flip between a normal and a drought year.
 
 **What to deliberately omit at v1:** full energy-balance microclimate (soil/air temperature, VPD),
 water balance and rain redistribution, and canopy radiative transfer. Each is a research problem in
-itself; the §3 evidence is not consistent enough to support a quantitative model, and the §5 optical
+itself, the §3 evidence is not consistent enough to support a quantitative model, and the §5 optical
 model plus the §2 response curves already capture the first-order effect. Rain-shadow **geometry**
 (§3.4) is the exception — it is purely geometric, cheap to compute from the same panel polygons, and
 practically important at garden scale, so it belongs in v1 as a rendered footprint even without a
@@ -707,9 +712,9 @@ incorporated by reference (which the EEG does).
   quantitative homogeneity limit is **not supported by the primary text.**
 - **No ground-coverage-ratio (GCR) cap exists in this standard.** It uses *Flächenverlust*, which is a
   different quantity. This is a common misattribution.
-- **No minimum row spacing is prescribed** (§6.4.4): orientation and inter-row distances are explicitly
-  "not fixed"; spacing must simply be planned for light availability, homogeneity, and machinery
-  headland turning space.
+- **No minimum row spacing is prescribed** (§6.4.4): orientation and inter-row distances are
+  explicitly "not fixed", spacing must simply be planned for light availability, homogeneity, and
+  machinery headland turning space.
 - Follow-on: **DIN SPEC 91492:2024-06**, *Anforderungen an die Nutztierhaltung* — livestock-specific
   requirements (stocking density, structure protection), June 2024.
 
@@ -724,9 +729,9 @@ Primary text used: <https://arendsee.info/stadt-arendsee/wp-content/uploads/site
 
 ### 6.2 Japan — MAFF solar sharing (営農型太陽光発電)
 
-MAFF Notice **5-Nōshin-2825, 25 March 2024** (令和6年3月25日 5農振第2825号), amended by
-**6-Nōshin-2983 (2025)**, Agricultural Land Bureau Director-General; effective 1 April 2024,
-superseding the original 2013 notice (revised 2018 and 2021) **[S]**.
+MAFF Notice **5-Nōshin-2825, 25 March 2024** (令和6年3月25日 5農振第2825号), amended by **6-Nōshin-2983
+(2025)**, Agricultural Land Bureau Director-General, effective 1 April 2024, superseding the
+original 2013 notice (revised 2018 and 2021) **[S]**.
 <https://www.maff.go.jp/j/nousin/noukei/totiriyo/attach/pdf/einogata-57.pdf>
 
 - **Yield rule (the "80% rule"):** approval is denied or renewal jeopardised if yield under the array
@@ -740,8 +745,9 @@ superseding the original 2013 notice (revised 2018 and 2021) **[S]**.
   farmland, or on Class 2/3 farmland. The structure must be **temporary and readily removable**.
 - **Reporting:** annual cultivation record (栽培実績書) and income/expense report (収支報告書) due by
   **end of February**.
-- **Inspection triggers:** mandatory annual on-site inspection where combined support-pole + farmland
-  area exceeds **4 ha**; prefectural agricultural-committee consultation above **30 are (0.3 ha)**.
+- **Inspection triggers:** mandatory annual on-site inspection where combined support-pole +
+  farmland area exceeds **4 ha**, prefectural agricultural-committee consultation above **30 are
+  (0.3 ha)**.
 - 2021 3rd directive **abolished the yield requirement entirely for installations on devastated
   (degraded/abandoned) farmland**.
 - **Scale:** 6,137 approved sites on 1,361.6 ha of farmland by end of FY2023.
@@ -749,8 +755,8 @@ superseding the original 2013 notice (revised 2018 and 2021) **[S]**.
   only in industry commentary. Recent (2026) trade reporting describes *draft* national benchmarks with
   shading below 30%, ~3 m panel height, and 4–5 m pillar spacing — **draft, not in force [?] THIN.**
 - One secondary source (Renewable Energy Institute) claims the 80% rule was retracted in favour of a
-  looser cultivation-efficiency check. The 2024/2025 primary text still uses the ~20%-decline standard;
-  **treat the retraction claim as unsubstantiated.**
+  looser cultivation-efficiency check. The 2024/2025 primary text still uses the ~20%-decline
+  standard, **treat the retraction claim as unsubstantiated.**
 
 ### 6.3 Massachusetts — SMART Agricultural Solar Tariff Generation Unit (ASTGU)
 
@@ -763,12 +769,14 @@ Photovoltaics" fact sheet, version January 2024.
   via DOER's Shading Analysis Tool. Note this is a **per-point minimum**, not an average, which makes
   it simultaneously a shading limit **and** a homogeneity constraint — the strictest such requirement
   in any of the regimes reviewed, and the one most directly implementable in a design tool.
-- **Height:** lowest panel edge **≥ 8 ft** (fixed tilt); **≥ 10 ft** at horizontal position (tracking).
-- **System size:** **≤ 5 MW AC** for the expedited design track. (The commonly cited **2 MW AC** figure
-  appears to be from an older 2018 guideline iteration; the January 2024 fact sheet says 5 MW **[?]**.)
-- **Compensation:** base **$0.14–$0.26/kWh** by size and utility, declining ~4% per capacity block;
+- **Height:** lowest panel edge **≥ 8 ft** (fixed tilt), **≥ 10 ft** at horizontal position
+  (tracking).
+- **System size:** **≤ 5 MW AC** for the expedited design track. (The commonly cited **2 MW AC**
+  figure appears to be from an older 2018 guideline iteration, the January 2024 fact sheet says 5 MW
+  **[?]**.)
+- **Compensation:** base **$0.14–$0.26/kWh** by size and utility, declining ~4% per capacity block,
   ASTGU dual-use receives an **additional $0.06/kWh adder**.
-- **Continuity:** agricultural production must continue for the **20-year** SMART term; Important
+- **Continuity:** agricultural production must continue for the **20-year** SMART term, Important
   Agricultural Farmland sites require **≥ 3 years** of prior crop production before application.
 - **Reporting:** annual crop/herd productivity, management deviations, and forward plans.
 - All design parameters (height, shading, size) are **waivable** with DOER-approved documentation.
@@ -783,10 +791,10 @@ GSE "DM Agrivoltaico – Regole operative," Allegato 1 (146 pp.) **[S]**. Read d
 - **Minimum agricultural area (§2.B.1): `S_agricola ≥ 0.7 × S_tot`** — at least **70%** of total system
   area must remain in agricultural/pastoral use after subtracting non-cultivable footprint (supports,
   inverter cabins). Note this is an **area** constraint, not a PV ground-coverage-ratio cap.
-- **Minimum module height (§2.B.2):** **1.3 m** for livestock or fixed vertical modules; **2.1 m** for
-  crop cultivation; **2.1 m** for mixed crop + livestock. Measured from the lowest module edge, or at
-  maximum achievable tilt for tracking structures. Sections not meeting the height requirement must be
-  metered separately and are excluded from incentive tariffs.
+- **Minimum module height (§2.B.2):** **1.3 m** for livestock or fixed vertical modules, **2.1 m**
+  for crop cultivation, **2.1 m** for mixed crop + livestock. Measured from the lowest module edge,
+  or at maximum achievable tilt for tracking structures. Sections not meeting the height requirement
+  must be metered separately and are excluded from incentive tariffs.
 - **Minimum electrical producibility (§2.B.3): `FV_agri ≥ 0.6 × FV_standard`** — output must be **≥ 60%**
   of a reference ground-mount plant on the same site, computed with EU JRC **PVGIS**, with correction
   factors **+15%** for bifacial, **+15%** for biaxial tracking, **up to +30%** combined.
@@ -809,8 +817,8 @@ GSE "DM Agrivoltaico – Regole operative," Allegato 1 (146 pp.) **[S]**. Read d
 
 ### 6.5 France — loi APER and décret n° 2024-318
 
-Loi n° 2023-175 du 10 mars 2023 (*loi APER*), art. 54; **Décret n° 2024-318 du 8 avril 2024** relatif au
-développement de l'agrivoltaïsme; arrêté du 5 juillet 2024 **[S]**. Read from Légifrance.
+Loi n° 2023-175 du 10 mars 2023 (*loi APER*), art. 54, **Décret n° 2024-318 du 8 avril 2024**
+relatif au développement de l'agrivoltaïsme, arrêté du 5 juillet 2024 **[S]**. Read from Légifrance.
 
 - **Yield-maintenance rule:** outside livestock activity, production is deemed "significative" if the
   **average yield per hectare on the agrivoltaic parcel exceeds 90% of the average yield per hectare on
@@ -819,15 +827,17 @@ développement de l'agrivoltaïsme; arrêté du 5 juillet 2024 **[S]**. Read fro
 - **Ground coverage ratio (*taux de couverture*): 40% maximum** for installations > 10 MWp not covered
   by a "proven technology" exemption. Exempted proven technologies get technology-, crop-, and
   location-specific ratios set by the 5 July 2024 arrêté.
-- **Control zone:** must be **≥ 5% of the installation surface, capped at 1 hectare**; located nearby
-  with equivalent soil and climate, cultivated identically, free of any modules or shading structures.
+- **Control zone:** must be **≥ 5% of the installation surface, capped at 1 hectare**, located
+  nearby with equivalent soil and climate, cultivated identically, free of any modules or shading
+  structures.
 - **Unusable-area cap:** permanently unexploitable land (foundations, access) **≤ 10%** of total surface.
 - **Monitoring cadence:** proven technologies re-checked every **5 years** after an initial 6-year
-  assessment; installations with coverage ratio **< 40%** every **3 years**; all others **annually**.
+  assessment, installations with coverage ratio **< 40%** every **3 years**, all others
+  **annually**.
 - **Authorisation term:** **40 years** maximum initial, renewable in **10-year** increments contingent
   on continued significant production.
 - **"Atteinte substantielle"** (substantial harm to agricultural production) is deliberately **not
-  numerically defined**; assessed case-by-case by the DDT. Do not encode a number for it.
+  numerically defined**, assessed case-by-case by the DDT. Do not encode a number for it.
 
 <https://www.legifrance.gouv.fr/jorf/id/JORFTEXT000049386027>
 
@@ -837,15 +847,16 @@ développement de l'agrivoltaïsme; arrêté du 5 juillet 2024 **[S]**. Read fro
   depending on structure height, and crop yield must stay **above 60%** **[?, via Tekie et al. 2024
   preprint citing Sanchez Molina 2024]**.
 - **USA — NREL InSPIRE:** not regulatory. A research programme (22+ field sites) publishing an
-  open-access **Agrivoltaics Shading Tool** (OpenEI) that models ground-level irradiance under various
-  array geometries — directly relevant as prior art for §5. Widely cited (unverified) claims: combined
-  land-use efficiency **+60–200%**; crop water demand **−20–50%** in arid climates **[?]**.
+  open-access **Agrivoltaics Shading Tool** (OpenEI) that models ground-level irradiance under
+  various array geometries — directly relevant as prior art for §5. Widely cited (unverified)
+  claims: combined land-use efficiency **+60–200%**, crop water demand **−20–50%** in arid climates
+  **[?]**.
 - **India (MNRE):** no binding national threshold located. **≥ 2.1 m** module clearance appears in
   industry best-practice guidance (SPE/NSEFI), **not** as an MNRE regulation **[?]**.
-- **China:** no unified national agrivoltaic standard identified; ~**513 projects, ~31 GW** (WRI China
-  dataset) developed via general renewable-energy and land-policy channels **[?]**.
-- **South Korea:** Farmland Act currently caps agrivoltaic land-use permits at **8 years**; a pending
-  amendment would extend to **up to 23 years** **[?, trade press only]**.
+- **China:** no unified national agrivoltaic standard identified, ~**513 projects, ~31 GW** (WRI
+  China dataset) developed via general renewable-energy and land-policy channels **[?]**.
+- **South Korea:** Farmland Act currently caps agrivoltaic land-use permits at **8 years**, a
+  pending amendment would extend to **up to 23 years** **[?, trade press only]**.
 
 ### 6.7 Cross-regime comparison — what a tool should actually check
 
@@ -886,8 +897,8 @@ compliance determinations.
     scientific basis.
 11. **Fresh-weight vs dry-weight reporting bias** may inflate the apparent shade benefit for berries,
     fruits, and fruiting vegetables.
-12. **Multi-year accumulation of shade stress in perennials** is under-studied; single-season trials may
-    understate long-run losses in berries and tree fruit.
+12. **Multi-year accumulation of shade stress in perennials** is under-studied, single-season trials
+    may understate long-run losses in berries and tree fruit.
 
 ---
 

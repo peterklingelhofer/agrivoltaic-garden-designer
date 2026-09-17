@@ -272,7 +272,7 @@ test('compliance says the simulation has not run rather than rendering an empty 
   await openApp(page, { siteUnreachable: true })
   await step(page, 'check')
   // and offers the bake rather than naming a panel two down the stepper for the visitor to find
-  await expect(page.getByTestId('status-compliance')).toContainText(/hasn't been worked out yet/i)
+  await expect(page.getByTestId('status-compliance')).toContainText(/hasn't been computed yet/i)
   await expect(page.getByTestId('status-compliance-run')).toBeVisible()
   for (const regime of REGIMES) {
     await expect(page.getByTestId(`item-compliance-${regime}`), regime).toHaveCount(0)
