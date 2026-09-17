@@ -85,8 +85,8 @@ const needsLight = (state: AppState): AgentReply => {
     that they had not worked out any layouts yet, and offered them the search they had already
     run: the same permanent dead end this file's header describes, reached from the other side.
 
-    It stayed hidden because which of the five wins is often a coin toss the search itself admits
-    to, in `scoreResolution` and `tooCloseToCall`, and the control had not been landing on top.
+    It stayed hidden because which of the five wins turns on scores a hair apart, and the control
+    had not been landing on top.
     What is needed here is a plot worth baking, and beds alone are enough: the open sky over them
     is a light answer, and it is the one the control exists to give
   */
@@ -96,7 +96,7 @@ const needsLight = (state: AppState): AgentReply => {
     The bake and the ranking are two different runs, and asking for the wrong one repeats work
     that already finished. A garden whose light was already worked out, with nothing yet ranked
     from it, does not need the sun run again: it needs `recommend`, which reads `bedLight` rather
-    than retracing it. This used to call `runPreview` regardless, which restarted a bake that had
+    than retracing it. This used to call the bake regardless, which restarted a bake that had
     already landed every time a question needed only the ranking that follows it
   */
   if (state.raster.status === 'ready' && state.sets.status !== 'ready') {
@@ -104,7 +104,7 @@ const needsLight = (state: AppState): AgentReply => {
     if (state.sets.status !== 'loading' && !state.ranking) void state.recommend()
     return blocked('ranking-running', ['list-crops', 'describe-garden'])
   }
-  if (state.progress === null) void state.runPreview()
+  if (state.progress === null) void state.runFinal()
   return blocked('light-running', ['propose-designs', 'describe-garden'])
 }
 

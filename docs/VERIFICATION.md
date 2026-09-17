@@ -690,19 +690,9 @@ product rather than implied to have backing.
 8. **167 Tier C per-crop DLI values.** The literature does not contain them.
 9. **Whether the MA 50% test is cumulative over Growing Season Hours or worst-instantaneous.**
    The regulation does not say.
-10. **RESOLVED, and no longer a constant.** The gap below which two designs are called tied is now
-    derived per run by `scoreResolution`, from the bake's own error measured in raw units across
-    eight paired real-weather runs (Tromso, Bergen x2, Edinburgh, Amherst x2, Phoenix, Singapore,
-    preview against `FINAL_OPTIONS`). Season RSR moves under one percentage point everywhere, crop
-    share is a step and moves up to 0.0702. Both constants are the worst measured value, and they
-    are carried through the same min-max normalisation the score uses, which is what makes the
-    margin widen exactly where the candidates crowd together. It covers all eight, including the
-    Bergen courtyard that defeated the previous constant, and is tighter than that constant wherever
-    the set is well separated. **What remains open** is that both raw constants rest on eight runs
-    at one plot aspect ratio and one objective, the crop-share figure in particular is a step whose
-    size depends on how many crops sit near the light gate, so a catalogue change moves it.
-    Re-measure after any change to the light gate or to the crop DLI values. Note also that
-    Open-Meteo rate-limits (429) after a few dozen `resolveSite` calls, so gather in batches.
+10. **RESOLVED by removal.** Since 2026-09-17 the search bakes every candidate at full quality,
+    the app's one quality, and ranks strictly by score. There is no margin below which two
+    designs are called tied, because there is no finer bake to measure one against.
 11. Unchanged from the existing ledger and not re-examined: A2 wind reduction, A3
     frost/dew, A4 VPD deltas, A9 the 0.25 deg/min timestep justification, A15 soil data licensing,
     A16 Croptime coverage.

@@ -559,7 +559,7 @@ describe('the search runs where it cannot freeze the wizard', () => {
 
     // the editor's client is lazy too, so a bake has to actually reach it
     useAppStore.setState({ weather: ready(tmyFixture()), plot: makePlot() })
-    void getAppState().runPreview()
+    void getAppState().runFinal()
     expect(worker.create).toHaveBeenCalledTimes(2)
   })
 })
@@ -569,7 +569,6 @@ describe('an engine answer is taken only in a shape the view can render', () => 
     expect(normaliseSet(null)).toBeNull()
     expect(normaliseSet({ scenarios: [] })).toBeNull()
     expect(normaliseSet({ ...setFor(), scenarios: [] })).toBeNull()
-    expect(normaliseSet({ ...setFor(), evaluatedAt: 'guessed' })).toBeNull()
     expect(
       normaliseSet({ ...setFor(), scenarios: [{ candidate: candidateFor('balanced') }] }),
     ).toBeNull()
@@ -577,7 +576,6 @@ describe('an engine answer is taken only in a shape the view can render', () => 
 
   it('carries a preview set through as a preview, never as a final one', () => {
     const normalised = normaliseSet(setFor())
-    expect(normalised?.evaluatedAt).toBe('preview')
     expect(normalised?.scenarios.length).toBe(4)
   })
 

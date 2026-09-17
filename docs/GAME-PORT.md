@@ -113,10 +113,10 @@ There are three ways out, and only the third is any good.
    game, and the reason to build it on this repo evaporates.
 3. **Split the clock.** Cheap approximations drive the moment-to-moment loop, the real model runs on
    commit, on season boundaries, or when the player asks. The player feels a responsive game and the
-   *scored* outcomes come from the defensible model. This is what the app already does,
-   incidentally: `PREVIEW_OPTIONS` (Tregenza MF1, one substep an hour, 0.25 m cells) against
-   `FINAL_OPTIONS` (Reinhart MF2, four substeps, 0.12 m cells). The two-tier idea is already built,
-   tested and named.
+   *scored* outcomes come from the defensible model. The bake already takes its quality as options
+   (`SimulationOptions`: sky subdivision, sun samples an hour, cell size), and the app carried a
+   coarse tier beside `FINAL_OPTIONS` until 2026-09-17, dropping it once the full bake proved fast
+   enough for every path. A second options set is all the cheap tier would be.
 
 Take option 3. It is the only one where the provenance survives contact with a game loop, and
 half of it exists.

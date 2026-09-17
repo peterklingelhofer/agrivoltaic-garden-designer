@@ -99,7 +99,7 @@ the climate grids in `docs/STATIC-LAYERS.md`.
 
 | Cell size | Grid | float32 | JSON | AGDR | AGDR gzipped |
 |---|---|---|---|---|---|
-| 0.25 m, the app's own preview | 104 × 140 | 1 536 kB | 6.95 MB | 208.5 kB | 110.6 kB |
+| 0.25 m | 104 × 140 | 1 536 kB | 6.95 MB | 208.5 kB | 110.6 kB |
 | **0.40 m, shipped** | **65 × 88** | **603 kB** | **2.73 MB** | **93.7 kB** | **67.1 kB** |
 | 0.60 m | 44 × 59 | 274 kB | 1.24 MB | 46.6 kB | 30.6 kB |
 
@@ -109,7 +109,7 @@ the one thing this picture is for. 0.4 m puts 22 cells across the 9 m pitch and 
 depth of a bed, so a bed still has a light gradient inside it rather than one value. 0.6 m puts 15
 and 2. That is where the choice was made, and it is a judgement about legibility rather than a
 measurement, the bytes are the measurement. This is an example, not the visitor's design, and their
-own bake runs at 0.25 m or 0.12 m as before.
+own bake runs at 0.12 m.
 
 ### Quantisation
 
