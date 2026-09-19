@@ -255,8 +255,9 @@ CI=true bunx playwright test --project=visual --forbid-only --update-snapshots=n
 
 Observed repeatedly on a loaded machine (load average 80-143): Playwright exited **0** having
 run only 81, 91 and 8 tests out of 100, 100 and 12. No failures, no "interrupted", nothing in
-the summary to say a fifth of the suite never executed. The default 8 workers starve, and the
-line reporter's tail is easy to misread as a complete summary.
+the summary to say a fifth of the suite never executed. The eight workers Playwright defaulted to
+starve (the config runs two on a laptop now, for the fans), and the line reporter's tail is easy
+to misread as a complete summary.
 
 Two consequences:
 
