@@ -454,22 +454,62 @@ sheltering effect of solar panels on cultivated plots. *Hydrology and Earth Syst
 > should at minimum render the projected rain-shadow footprint and drip-line position, even if it does
 > not attempt a full water balance.
 
-**What this app does with it (2026-09-18, Decision Record 28).** The rain field
+**What this app does with it (2026-09-18 and 19, Decision Record 28).** The rain field
 (`src/recommend/rain.ts`) follows the array's plan geometry at its rain pose: a fixed row at its
-tilt, every tracker lying flat, which is its night stow. Ground under a panel's plan footprint is
-sheltered, each row's low edge drips its whole catchment into a strip 20 cm wide in still air
-(Elamri et al. 2018: about 90 percent of a panel's water leaves through a 20 cm outlet), and a
-flat panel sheds to both long edges, half each. The weather record carries wind speed and no
-direction, so the site's mean wind in rain hours is applied from every direction: the shadow moves
-by the panel's height times the wind over a 2 mm raindrop's 6.5 m/s fall (Gunn and Kinzer 1949),
-and the strip widens by what a 4 mm drip drifts in its fall from the edge. At the default 2.5 m
-clearance a 3 m/s wind at 10 m moves the shadow 1.2 m and widens the strip to 0.56 m. At Elamri's
-5 m the same wind moves the shadow 2.8 m, which is why the wind ruled their plot. Each bed reads
-its sheltered share and the panel water landing on it as a multiple of its own rain. A plain bed
-keeps half of that and a bed with a basin or swale along the strip four fifths, both modelling
-assumptions declared in the gaps register, and the ground overlay draws the field as a channel.
-On the starting plot the middle row shelters the bed beneath it whole in still air and 92 percent
-in a 3 m/s wind, and every drip strip lands on a path.
+tilt, every tracker lying flat, which is its night stow. The weather record carries the wind's
+speed and the direction it blows from, and the field runs on the site's rain-hour wind rose:
+twelve 30 degree bins, each weighted by the rain that fell with the wind from it and carrying that
+rain's mean speed. Each hour's drops are sized from that hour's rain rate the way AVrain sizes
+them, through Best 1950's distribution as the paper's Eq. 3 gives it and Gunn and Kinzer 1949's
+Table 2 for each drop's fall speed. Best's distribution is the water held in the air, so the field
+weights every size by its own fall speed to get the rain reaching the ground, then splits that
+into three equal thirds, each carrying its third's own mean fall speed (3.3, 5.5 and 6.9 m/s at
+2 mm/h). Every bin carries the rain-weighted tangent of the rain's angle off vertical for each
+third (their Eq. 1), and each panel is projected to the ground along all three, corner by corner
+at its own height, so the slow small drops shear the shadow further and its downwind edge comes
+out soft. The projected quad is that third's rain shadow in that bin, and the thirds' mean area is
+the panel's catchment (their Eq. 4): a row facing the rain intercepts more than its plan area and
+one turned from it less. Each row's low edge drips that catchment into a strip 0.2 m wide across
+the edge (this app's own derivation from the paper's Manning n of 0.01 on glass: the runoff film
+leaves the edge at under 0.2 m/s, so the drops land within a hand's width of the edge's vertical
+from a garden-height row, and the paper itself gives no width), moved downwind by what a 3.8 mm
+drip drifts through its whole fall from rest, integrated under drag through the site's own wind
+profile: 0.059 m from a 2.5 m edge in a 1 m/s wind at 10 m, 0.24 m at 3 m/s, 0.69 m at 6 m/s.
+Gunn and Kinzer saw their largest drops reach terminal speed only after about 12 m, and Wang and
+Pruppacher 1977 put the fall to 99 percent of terminal at 9.5 m for a 2 mm drop and 14 m for a
+4 mm one, so a drip from a garden edge is accelerating the whole way down. A flat panel sheds to
+both long edges, half each, because the app cannot know which way a given tracker leans: the paper
+says a nominally flat panel sends all of its water to one outlet, and its event 07 measured a 2 m
+panel's whole catchment in one 0.3 m collector, so the strip beside a flat tracker is either twice
+what the field draws or nothing, which the tracker note says. Below 5 degrees of tilt the paper
+found about 90 percent of a module's water leaving through an outlet 20 cm wide along its 1 m
+edge, so that strip is also a line of puddles the field averages along. The paper puts a panel's
+wetting before runoff starts at 0.2 mm at most in the field (its indoor rig needed about 2 mm), so
+the field carries no retention term. A record with no direction falls back to the equal twelve-way
+rose at the rain-weighted rain-hour mean, and a record with no hourly rain (PVGIS, NSRDB) sizes
+its drops at a declared 2 mm/h, which is the mass-median hourly rate in the records checked. The
+NSRDB's wind is MERRA-2's 2 m surface wind, which NREL's own NSRDB builder documents and an
+hour-by-hour comparison with MERRA-2 confirms, and it is brought to the 10 m every other source
+reports at ingest, which also corrects FAO-56's 2 m wind for ET0 at NSRDB sites. Where that 2 m
+field runs near zero, as it does over cells the reanalysis treats as forest, the year's wind is
+replaced by FAO-56's own default of 2 m/s and the label says so. Each bed reads its sheltered
+share and the panel water landing on it as a multiple of its own rain. A plain bed keeps half of
+that and a bed with a basin or swale along the strip four fifths, both modelling assumptions
+declared in the gaps register, and the ground overlay draws the field as a channel. On the
+starting plot in still air the middle row shelters the bed beneath it whole and every drip strip
+lands on a path. At a 3 m/s wind taken from every direction it shelters 77 percent of that bed,
+10 percent of the bed south of it and 21 percent of the bed north of it: the row faces south, its
+high edge is the higher, and a higher edge's shadow moves further. The paper's own rig (2 m panels
+5 m up, rows 6.4 m apart, flat) is rebuilt in a test: the ground under a row dry, the ground
+between rows open, and the drip line read the way the paper read it, in a 0.3 m collector, which
+at one-sided drainage comes to 7.2 times the open ground against the 8 times event 07 measured.
+Their anemometer height and collector readings are only in figures, so the model is compared with
+the paper and never fitted to it. What the field leaves out, by declaration: the garden's own wind
+shelter (the wind profile is FAO-56's open grass, and a fenced garden's panel-height wind runs
+lower), the spread of the drip's own drop sizes (a 1.5 mm drip drifts about 2.4 times as far as
+the 3.8 mm mode), the beading along a flat panel's edge that put the paper's own peak at 11 to 16
+times open ground, the spread of wind speeds inside a 30 degree bin, and the within-the-hour burst
+structure of rain that an hourly rate averages out.
 
 Further sources read for the drip line:
 
