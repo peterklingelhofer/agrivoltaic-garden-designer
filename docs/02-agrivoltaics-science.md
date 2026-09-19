@@ -454,6 +454,58 @@ sheltering effect of solar panels on cultivated plots. *Hydrology and Earth Syst
 > should at minimum render the projected rain-shadow footprint and drip-line position, even if it does
 > not attempt a full water balance.
 
+**What this app does with it (2026-09-18, Decision Record 28).** The rain field
+(`src/recommend/rain.ts`) follows the array's plan geometry at its rain pose: a fixed row at its
+tilt, every tracker lying flat, which is its night stow. Ground under a panel's plan footprint is
+sheltered, each row's low edge drips its whole catchment into a strip 20 cm wide in still air
+(Elamri et al. 2018: about 90 percent of a panel's water leaves through a 20 cm outlet), and a
+flat panel sheds to both long edges, half each. The weather record carries wind speed and no
+direction, so the site's mean wind in rain hours is applied from every direction: the shadow moves
+by the panel's height times the wind over a 2 mm raindrop's 6.5 m/s fall (Gunn and Kinzer 1949),
+and the strip widens by what a 4 mm drip drifts in its fall from the edge. At the default 2.5 m
+clearance a 3 m/s wind at 10 m moves the shadow 1.2 m and widens the strip to 0.56 m. At Elamri's
+5 m the same wind moves the shadow 2.8 m, which is why the wind ruled their plot. Each bed reads
+its sheltered share and the panel water landing on it as a multiple of its own rain. A plain bed
+keeps half of that and a bed with a basin or swale along the strip four fifths, both modelling
+assumptions declared in the gaps register, and the ground overlay draws the field as a channel.
+On the starting plot the middle row shelters the bed beneath it whole in still air and 92 percent
+in a 3 m/s wind, and every drip strip lands on a path.
+
+Further sources read for the drip line:
+
+- Cook, L. M., McCuen, R. H. (2013). Hydrologic Response of Solar Farms. *Journal of Hydrologic
+  Engineering* 18(5):536–541 **[P]**: water leaving a panel edge carries up to ten times the
+  kinetic energy of rainfall and erodes the base of a row, while the panels themselves leave
+  runoff volumes unchanged. The reason the bed note says to mulch the strip and set seedlings back.
+- Yavari et al. (2022). *Environmental Research: Infrastructure and Sustainability* 2:032002
+  **[P]**, open access: the review of solar-farm hydrology, with concentrated drip-edge runoff and
+  bare ground under the rows as the risks and vegetated ground as the remedy.
+- Mulla et al. (2024). *Vadose Zone Journal* 23:e20335 **[P]**: a row measured and modelled as a
+  disconnected impervious surface shedding at its drip edge, the treatment the rain field gives it.
+- Wang et al. (2024). *Frontiers in Environmental Science* 12:1406546 **[P]**: China's desert
+  plants count on the drip lines under their panel edges, fed by rain and by seven to eight
+  cleanings a year, to carry the vegetation beneath. The one setting found where a drip line is
+  used on purpose.
+- Meng et al. (2025). *Frontiers in Plant Science* 15:1515896 **[P]**: *Astragalus adsurgens*
+  under desert panels about 50 percent taller, with 51 to 87 percent more nitrogen than in the open.
+- Ravi et al. (2016). *Applied Energy* 165:383–392 **[P]**: panel-cleaning water about equals an
+  aloe crop's annual need, so the two can share it.
+- García-Chica et al. (2025). *Irrigation Science* 43:1385–1395 **[P]**, and EDF's US patent
+  11736061 (2023): the gutter form, a channel on the modules' low edge (the patent's swings level
+  at any tilt) to a reservoir or a spreader, which puts the row where the light says and the water
+  where the crop is.
+- Allen and Hickman (2023), Planet Forward: at Jack's Solar Garden rainwater lands along each
+  tracking panel's downward edge and growers plant to it. Reported practice, nothing measured.
+- pv magazine (2026-07-28): SolarRoot, a proposal pairing module rainwater harvesting with
+  sensor-driven subsurface drip, nothing measured yet.
+
+No source found places rows so the drip edge waters the beds and the footprint shades the paths
+as a design rule. The geometry says a fixed row tilted to the equator drips on its equator side
+and throws its midday shade poleward, so a row over an east-west path hands the equator-side bed
+the water and the pole-side bed the shade and the evapotranspiration saving of section 3.3. The
+wind blurs the shadow by more than it moves the drip, so the strip is the feature to place and the
+shadow the one to expect a smear of.
+
 ### 3.5 Phenology delay
 
 - **Lettuce: 3–7 day maturity delay** under panel shade (Elamri et al. 2018, AWM) **[P]**.

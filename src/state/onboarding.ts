@@ -206,7 +206,6 @@ export const irrigationFor = (answers: WizardAnswers): Irrigation => ({
   method: answers.irrigationAvailable ? 'drip' : 'none',
   available: answers.irrigationAvailable,
   appliedMmPerYear: millimetersPerYear(answers.irrigationAvailable ? 180 : 0),
-  harvestsPanelRunoff: false,
 })
 
 /**
