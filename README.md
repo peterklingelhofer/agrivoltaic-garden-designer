@@ -38,11 +38,11 @@ bun run dev          # app on :5173, without the conversational panel
 The chat panel is off in `bun run dev` and in a deployed build. `VITE_AGENT=on bun run dev` turns it
 on, `src/agent/flag.ts` has the rule and the reason.
 
-Under plain `bun run dev` the dev server proxies weather (Open-Meteo), elevation (Open-Elevation)
-and place-name lookups (Nominatim, Photon) straight to their upstreams, so a site resolves with
-nothing else running, `dev-proxy.ts` holds the table. PVGIS, NSRDB and the EIA retail price route
-through the Cloudflare Worker, and with no worker listening those requests fail and the app uses its
-fallbacks. To exercise them run the worker too:
+Under plain `bun run dev` the dev server proxies weather (Open-Meteo) and place-name lookups
+(Nominatim, Photon) straight to their upstreams, so a site resolves with nothing else running,
+`dev-proxy.ts` holds the table. PVGIS, NSRDB and the EIA retail price route through the Cloudflare
+Worker, and with no worker listening those requests fail and the app uses its fallbacks. To
+exercise them run the worker too:
 
 ```sh
 bun run dev:worker   # worker on :8787, proxied from the dev server

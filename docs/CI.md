@@ -80,6 +80,18 @@ false green, and `--trace=retain-on-failure` so a red build ships a trace. The
 `playwright-report/` and `test-results/` directories upload as artifacts on pass and on
 fail, which is what makes a red build diagnosable without reproducing it locally.
 
+## No job here reaches a live upstream
+
+None of the three jobs above touch a live upstream: `e2e/fixtures/app.ts` stubs every weather,
+elevation, soil and geocoding request the functional suite makes, and the unit suite never
+leaves the process. `bun run verify-deploy` doesn't either, it only reads the deployed HTML and
+JS over HTTP and checks the bytes are what they claim to be. `bun run verify-live [url]` is the
+check that does: a real headless browser against the deployed site, production by default,
+running a real place lookup, geocoder search, bake, layout search and ranking with nothing
+stubbed. Run it before pointing anyone at the site and again after every deploy. It picks a
+town nobody has looked up so the Worker's cache can't hide an outage, which costs about one
+fresh lookup of the pooled Open-Meteo allowance, so it stays a manual check and never a cron.
+
 ## Why the visual project runs on macOS
 
 `e2e/visual.spec.ts-snapshots/` holds three baselines, all suffixed `-darwin`. Playwright

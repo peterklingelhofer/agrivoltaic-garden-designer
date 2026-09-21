@@ -73,6 +73,12 @@ const PUBLISHED = [
     blurb: 'What the app opens on, how it was computed, and what it costs to ship',
   },
   {
+    file: 'VALIDATION.md',
+    title: 'Validation record',
+    blurb:
+      'Which numbers have been checked against something outside this app, in four bands from a named physics oracle down to nothing measured in a garden',
+  },
+  {
     file: 'the verification document',
     title: 'Verification record',
     blurb:
