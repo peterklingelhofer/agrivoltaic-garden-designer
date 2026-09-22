@@ -11,7 +11,7 @@ import { mount } from './testkit'
 /**
  * jsdom implements no scrolling, so the method the stepper guards for is defined here to record
  * which header it was asked of. Only the outermost frame callback runs, so one landing records
- * one call rather than a second's worth of them: see the same rig in `stepper.test.tsx`
+ * one call, without a second's worth of them: see the same rig in `stepper.test.tsx`
  */
 const scrolled: string[] = []
 
@@ -48,9 +48,9 @@ afterEach(() => {
 
 /**
  * Reported twice from use. First: applying a guided layout left the sidebar five thousand pixels
- * down, so the column was scrolled to its top to show the card that says what was planted. Then
- * that scroll put two cards of prose above the step that was open, and the step the
- * reader came for started 48,000 characters down. So applying a layout lands on the open step's
+ * down, so the column was scrolled to its top to show the card that says what was planted. But
+ * that put two cards of prose above the step that was open, and the step the reader came for
+ * started 48,000 characters down. So applying a layout lands on the open step's
  * header instead, the way a press on it would
  */
 describe('the sidebar lands on the plants step when a layout is applied', () => {

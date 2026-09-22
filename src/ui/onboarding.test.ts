@@ -68,7 +68,7 @@ describe('metres and feet, neither forced on anyone', () => {
 /**
  * The wall this wizard exists to remove. A question a novice cannot answer without reading
  * a paper is not a question, it is a quiz, and the mapping from an answer onto tilt, pitch,
- * ground cover ratio, clearance and DLI is the engine's job rather than the grower's
+ * ground cover ratio, clearance and DLI is the engine's job alone
  */
 const JARGON =
   /\b(tilt|pitch|azimuth|ground cover ratio|gcr|dli|daily light integral|rsr|shade ratio|albedo|bifacial|land equivalent ratio|ler|irradiance|insolation|photovoltaic|agrivoltaic|clearance|homogeneity|tracker|inverter|nameplate|kwp)\b/i
@@ -135,7 +135,7 @@ describe('every question is answerable without knowing any agrivoltaics', () => 
   it('asks whether the space can be watered rather than whether it is water-limited', () => {
     expect(ANSWER_QUESTIONS.irrigationAvailable).toMatch(/water it through a dry spell/i)
     const source = MODULES['/src/ui/AnswerPanels.tsx'] ?? ''
-    // asked from the table rather than from a second copy of the sentence in the panel
+    // asked from the table, without a second copy of the sentence in the panel
     expect(source).toMatch(/ANSWER_QUESTIONS\.irrigationAvailable/)
     expect(source).not.toMatch(/water[- ]limit/i)
   })
@@ -262,7 +262,7 @@ describe('nothing the results render reads as a determination', () => {
 
   /**
    * The per-card caveat, which was exact and opaque: "the geometry" is the shapes and the sun, and
-   * "the programme" read as this software rather than as the scheme whose rules are quoted above
+   * "the programme" read as this software, when it should mean the scheme whose rules are quoted above
    * it. The phrase that matters if it is ever quoted back lives in the app-wide caveat instead, so
    * it has to survive there
    */
@@ -274,7 +274,7 @@ describe('nothing the results render reads as a determination', () => {
 
   /**
    * The shade budget is the grower's own answer, not a regime, so going over it is a plain
-   * statement rather than a determination. Both numbers are named either way, because the case
+   * statement, without becoming a determination. Both numbers are named either way, because the case
    * worth explaining is a footprint sized inside the budget whose measured shade came out over
    */
   it('names both numbers whether the shade lands inside the budget or outside it', () => {

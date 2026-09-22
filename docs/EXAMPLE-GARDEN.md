@@ -1,12 +1,10 @@
 # The bundled example garden
 
-The app used to open on a bare starting plot over an empty grid. A visitor had to draw a plot,
-place an array and wait out a bake before the product showed them anything, so every claim it
-makes about light, shade and crop response was invisible until they had done the work.
-
-It now opens on a worked example: a real `PersistedDesign`, with a `DliRaster` this simulation
-baked, loaded when and only when the browser holds no design of its own. Nothing in it is a picture
-of a result. The design is authored, every number is produced.
+The app opens on a worked example: a real `PersistedDesign`, with a `DliRaster` this simulation
+baked, loaded when and only when the browser holds no design of its own. Without it a visitor has
+to draw a plot, place an array and wait out a bake before anything the app claims about light,
+shade and crop response is visible. Nothing in the example is a picture of a result. The design is
+authored, every number is produced.
 
 Rebuild it with `bun run bake-example`, or `node scripts/bake-example-garden.mjs --dry-run` to bake
 and report without writing. `--no-cache` forces the upstream fetches, without it the archive
@@ -14,20 +12,20 @@ responses are cached under `node_modules/.cache/`, because Open-Meteo answers 42
 identical request in a row and an archive year does not change between two runs. Format the result
 afterwards: the written JSON is not formatted, and `bunx biome check --write public/data` does it.
 
-Two things about running it, both learned the hard way on 2026-09-01:
+Two rules for running it:
 
 - **The script fetches through the Worker proxy path**, `/api/proxy/<upstream>/...`, which several
-  lookups moved behind so the Worker can identify itself to them. That path is relative and only
-  resolves against a page, so in Node it threw `ERR_INVALID_URL` and the script could not bake at
-  all. Its `globalThis.fetch` shim now rewrites those back to the upstream's own origin using
+  lookups sit behind so the Worker can identify itself to them. That path is relative and only
+  resolves against a page, so in Node it is an `ERR_INVALID_URL` and the script cannot bake at
+  all. Its `globalThis.fetch` shim rewrites those back to the upstream's own origin using
   `upstreamOrigin` from `src/data/http.ts`. **If another lookup moves behind the proxy, that shim
   is what has to learn about it.**
 - **The written design carries `rowAzimuthDeg`, and the loader recomputes the scene extent from
   it.** `exampleGridMatches` derives `sceneExtent` from the stored arrays and compares the grid to
   the raster's, so a stored azimuth that no longer describes the same array makes
   `loadExampleGarden` return null. There is no error anywhere: the app simply opens on the empty
-  starting plot. That is exactly what happened when the row-axis convention was corrected, and it
-  is the failure mode to suspect if the example ever silently stops appearing.
+  starting plot. That is the failure mode to suspect if the example ever silently stops appearing,
+  and a change to the row-axis convention is one way in.
 
 ## 1. What is authored, and what is not
 
@@ -37,10 +35,7 @@ four beds, the hour the scene is posed at, and the bake resolution. That is the 
 
 The array's rows run east-west and are spaced north-south, which is what the four bed northings are
 measured against: the row centres land on -9, 0 and +9. `rowAzimuthDeg` is the direction the rows
-RUN, so east-west is **90**. It read 180 until 2026-09-01, when `panelSnapshot` had its two
-horizontal axes exchanged and 180 was what produced the arrangement described here. The three
-rasters are byte-identical across that change, because the array itself was never wrong, only the
-field naming its orientation was.
+RUN, so east-west is **90**.
 
 Produced, by the same modules the browser runs, loaded out of `src/` through Vite so there is no
 second implementation to drift from the first:
@@ -50,7 +45,7 @@ second implementation to drift from the first:
 | site, weather, soil, hardiness, Köppen | `resolveSite` | real Open-Meteo TMY over 8 760 hours, the bundled 2023 PRISM and Beck grids read off disk |
 | the light field | `runSimulation`, `cpu-reference` backend | 65 × 88 cells at 0.4 m, tregenza-mf1 sky, 1 255 binned sun directions, 2 sub-steps an hour |
 | per-bed light, compliance | `bedLight`, `checkAllRegimes` | derived in the browser at load, never shipped |
-| the crops in the beds | `runRecommendations` → `suggestPolycultures` → `derivePlanting` | ranked against this bake, written through the one path that refuses a planting it cannot derive |
+| the crops in the beds | `runRecommendations` -> `suggestPolycultures` -> `derivePlanting` | ranked against this bake, written through the one path that refuses a planting it cannot derive |
 
 The four beds are placed at northings −13.5, −4.5, +0.8 and +4.5 m. The rows stand at −9, 0 and
 +9 and face south, so their shadows sweep north across the year: the deepest annual shade is a
@@ -68,13 +63,11 @@ Nobody chose those crops. A full-sun bed gets a tomato and a shade bed gets ramp
 light gate and the polyculture scorer say so, which is the product's entire argument in one
 picture.
 
-**These are not the crops this table carried before.** The asset was baked on 2026-09-11, before the
-catalogue gained teff two days later. Beds 2 and 4 had room for a third crop and now fill it with
-teff, next to the brussels sprouts and crimson clover already there, beds 1 and 3 are untouched. The
-`.raster` file comes back byte-identical across the rebake: the shade this picture argues from
-stayed put, and only the crop set changed. **A bake is only as current as the ranking it was taken
-from**: any change to the catalogue or the climate and light gates dates every shipped example,
-silently, because nothing recomputes them.
+**A bake is only as current as the ranking it was taken from**: any change to the catalogue or to
+the climate and light gates dates every shipped example, silently, because nothing recomputes them.
+A rebake after a catalogue change moves the crop table and leaves the `.raster` file
+byte-identical: the shade this picture argues from is a function of the geometry and the weather
+year, and the catalogue is not in it.
 
 ## 2. The encoding, and what it costs
 
@@ -82,7 +75,7 @@ A `DliRaster` is 27 `Float32Array`s over the grid, plus two more per time window
 this example is **2.73 MB**, as raw float32 it is **603 kB**. Neither is a first-paint asset.
 
 `AGDR v1`, written by `encodeExampleRaster` and read by `decodeExampleRaster` in
-`src/data/example-raster.ts` — one module, so the format has one definition:
+`src/data/example-raster.ts`, one module, so the format has one definition:
 
 1. **Per-slice quantisation to 4 096 levels.** Each slice carries its own minimum and maximum.
 2. **A raster-order predictor.** A cell is coded against the cell to its left, and the first cell
@@ -106,10 +99,9 @@ the climate grids in `docs/STATIC-LAYERS.md`.
 The overlay uploads the quantity as a half-float texture and interpolates between cells, so a
 coarser grid does not pixelate, what it costs is the sharpness of the shade band's edge, which is
 the one thing this picture is for. 0.4 m puts 22 cells across the 9 m pitch and 4 across the 1.5 m
-depth of a bed, so a bed still has a light gradient inside it rather than one value. 0.6 m puts 15
-and 2. That is where the choice was made, and it is a judgement about legibility rather than a
-measurement, the bytes are the measurement. This is an example, not the visitor's design, and their
-own bake runs at 0.12 m.
+depth of a bed, so a bed carries a light gradient inside it and never one value. 0.6 m puts 15
+and 2. That is where the choice was made, and it is a judgement about legibility, with the bytes as
+the only measurement. This is an example, and the visitor's own bake runs at 0.12 m.
 
 ### Quantisation
 
@@ -120,7 +112,7 @@ own bake runs at 0.12 m.
 | 1 024 | 76.7 kB | 0.018 mol/m²/d |
 | 256 | 69.4 kB | 0.072 mol/m²/d |
 
-The error is measured, not predicted: `quantisationErrorOf` encodes and decodes and reports the
+The error is measured: `quantisationErrorOf` encodes and decodes and reports the
 largest disagreement, so what the asset records includes the float32 storage as well as the
 quantisation. Two things set the floor. `contourStep` draws iso-lines every 5 mol/m²/d on a field of
 this range and the legend prints its ticks at the same interval, so 0.0045 is a thousandth of one
@@ -140,8 +132,8 @@ every ramp entry.
 | `public/data/example-garden-high.json` | 10 698 B | 2 035 B |
 | **A visitor fetches ONE pair** | **~106-113 kB** | **~67-75 kB** |
 
-**Only one pair is ever fetched.** What a second band costs is repository and deploy size, not load
-time, which is the whole reason having more than one is affordable. They are fetched once, on first
+**Only one pair is ever fetched.** A second band costs repository and deploy size and no load time,
+which is the whole reason having more than one is affordable. They are fetched once, on first
 paint, and only by a visitor with no saved design, a returning visitor requests neither.
 
 ### Which band
@@ -157,30 +149,29 @@ the other 183 (1.9 kB gzipped).
 Bake one with `bun run bake-example -- --band=high`, then run the formatter over `public/data`: the
 script writes JSON that Biome has an opinion about. `SHIPPED_BANDS` in `src/state/example.ts`
 lists what actually exists, and `bandsToTry` filters to it so a band with nothing baked goes
-straight to the temperate fallback instead of paying for a 404. All three ship now, so that
-filter is currently guarding against a half-deployed `public/data` rather than a missing bake.
+straight to the temperate fallback and never pays for a 404. All three bands ship, so that
+filter guards a half-deployed `public/data`.
 
-**`low` was held back for two releases and is now shipped.** Baked at Phoenix it first returned
-ramps, an eastern North American woodland ephemeral, as the only crop for beds reading
-40.6 mol/m²/d of full desert sun. Two defects were behind that, both since fixed: the
-shade-benefit bonus was paid on site heat and water with no reference to whether the bed had any
-shade in it, and `growingSeasonMeanTempC` scored a perennial over its growing window only, so the
-July that would kill it was never read.
+**`low` is baked at Phoenix**, where the beds read 40.6 mol/m²/d of full desert sun. Two terms
+decide what a site like that returns. `shadeBenefitBonus` scales by the bed's own `cumulativeRsr`,
+so site heat and water alone earn nothing where the bed has no shade in it. And `ecocropScore`
+holds a perennial to the worse of its growing window and its hottest month, so the 35 °C July an
+eastern woodland ephemeral cannot walk away from is read.
 
-What it ships with is **one empty bed of four**, and that is the honest answer rather than a defect.
+What it ships with is **one empty bed of four**, and that is what the light at that site allows.
 Bed 3 stands in 71 to 79 % cumulative shade, above the 0.6 `maxDesignRsr` ceiling every annual in
 the catalogue carries, the only three crops with a measured ceiling above it are woodland perennials
 the climate gate rules out of Phoenix on the July they would have to stand through. Nothing in a
 182-crop catalogue is both that shade-tolerant and that heat-tolerant. An empty bed makes
-`lightDemandClause` return null, so the narration falls back to its generic sentence instead of
-asserting an ordering it cannot support.
+`lightDemandClause` return null, so the narration falls back to its generic sentence and asserts
+no ordering it cannot support.
 
-Bergen, by contrast, came back with aronia, comfrey, red currant, sorrel, good king henry and
-lemon balm across a 16.5 to 8.3 mol/m²/d gradient.
+The `high` band, baked at Bergen, comes back with aronia, comfrey, red currant, sorrel, good king
+henry and lemon balm across a 16.5 to 8.3 mol/m²/d gradient.
 
 ## 3. It cannot drift from the schema, and cannot drift from itself
 
-The design is a `PersistEnvelope`, read by `decodeEnvelope` in `src/state/persist.ts` — the same
+The design is a `PersistEnvelope`, read by `decodeEnvelope` in `src/state/persist.ts`, the same
 function `loadDesign` uses for a design restored from `localStorage`. There is no second decoder
 and no second shape. Two things are stricter than for a saved design:
 
@@ -202,8 +193,8 @@ unreadable asset end to end.
 
 ## 4. It is visibly an example, and it is never the visitor's
 
-`ExampleBanner` sits over the canvas, not in the sidebar: the guided panel is already there, and
-the example is the thing behind the questions rather than a second thing to dismiss. It says in
+`ExampleBanner` sits over the canvas: the guided panel is already there, and
+the example is the thing behind the questions. It says in
 plain words that nothing on screen is yours yet, prints the provenance of the light field it is
 showing, and carries one control that clears it.
 
@@ -215,24 +206,24 @@ an edit lands while the asset is still in flight.
 
 ## 5. The camera
 
-`src/scene/framing.ts` computes where to stand from the array's own geometry rather than storing a
+`src/scene/framing.ts` computes where to stand from the array's own geometry and stores no
 pose, so the framing cannot drift from the design. At the default camera the open ground is nearly
 uniform and the contours have nothing to say, the field varies across the pitch and nowhere else. So
-the camera is placed on the side the panels face, 38° off the pitch axis so the rows recede rather
-than stack, at 27° elevation and 1.12 times the array's longest span.
+the camera is placed on the side the panels face, 38° off the pitch axis so the rows recede across
+the frame and never stack, at 27° elevation and 1.12 times the array's longest span.
 
-`useGuidedTour` turns that view slowly, at **2.4 degrees a second**, held in degrees per second
-rather than in OrbitControls' `autoRotateSpeed`, which steps per frame: on the software
-rasteriser the e2e suite runs, per-frame stepping is a tenth of the speed a visitor with a GPU
-sees, and an orbit whose speed is a property of the machine is not an orbit anyone chose.
+`useGuidedTour` turns that view slowly, at **2.4 degrees a second**, held in degrees per second,
+where OrbitControls' `autoRotateSpeed` steps per frame: on the software rasteriser the e2e suite
+runs, per-frame stepping is a tenth of the speed a visitor with a GPU sees, and an orbit whose
+speed is a property of the machine is not an orbit anyone chose.
 
 It stops on the first `pointerdown`, `wheel`, `keydown` or `touchstart`, and never restarts: the
 latch is a state flag with nothing that clears it, so a re-render, a tab change or the example
 being cleared cannot bring the motion back. Under `prefers-reduced-motion` the orbit never
-starts, while the framing still happens — the framing is where to stand, and only the orbit is
+starts, while the framing still happens: the framing is where to stand, and only the orbit is
 motion.
 
-`e2e/example.spec.ts` asserts all three by reading a strip of sky rather than the whole canvas.
+`e2e/example.spec.ts` asserts all three by reading a strip of sky, never the whole canvas.
 Foliage has wind in its vertex shader off a shared clock, so the canvas is never twice the same
 image and "the orbit stopped" cannot be asserted from it. Above the horizon there is nothing but the
 Preetham sky, which is a function of the hour and the view direction, the hour is fixed by the
@@ -243,25 +234,24 @@ example, so that strip changes when and only when the camera turns.
 `stubUpstreams` serves an unreadable body for `**/data/example-garden-*` unless a test passes
 `exampleGarden: true`. Every other spec in the suite asserts something about a design the test
 itself builds, and an example loading underneath would change the plot, the DOM and every visual
-baseline. It is refused rather than cleared after the fact, because clearing races the fetch.
+baseline. It is refused, never cleared after the fact, because clearing races the fetch.
 
-An unreadable body rather than a 404, because a 404 puts a console error on every page in the
+The body is unreadable and not a 404, because a 404 puts a console error on every page in the
 suite and several specs assert the absence of those.
 
-No visual baseline moved. At the shipped comparison settings both snapshots match exactly, 0
-differing pixels, at `threshold: 0`, where every sub-perceptual difference counts, `dli-overlay.png`
-reports 33 031 differing pixels and a build of the commit before this work, in a throwaway worktree
-against the same baseline file, reports 33 743. That residue is the rasteriser's and it predates
-this change.
+No visual baseline moved: at the shipped comparison settings both snapshots match exactly, 0
+differing pixels. At `threshold: 0`, where every sub-perceptual difference counts,
+`dli-overlay.png` reports about 33 000 differing pixels against the same baseline file with the
+example present or absent. That residue is the rasteriser's.
 
-## 7. The contrast audit had to get sharper first
+## 7. How the contrast audit resolves a backdrop
 
-`backdropOf` in `e2e/fixtures/contrast.ts` marked an element unresolvable if any ancestor carried
-a background-image, and `.canvas-host` carries the pre-paint sky gradient, so nothing drawn over
-the canvas could be audited at all: the banner reported zero text elements checked, which the
-collector's own floor turns into a failure rather than a pass.
+`backdropOf` in `e2e/fixtures/contrast.ts` walks an element's ancestors for the colour painted
+behind it. A fully opaque background-color hides everything painted before it, gradients included,
+so it clears the unresolvable flag, and a background-image on the same element sets the flag again,
+because it paints over its own colour. Without that, `.canvas-host` and its pre-paint sky gradient
+leave everything drawn over the canvas unresolvable, the banner included.
 
-A fully opaque background-color hides everything painted before it, gradients included, so it now
-clears that flag, a background-image on the same element sets it again, because it paints over its
-own colour. All eighteen contrast tests pass with the sharper resolver, including the self-test that
-proves the audit can still fail.
+A text-element count of zero is a failure of the check, asserted by the collector's own floor, so
+an unresolvable banner reports as red and never as green. All eighteen contrast tests pass,
+including the self-test that injects the pair that shipped and proves the audit can still fail.

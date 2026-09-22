@@ -57,7 +57,7 @@ export const cropById = (catalogue: readonly Crop[], id: CropId): Crop | undefin
 /**
  * The name a gardener would use, never the catalogue's own id.
  *
- * Here rather than in the UI because both layers say a crop's name out loud: `recommend` writes
+ * Here, above in the UI, because both layers say a crop's name out loud: `recommend` writes
  * it into the prose it hands the wizard, and `ui` prints it beside every picker. There were four
  * copies of this expression, and a picker offering `bean-bush` and `pepper-hot` beside prose
  * saying bush beans and chillies is the failure that costs, not the duplication itself.

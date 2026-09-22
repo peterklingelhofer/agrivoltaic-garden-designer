@@ -4,7 +4,7 @@
  * r3f renders once per frame for you until something subscribes at a non-zero priority; from
  * then on the subscriber owns the frame. This one does, because the sky-occlusion estimate has
  * to be finished before the lit pass that samples it, and because the overlay is composited
- * after that pass rather than inside it.
+ * after that pass, on its own.
  *
  * Nothing here is a screen-space filter over the finished image. The occlusion reaches the
  * scene as a term in the lighting equation of every lit material (`ambientOcclusion.ts`), which
@@ -96,7 +96,7 @@ export const RenderPipeline = ({
   const sweep = useRef(0)
   /**
    * Where the camera was on the last frame this pass actually drew, so that "did it move" can be
-   * ASKED rather than announced. See the note beside `structural` below for why announcing it is
+   * ASKED, on demand. See the note beside `structural` below for why announcing it is
    * not enough
    */
   const drawnFrom = useRef(new Matrix4())
@@ -130,7 +130,7 @@ export const RenderPipeline = ({
    * WebGLRenderer, which `useThree` hands over precisely so it can be driven imperatively, and
    * there is no other way to say "stop redrawing the cascades": the flag lives on the renderer.
    * It began failing a file that had not changed, when an eslint-plugin-react-hooks bump under
-   * the caret range added the rule. Disabled at the three sites rather than for the directory,
+   * the caret range added the rule. Disabled at the three sites alone,
    * because everything else that rule catches in here is still worth catching
    */
   useEffect(() => {

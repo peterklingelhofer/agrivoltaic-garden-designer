@@ -31,8 +31,8 @@ const CONTROL: CandidateArchetype = 'no-array-control'
  * layouts with panels, then the space with none, which is here for comparison.
  *
  * The control used to lead, because what the panels cost is only readable against no panels, and
- * that was right for cards laid side by side. As a pager it opened two visits in the newcomer
- * audit on "No panels at all", badged "Suggested for you", with the only green button on the
+ * that was right for cards laid side by side. As a pager it opened on "No panels at all" by
+ * default, badged "Suggested for you", with the only green button on the
  * screen reading "Start with no panels and plant it"; the layouts with panels were a small grey
  * "Next ›" or a fold away. The comparison is still read against the control: its tab is always
  * there and says what it is
@@ -56,9 +56,9 @@ interface CardProps {
   readonly experience: Experience
   /**
    * Whether the site is in Massachusetts, whose SMART programme the two regime flags quote.
-   * They were printed for every site: a plot in Denver and a plot in Portland
-   * both read "meet the Massachusetts fast-track rules", which is a rule for neither
-   * town. Outside the state the flags say nothing; the checks step still lists every regime
+   * They used to be printed for every site regardless of state, and a Massachusetts-specific line
+   * read as though the app had the wrong location for anyone elsewhere. Outside the state the
+   * flags say nothing; the checks step still lists every regime
    */
   readonly massachusetts: boolean
   /** The sentence for a card another layout beats on both figures, or null */
@@ -71,7 +71,7 @@ interface CardProps {
  * One layout, as the face of the step: a first line in plain words, three figures, what it
  * costs, what still grows, and the two presses. The pills went with the dock. "SUGGESTED FOR
  * YOU" and "MODERATE CONFIDENCE" in uppercase capsules added clutter on top of the card, and
- * orange-on-green when the card was selected. The same words in the
+ * orange-on-green when the card was selected; the same words in the
  * first line say the same thing
  */
 const ScenarioCard = ({
@@ -141,8 +141,8 @@ const ScenarioCard = ({
       <p className="scenario-tradeoff" data-testid={`readout-onboarding-tradeoff-${archetype}`}>
         {baseline ? 'The same space with no panels on it. ' : 'What it costs you: '}
         {scenario.tradeoff}
-        {/* the one archetype that stands panels on edge, so its shadow moves through the day
-            instead of sitting fixed under a tilted row: worth saying why it costs less light */}
+        {/* the one archetype that stands panels on edge, so its shadow moves through the day.
+            A tilted row instead sits fixed: worth saying why it costs less light */}
         {archetype === 'vertical-east-west'
           ? ' Upright panels throw a narrow shadow that sweeps across the ground through the day, so the beds keep more of the midday sun.'
           : ''}
@@ -155,7 +155,7 @@ const ScenarioCard = ({
 
       {/* a refusal means this option cannot give the grower a bed at all, which is not a
           detail to make anyone click for: it warns what NOT to expect from the button below,
-          so it stays beside the tradeoff rather than behind the disclosure with the rest */}
+          so it stays beside the tradeoff. It never sits behind the disclosure with the rest */}
       {scenario.layout.refusals.map((refusal) => (
         <p
           className="notice notice-warn"
@@ -174,7 +174,7 @@ const ScenarioCard = ({
         )}
       </p>
 
-      {/* the one flag that is a warning rather than a reading: more shade than the plants asked
+      {/* the one flag that is a warning. It is not a plain reading: more shade than the plants asked
           for can take is something to know before the press below, so it stays out of the fold
           when it is true and lives with the other flags when it is not */}
       {scenario.flags.shade.withinBudget ? null : (

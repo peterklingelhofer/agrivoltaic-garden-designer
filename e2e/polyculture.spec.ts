@@ -22,7 +22,7 @@ import {
  *
  * The combinations live on the plants step now, behind "All the combinations for Bed N", and
  * they arrive by themselves once the ranking has: the press that used to ask for them is gone,
- * so every helper here waits for the ranking and opens the fold rather than pressing anything
+ * so every helper here waits for the ranking and opens the fold, without pressing anything
  */
 
 const anchoredOnBlueberry = async (page: Page): Promise<void> => {
@@ -217,7 +217,7 @@ test.describe('polyculture suggestions', () => {
     page,
   }) => {
     await rankedBed(page)
-    // the default bed is near-neutral, and blueberry's pH envelope is physiology rather than
+    // the default bed is near-neutral, and blueberry's pH envelope is physiology, not
     // a preference, so the ranking rules it out before any preference could ask for it
     await expect(page.getByTestId('control-plants-like-blueberry')).toHaveCount(0)
     await openFold(page, 'details-plants-more')

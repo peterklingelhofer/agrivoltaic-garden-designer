@@ -160,8 +160,8 @@ const lowestScoringPlanting = (
 
 /**
  * Scrolls a node into the middle of the view, and does nothing where there is no view to
- * scroll: jsdom has no `scrollIntoView`, and a browser missing it does not scroll rather than
- * throws
+ * scroll: jsdom has no `scrollIntoView`, and a browser missing it simply does nothing, without
+ * throwing
  */
 const bringIntoView = (node: HTMLElement | null): void => {
   if (node === null || typeof node.scrollIntoView !== 'function') return
@@ -202,8 +202,8 @@ const PlantingRow = ({
   readonly otherBeds: readonly Bed[]
   /**
    * A move re-derives the planting against the destination's own calendar, so until the
-   * calendars exist there is nothing to derive from and the gesture is refused rather than
-   * offered. Same rule as the crop picker above: a control that cannot work does not appear
+   * calendars exist there is nothing to derive from and the gesture is refused. Same rule as
+   * the crop picker above: a control that cannot work does not appear
    */
   readonly movable: boolean
   onCount(value: number): void
@@ -264,7 +264,7 @@ const PlantingRow = ({
         asked a gardener for "130" and printed the date it meant underneath, which is a
         conversion table with a text box in it.
 
-        Two selects rather than an `<input type="date">` on purpose: a planting recurs every year
+        Two selects, on purpose: a planting recurs every year
         and carries no year at all, so a date control would have to invent one and show it
       */}
         <SelectField
@@ -296,7 +296,7 @@ const PlantingRow = ({
         itself shows */}
       {/* deliberately not under the `readout-bed-planting-` prefix: several specs select that
         prefix expecting the one summary line per planting, and a second match under it is a
-        strict-mode violation rather than a wrong answer.
+        strict-mode violation.
 
         It used to translate the day-of-year field above into a date. The field asks for the date
         now, so what is left worth saying is the number underneath it, for anyone comparing this
@@ -351,7 +351,7 @@ const PlantingSection = ({
   const carry = useAppStore((s) => s.carry)
   const dropped = useAppStore((s) => s.dropped)
   const clearDropped = useAppStore((s) => s.clearDropped)
-  // in the store rather than in this component, because a closed step is taken out of the
+  // kept in the store, because a closed step is taken out of the
   // document and took the answer with it: a grower ticked the box, left the step, came back for
   // the crop they had seen and found the short list again. The same flag drives the ranking
   // panel's own box, so the two lists agree about how much of the ranking is on screen
@@ -369,14 +369,14 @@ const PlantingSection = ({
   /**
    * A crop dropped on a bed in the 3D, read as the same draft a click on the list would make.
    *
-   * Staged rather than planted, and that is the whole design of the gesture. What a bed can take
+   * Staged first, and that is the whole design of the gesture. What a bed can take
    * is derived, and the derivation is entitled to refuse: a bed with a tenth of a square metre
-   * free cannot take a squash, and the sentence explaining that is the product working rather
-   * than failing. A drop that planted silently would either hide that refusal or, worse, plant
+   * free cannot take a squash, and the sentence explaining that is the product working
+   * as intended. A drop that planted silently would either hide that refusal or, worse, plant
    * something the bed cannot carry. So the drop chooses the bed and the crop, and the press
    * below, with the sow date and any refusal on screen, is still what writes it.
    *
-   * DERIVED rather than copied into `draft` by an effect. The effect version worked and was worse:
+   * Derived fresh. The effect version worked and was worse:
    * it made the drop a state write that fires after a render, so the panel painted once without
    * the staged crop and again with it, and it needed the store cleared from inside the effect to
    * avoid re-staging itself forever. Read straight through, a drop is just a draft nobody has
@@ -399,7 +399,7 @@ const PlantingSection = ({
   }, [dropped, bed.id])
 
   // memoised because `derived` below is memoised on it, and a fresh object every render would
-  // re-derive the planting on every render instead of when the choice actually changes
+  // re-derive the planting every render, even when the choice has not changed
   const chosen = useMemo(
     (): Draft | null =>
       draft !== null && draft.bedId === bed.id
@@ -413,8 +413,8 @@ const PlantingSection = ({
     [draft, bed, droppedHere, calendars, occupancy.freeM2, maxCropsPerBed],
   )
 
-  // looked up rather than trusted: a bed that changed under the panel leaves the id behind, and
-  // the select falls back to adding alongside instead of naming a planting that has gone
+  // looked up fresh each time: a bed that changed under the panel leaves the id behind, and
+  // the select falls back to adding alongside when it cannot name a planting that has gone
   const chosenReplacing = bed.plantings.find((planting) => planting.id === replaceId) ?? null
 
   /**
@@ -460,9 +460,9 @@ const PlantingSection = ({
     reader hunting for a select the sentence only named. The moment adding the chosen crop
     alongside everything already in the bed is what a full bed refuses, the planting this bed's
     own ranking would drop first is offered as the replacement instead, so the status line and
-    the press below read the ordinary "Replaces ..." sentence rather than a dead end.
+    the press below read the ordinary "Replaces ..." sentence.
 
-    Read fresh every render off `rawDerived` rather than written into `replaceId` itself, so
+    Read fresh every render off `rawDerived`, so
     picking "Nothing, add it alongside" on a bed that is still full is not fought back to the
     suggestion: a full bed genuinely has nothing to offer alongside, which is exactly the gap
     this fills in until the visitor picks something else to replace
@@ -515,11 +515,11 @@ const PlantingSection = ({
         )
   const options = matched ?? (showAllCrops ? ranked : ranked.slice(0, PICKER_LIMIT))
   // every other bed in the plot, so a row carries a keyboard route as well as the drag one;
-  // hoisted once rather than re-filtered per row below
+  // hoisted once, so it is never re-filtered per row below
   const otherBeds = (plot?.beds ?? []).filter((entry) => entry.id !== bed.id)
 
   // The scene draws a planting at its growth stage, so an annual outside its own window is
-  // genuinely absent rather than hidden. Without this the grower places a plant, sees the bed
+  // genuinely absent from the scene. Without this the grower places a plant, sees the bed
   // stay empty and is told nothing at all
   const dayOfYear = dayOfYearUtc(timeUtcMillis)
   const undrawn = outOfSeason(
@@ -540,7 +540,7 @@ const PlantingSection = ({
     chosen === null ? null : (ranked.find((item) => item.cropId === chosen.cropId)?.outcome ?? null)
   const excludedBy = excluding?.verdict === 'excluded' ? excluding.limiting : null
   // looked up once and reused by both the exclusion sentence and the root-depth remedy below,
-  // rather than each re-deriving it: the picker's own options do the same lookup for their own
+  // so neither has to re-derive it: the picker's own options do the same lookup for their own
   // crop, so this is the chosen crop's equivalent
   const chosenCrop =
     chosen === null ? undefined : catalog.find((entry) => entry.id === chosen.cropId)
@@ -572,8 +572,8 @@ const PlantingSection = ({
     A gardener who searched tomato read that the soil here was not deep enough, and never found
     the raised bed box because the sentence never said one existed. `rootDepthRemedy` is the same
     arithmetic `stages/space.ts` already ran, read back off the crop and bed the panel already
-    has rather than carried on the limiting factor itself. A shallow bed limits a crop rather
-    than refusing it now (`ROOT_DEPTH_FLOOR_M`), so the marginal verdict's limiting factor is
+    has, without depending on the limiting factor itself. A shallow bed limits a crop now, short
+    of refusing it (`ROOT_DEPTH_FLOOR_M`), so the marginal verdict's limiting factor is
     read as well as an exclusion's: the raise is worth offering either way
   */
   const limitedBy =
@@ -584,7 +584,7 @@ const PlantingSection = ({
       : null
   const raiseToM = rootDepthIssue?.raiseToM ?? null
   // a full bed is refused with a reason, not a shape, so this is the one signal the panel gets
-  // for whether the fix on offer is the replace select rather than a smaller count or a later day.
+  // for whether the fix on offer is the replace select. A smaller count or a later day take a different path.
   // Read off the effective replacement above, so it goes false the moment that swap resolves the
   // refusal, exactly as it already does when a visitor's own pick resolves it
   const refusedForRoom = derived?.ok === false && derived.cause === 'room'
@@ -628,7 +628,7 @@ const PlantingSection = ({
         What is in the bed already, above the list to pick from.
         The ranking is reference and the plantings are the thing a grower came to change, so the
         reference used to sit between the top of the panel and the row anybody wanted: "Fix Bed 1"
-        on the seasons step landed on 163 ranked crops rather than on the planting it names
+        on the seasons step landed on 163 ranked crops. It never reached the planting it names
       */}
       {bed.plantings.length === 0 ? null : (
         <>
@@ -698,8 +698,7 @@ const PlantingSection = ({
       ) : (
         <>
           {/* the only way into a 163-crop ranking for somebody who came here wanting one plant:
-              the list runs past hops, tomatillo, purslane and phacelia before a tomato, so
-              a search field is what reaches the plant somebody came for */}
+              a search field lets a visitor jump straight to the plant they came for */}
           <TextField
             testId="control-bed-crop-search"
             label="Find a plant by name"
@@ -711,8 +710,7 @@ const PlantingSection = ({
             The draft sits directly under the search box, above the list it is drawn from. A
             grower who clicked a crop in the picker below used to read the same screen back: the
             block that actually changed sat below a 163-row list, off the bottom of it. Choosing a
-            crop now fills a block that is already on screen rather than one the reader has to
-            scroll to
+            crop now fills a block that is already on screen
           */}
           <p
             className={`notice notice-${chosen !== null && derived?.ok === false ? 'error' : 'idle'}`}
@@ -871,7 +869,7 @@ const PlantingSection = ({
                    * Picking the crop up to carry it to a bed. The click above still works and
                    * still stages it against the bed already selected, so nothing here is the
                    * only way to do anything: this is the shorter road for somebody looking at
-                   * the garden rather than at the list, and a pointer let go anywhere that is
+                   * the garden, and a pointer let go anywhere that is
                    * not a bed simply puts the crop down again
                    */
                   onPointerDown={() => carry(item.cropId)}
@@ -980,7 +978,7 @@ const PlotSizeSection = ({ boundary }: { readonly boundary: Polygon2D }): ReactE
   const rectangle = useMemo(() => rectangleOf(boundary.exterior), [boundary])
   const extent = useMemo(() => extentOf([boundary.exterior]), [boundary])
 
-  // the centre of what is there now, so a resize spreads either way rather than dragging the
+  // the centre of what is there now, so a resize spreads both ways, and never drags the
   // plot off its own ground by one edge
   const centre = vec2((extent.minXM + extent.maxXM) / 2, (extent.minYM + extent.maxYM) / 2)
   const size: PlotSize = rectangle ??
@@ -1068,7 +1066,7 @@ const PlotSizeSection = ({ boundary }: { readonly boundary: Polygon2D }): ReactE
 /**
  * What is on the ground, which is a growing decision and an electrical one at once.
  *
- * It sits under the plot's own size rather than in the panels panel because it describes the
+ * It sits with the plot's own size question, because it describes the
  * whole plot, but the sentence beneath it names the electrical half on purpose: the reason this
  * question exists at all is that the ground's brightness is a term in the rear-side irradiance
  * of a bifacial panel, and it is a large one. Between the darkest and the brightest option here
@@ -1111,7 +1109,7 @@ const GroundCoverSection = (): ReactElement => {
  * What the bed's sky view factor means for frost, in words.
  *
  * The number above it is geometry the bake has always had; this is the one consequence of it that
- * a grower can act on, and the reason it is prose rather than a figure is set out at length in
+ * a grower can act on, and why it takes the form of prose is set out at length in
  * `src/recommend/frost.ts`. The short version: the mechanism is textbook and nobody has published
  * a magnitude for a garden under panels, so the honest output is a direction and a caveat
  */
@@ -1424,9 +1422,9 @@ export const GroundPanel = (): ReactElement => {
                 {/*
                   The two figures on every row of the table below are the whole light story for
                   this bed and neither of them said what it was: a beginner walk-through read "1%
-                  shade (RSR)" as a typo. Both are definitions of a term rather than a caveat, so
-                  they sit behind an InfoTip on the column heading itself now instead of a
-                  paragraph read once and forgotten above twelve rows of figures
+                  shade (RSR)" as a typo. Both are definitions of a term, so
+                  they sit behind an InfoTip on the column heading itself,
+                  one tap from the twelve rows of figures it explains
                 */}
                 <div className="row">
                   <span className="field-label">

@@ -21,15 +21,15 @@ const BACKENDS: readonly (readonly [BackendKind, string])[] = [
  * offering the choice, so the choice is gone and this sentence, built off the constant every bake
  * actually uses, stands in its place instead.
  *
- * There were two buttons here until 2026-09-09, a quick check and a full one. The quick one is
- * gone. It saved about 540 ms on a real GPU (260 against 799, `the port document` section 5) and
- * cost a different answer: `src/recommend/design.ts` measures the crop share moving by 0.0702 at
+ * There were two buttons here, a quick check and a full one. The quick one is gone. It saved
+ * about 540 ms on a real GPU (260 against 799) and cost a different answer:
+ * `src/recommend/design.ts` measures the crop share moving by 0.0702 at
  * Bergen between preview and final settings, which is a whole crop appearing or vanishing from a
  * plan. The preview settings were retired everywhere they still ran, including the layout search
  * and `useAutoLight`; what is gone is asking a grower to choose between two answers when only one
  * of them is the one to trust.
  *
- * Since 2026-09-10 `useAutoLight` runs that full check by itself, the first time as well as after
+ * `useAutoLight` runs that full check by itself, the first time as well as after
  * every change, so the press below is for a run that failed or an automatic run switched off. The
  * first light on a new garden is a full bake, which is about three times the quick one's work,
  * and the e2e functional job measured that as 15.2 minutes becoming 20.6
@@ -134,7 +134,7 @@ export const SimPanel = (): ReactElement => {
       {/*
         The machinery, behind one press. Which backend traced the shadows, how big a square of
         ground is, how many sun positions were used and how the run is triggered are all answers
-        about the run rather than about the garden, and this step was measured at reading grade 12
+        about the run. Not about the garden: this step was measured at reading grade 12
         with them in the open. The status row and the unit's definition are what a grower needs
         from this panel
       */}
@@ -161,7 +161,7 @@ export const SimPanel = (): ReactElement => {
             label="Sun positions done"
             value={progress ? `${progress.passesDone} / ${progress.passesTotal}` : 'idle'}
           />
-          {/* own id rather than "sim-quality", now that the sentence above claims that testid
+          {/* its own id now. Not "sim-quality": the sentence above claims that testid
               for the plain-language explanation of what quick and full check mean */}
           <Readout
             id="sim-raster-quality"

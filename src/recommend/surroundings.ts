@@ -90,7 +90,7 @@ export const drawnPhrase = (obstructions: readonly Obstruction[]): string => {
  * since it is what answers the surroundings question then; otherwise what the three-answer
  * share did, when it dims them.
  *
- * Leads with `drawnPhrase` capitalised rather than "The" plus the phrase: `drawnPhrase` already
+ * Leads with `drawnPhrase` capitalised: `drawnPhrase` already
  * carries its own article or count ("a house", "2 houses"), and "The" in front of that doubles
  * the determiner ("The a house you drew")
  */

@@ -190,7 +190,7 @@ describe('an upstream that answers with an error status', () => {
   })
 
   it('lands a retry a minute past the boundary the counter is cleared on', () => {
-    // 10:20:00 UTC on 2026-09-06
+    // 10:20:00 UTC
     const now = Date.UTC(2026, 8, 6, 10, 20, 0)
     expect(windowResetMs('minute', now)).toBe(60_000)
     expect(windowResetMs('hour', now)).toBe(40 * 60_000 + 60_000)
@@ -233,7 +233,7 @@ describe('the default options every caller inherits', () => {
 })
 
 /**
- * The two halves of one contract, checked against each other rather than against a copy.
+ * The two halves of one contract, checked against each other.
  *
  * `src/data/http.ts` builds the URL and `ROUTES` decides what is reachable, and the tests here
  * used to hold their own hardcoded copies of both. A path that drifted on either side would have
@@ -275,8 +275,8 @@ describe('the client and the allowlist agree on every proxied path', () => {
     for (const upstream of WORKER_PROXIED) {
       expect(requestUrl(upstream, '/x', new URLSearchParams()), upstream).toContain(PROXY_PREFIX)
     }
-    // the weather is the one nothing in the app can do without, so it is named rather than
-    // left to a loop that would still pass if the list were emptied
+    // the weather is the one nothing in the app can do without, so it is named.
+    // A loop over the list would still pass if the list were emptied
     expect(WORKER_PROXIED).toContain('open-meteo')
     /*
       And the place-name lookup, which is named here because it was the LAST browser-direct

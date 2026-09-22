@@ -23,7 +23,7 @@ export const MISSING_RASTER =
 
 export const MissingRaster = ({ testId }: { readonly testId: string }): ReactElement | null => {
   // subscribed to the key, built from a read: a builder returns a fresh object every call and
-  // so can never be a selector, which is a re-render loop rather than a wrong answer
+  // so can never be a selector, which is a re-render loop. It is not a wrong answer
   useAppStore(requirementKey)
   const requirement = lightRequirement(useAppStore.getState())
   return (

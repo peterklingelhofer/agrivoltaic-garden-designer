@@ -66,7 +66,7 @@ import { hourlyArchiveBody, nulledDailyNormalsBody } from './fixtures/weather.ts
  *    hovering an inactive option nor leaving the active option alone reproduces it
  *
  * Every state accumulates into one collector and the test asserts once at the end, so a
- * failure is the complete list of bad pairs rather than whichever one came first.
+ * failure is the complete list of bad pairs
  */
 
 const SCHEMES: readonly ColourScheme[] = ['light', 'dark']
@@ -270,7 +270,7 @@ for (const scheme of SCHEMES) {
     }
 
     // the saved-design notice repaints on every outcome, and its written and cleared states
-    // only exist after the buttons are pressed, so the audit drives them rather than
+    // only exist after the buttons are pressed, so the audit drives them directly, without
     // reading whatever the page happened to boot with. Last, because the reset empties the
     // page the audits above depend on
     await step(page, 'check')
@@ -548,7 +548,7 @@ for (const scheme of SCHEMES) {
     test.setTimeout(240_000)
     const found = contrastCollector()
     // a stored design this build cannot read, so the warn pair on the storage notice is
-    // painted by the boot itself rather than by anything the test has to fake afterwards
+    // painted by the boot itself, with nothing the test has to fake afterwards
     await seedStoredDesign(page, '{"version":999,"design":{}}')
     // the Check step now waits on nothing but a resolved site, so every notice on it -- the
     // discarded-design notice included, though it has nothing to do with the site -- needs one
@@ -586,7 +586,7 @@ for (const scheme of SCHEMES) {
 
     // an upstream that answers with no usable values: the site refuses and says why. Place
     // never locks, so its own notices stay legible even once nothing past it does.
-    // `unroute` first, rather than layering a second handler: a route added on top of
+    // `unroute` first: layering a second handler on top of
     // `stubUpstreams`'s own falls back to it for anything it does not answer itself, and that
     // fallback is one thing too many to get right live against a real fetch race
     /*
@@ -832,7 +832,7 @@ for (const scheme of SCHEMES) {
  * scheme. The example notice is folded to a line at this width too, so its close and its More
  * control are a different pair of states from the ones the desktop test above checks.
  *
- * 320x568 rather than a roomier phone, because that is where the mobile audit found everything
+ * 320x568, because that is where the mobile audit found everything
  * else and because a narrower bar puts more of its label on one line
  */
 for (const scheme of SCHEMES) {
@@ -857,7 +857,7 @@ for (const scheme of SCHEMES) {
       await auditHovered(page, page.getByTestId('action-tab-edit'), bar),
     )
 
-    // and over the garden, where the bar is over the 3D rather than a panel, with the strip
+    // and over the garden, where the bar sits over the 3D scene, with the strip
     // back to the plan pinned across the top of it
     await page.getByTestId('action-tab-garden').click()
     found.add(`${scheme} tab bar over the garden`, await auditContrast(page, { within: bar }))
@@ -958,9 +958,9 @@ for (const scheme of SCHEMES) {
     found.addFocus(`${scheme} agent focus indicators`, await auditFocusIndicators(page, 12))
 
     /*
-      And again on a laptop, where it is a different surface: it takes the editor's column rather
-      than the whole screen, so it paints on `--panel` against a border instead of on `--bg`, and
-      it is reached from the toolbar rather than the tab bar. A pair audited at 320px says nothing
+      And again on a laptop, where it is a different surface: it takes the editor's column,
+      so it paints on `--panel` against a border, and
+      it is reached from the toolbar. A pair audited at 320px says nothing
       about the pair that ships at 1280
     */
     await page.setViewportSize({ width: 1280, height: 800 })

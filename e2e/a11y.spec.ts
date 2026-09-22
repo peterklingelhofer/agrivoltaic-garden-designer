@@ -14,7 +14,7 @@ import { AGENT_IN_BUILD, openApp, step, waitForCanvas, type Step } from './fixtu
  * At rest it found nothing, on any of the nine sidebar steps. What it found was in a STATE: the
  * guided dock's help paragraph scrolls on the longer questions, and a scrollbar reachable only
  * with a pointer is content a keyboard cannot read. That is why the sweep below opens things
- * rather than loading pages
+ * on the page, on top of loading it
  */
 const PHONE = { width: 375, height: 667 }
 
@@ -48,7 +48,7 @@ const sweep = () => {
     settle: (): void => {
       const bad = Object.entries(found).filter(([, violations]) => violations.length > 0)
       expect(JSON.stringify(Object.fromEntries(bad), null, 1)).toBe('{}')
-      // and it actually looked at something, rather than passing because it audited nothing
+      // and it actually looked at something, so an audit that found nothing does not pass
       expect(Object.keys(found).length).toBeGreaterThan(2)
     },
   }
@@ -109,7 +109,7 @@ test('every step of the editor, and the conversation beside it', async ({ page }
 
 /**
  * The questions as a first visit meets them, walked with the Next at the foot of each step
- * rather than by naming the steps, so a question added to the path is audited without this file
+ * never by naming the steps, so a question added to the path is audited without this file
  * being edited: each open step with its folds shut, which is what a visitor reads, and then the
  * comparison the search lands
  */

@@ -53,7 +53,7 @@ describe('the sky occlusion patch', () => {
   /**
    * The diffuse half shipped first and left panel glass and wet soil reflecting a hemisphere
    * they cannot see. What occludes the rest is three's own treatment from `aomap_fragment`,
-   * copied rather than authored, so this pins the copy: the same function, the same guards
+   * This is copied. It is not authored fresh, so this pins the copy: the same function, the same guards
    */
   it('occludes every indirect term the way three occludes them for an aoMap', () => {
     const patched = patchSkyOcclusion(LIT_FRAGMENT)
@@ -133,7 +133,7 @@ describe('enrolling a material', () => {
 
 describe('the horizon search radius', () => {
   /**
-   * The bound is derived rather than tuned, so the test is the derivation: at the radius it
+   * The bound is derived. It is not tuned: the test is the derivation: at the radius it
    * returns, the sky it cannot reach is a tenth of what an occluder at that height could block
    */
   it('misses a tenth of the cosine-weighted sky and no more', () => {

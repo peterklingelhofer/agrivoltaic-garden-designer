@@ -1,12 +1,12 @@
 /**
- * Foliage, as alpha cards rather than solid primitives.
+ * Foliage, as alpha cards.
  *
  * A plant used to be one low-poly solid per `CanopyShape`, which shades like a billiard ball and
  * casts a billiard ball's shadow. Since plants shading each other is part of what this tool
  * models, the shadow is not decoration: a canopy has to let light through the way a canopy does.
  * Each shape is now a cluster of leaf cards whose silhouette follows the same profile the solid
- * had, alpha-tested rather than blended so the depth pass sees exactly what the colour pass does,
- * and shaded off a normal that points out of the canopy volume rather than off the card, which is
+ * had, alpha-tested, so the depth pass sees exactly what the colour pass does,
+ * and shaded off a normal that points out of the canopy volume, which is
  * what stops the cards reading as flat paper.
  *
  * Everything here is one geometry and one material per shape, so the instancing the scene already
@@ -273,7 +273,7 @@ const WIND_GLSL = /* glsl */ `
 
 /**
  * Note for whoever enrols these materials in the cascaded shadow maps: `CSM.setupMaterial`
- * assigns `onBeforeCompile` rather than composing with it, so it would drop this. `SunRig`
+ * assigns `onBeforeCompile` directly, so it would drop this. `SunRig`
  * chains the two
  */
 export const applyWind = <T extends Material>(material: T): T => {

@@ -1,14 +1,9 @@
 # Continuous integration
 
 > The workflow is at `.github/workflows/ci.yml` and has three jobs: `checks` (typecheck, lint,
-> format, unit, build), `rust` (fmt, clippy, test, wasm) and `e2e (functional, macos)`.
->
-> A fourth job, `e2e-visual`, ran the `visual` Playwright project (2 tests, 3 screenshots) on
-> macOS. It was deleted on 2026-09-12, the fallback this file already named for when macOS
-> minutes became the binding cost. Historical cost, from when both e2e jobs ran there: the
-> functional job took 14m51s and the visual job 2m1s, about **169 billed minutes** for one push
-> at the private repo's 10x macOS multiplier. The `visual` project itself stays runnable
-> locally on macOS, see "Why the visual project runs on macOS" below.
+> format, unit, build), `rust` (fmt, clippy, test, wasm) and `e2e (functional, macos)`. The
+> `visual` Playwright project (2 tests, 3 screenshots) is not one of them: it runs locally on
+> macOS, see "Why the visual project runs on macOS" below.
 >
 > Two functional tests skip under the `CI` environment variable, because they wait on a settled
 > GPU frame that GitHub's macOS runners do not produce:
@@ -18,15 +13,8 @@
 > | `the guided camera move runs, and the first pointer event stops it dead` | `e2e/example.spec.ts` | waits on a settled GPU frame, macOS runners have none |
 > | `a wetted surface loses more to the sky occlusion than the same surface dry` | `e2e/specular-occlusion.spec.ts` | waits on a settled GPU frame, macOS runners have none |
 >
-> **Public since 2026-09-12.** Hosted runners are free on public repositories, so the workflow
-> runs on every push. The first public run: `checks` and `rust` green, `e2e (functional, macos)`
-> 216 tests in 19.8 minutes, 166 passed, 49 skipped, one failure in `e2e/persistence.spec.ts`, a
-> timing race in which the boot-time site lookup's soil copy-in scheduled a save before the test
-> read the storage notice. Fixed the same day in `src/state/store.ts`: the copy-in is not an edit,
-> so it schedules no save and cannot displace the shipped example. The second run (c2b7f8a)
-> passed that spec and lost one test to a renderer hang on the runner's virtual GPU (Metal
-> command-buffer errors after a layout was applied, the browser context took nine minutes to
-> close). The functional project now retries a failed test once under `CI`, and only there.
+> The functional project retries a failed test once under `CI`, and only there: the runner's
+> virtual GPU can hang a renderer mid-suite.
 
 The workflow runs on every push to `main` and on every pull request. A
 `concurrency` group keyed on the ref cancels superseded runs, so a rapid push sequence
@@ -45,35 +33,32 @@ Three jobs, run in parallel because nothing in one depends on another.
 | Lint | `bun run lint` | Biome's rule set plus the fourteen React Compiler rules only ESLint has |
 | Format | `bunx biome check .` | formatting and import order, which nothing enforced before |
 | Agent model | `bun run fetch-agent-model`, cached | the sentence-embedding weights, which are gitignored and which `bun run test` now refuses to run without |
-| Unit | `bun run test` | 2,245 `bun test` tests in 188 files (2026-09-12), including the layer-boundary, provenance and citekey-consistency guards. Two runs: `test:dom` for the 184 files that want a DOM (2,201 tests: 2,188 pass, 13 skip), `test:scene` for the four that must not have one (44 tests) |
+| Unit | `bun run test` | 2,245 `bun test` tests in 188 files, including the layer-boundary, provenance and citekey-consistency guards. Two runs: `test:dom` for the 184 files that want a DOM (2,201 tests: 2,188 pass, 13 skip), `test:scene` for the four that must not have one (44 tests) |
 | Build | `bun run build` | the production bundle |
 
 **`rust` (ubuntu-latest)** runs `cargo fmt --check`, `cargo clippy -- -D warnings`, `cargo test`
 and a release build for `wasm32-unknown-unknown`, all against the physics core in
 `crates/agv-sim`. The crate has no dependencies, so there is nothing to install.
 
-**`e2e-functional` (macos-latest)** runs the `functional` Playwright project: 216 tests
-(2026-09-11) covering journeys, invariants, water compliance, array energy, degradation, site
-search, the rendered overlay's colour against its legend, and the runtime WCAG contrast audit.
-169 of them run by default, the other 47 are the agent's and skip unless `VITE_AGENT=on`. It is
-on macOS rather than Linux for the GPU, which the long note in `ci.yml` measures.
+**`e2e-functional` (macos-latest)** runs the `functional` Playwright project: 216 tests covering
+journeys, invariants, water compliance, array energy, degradation, site search, the rendered
+overlay's colour against its legend, and the runtime WCAG contrast audit. 169 of them run by
+default, the other 47 are the agent's and skip unless `VITE_AGENT=on`. It is on macOS for the GPU,
+which the long note in `ci.yml` measures.
 
-**The agent's weights are fetched in `checks` only, as of 2026-09-07.** `models/` is 58 MB and
-gitignored, so CI has none unless it asks. `checks` still asks, because `src/agent/model-presence.ts`
-makes their absence a hard failure under `CI` rather than skipping eight unit tests, which had
-left the embedding router with no coverage in the only place that gates a merge. The held-out
-sets also assert `COLLAPSE_FLOOR`, an alarm for a router that has fallen over rather than a score
-to tune towards.
+**The agent's weights are fetched in `checks` only.** `models/` is 58 MB and gitignored, so CI has
+none unless it asks. `checks` asks, because `src/agent/model-presence.ts` makes their absence a hard
+failure under `CI`. Skipping those eight unit tests would leave the embedding router with no
+coverage in the only place that gates a merge. The held-out sets also assert `COLLAPSE_FLOOR`, an
+alarm for a router that has fallen over.
 
-**The e2e job doesn't fetch them any more.** `playwright.config.ts` used to build the webServer
-with `VITE_AGENT=on`, which made the weights mandatory there too, it builds the way a deploy
-builds now. `agent.spec.ts` skips itself, the agent halves of `a11y` and `contrast` are guarded
-by `AGENT_IN_BUILD`, and 47 of the 223 functional tests skip, taking the local suite from about
-2.9 minutes to 1.4. `VITE_AGENT=on bunx playwright test` restores all of it, and needs `models/`
-present. Put the fetch step back in the e2e job when the flag goes back on.
+**The e2e job does not fetch them.** `playwright.config.ts` builds the webServer the way a deploy
+builds, so the weights are optional there. `agent.spec.ts` skips itself, the agent halves of `a11y`
+and `contrast` are guarded by `AGENT_IN_BUILD`, and 47 of the 223 functional tests skip, taking the
+local suite from about 2.9 minutes to 1.4. `VITE_AGENT=on bunx playwright test` restores all of it,
+and needs `models/` present. Put the fetch step back in the e2e job when the flag goes back on.
 
-`visual` (2 tests, 3 screenshots) stopped running as a CI job on 2026-09-12, it still runs
-locally on macOS.
+The `visual` project (2 tests, 3 screenshots) runs locally on macOS and is not a CI job.
 
 The e2e job passes `--forbid-only` so a stray `test.only` cannot narrow the suite into a
 false green, and `--trace=retain-on-failure` so a red build ships a trace. The
@@ -90,46 +75,40 @@ check that does: a real headless browser against the deployed site, production b
 running a real place lookup, geocoder search, bake, layout search and ranking with nothing
 stubbed. Run it before pointing anyone at the site and again after every deploy. It picks a
 town nobody has looked up so the Worker's cache can't hide an outage, which costs about one
-fresh lookup of the pooled Open-Meteo allowance, so it stays a manual check and never a cron.
+fresh lookup of the pooled Open-Meteo allowance, so it stays a manual check.
 
 ## Why the visual project runs on macOS
 
 `e2e/visual.spec.ts-snapshots/` holds three baselines, all suffixed `-darwin`. Playwright
 suffixes snapshot filenames by `process.platform`, so a Linux runner looks for `-linux.png`
-files that do not exist. Three options were on the table, this repo takes **(a), run the
-`visual` project on macOS**.
+files that do not exist. The `visual` project therefore runs on macOS, where the one committed
+set is authoritative and regenerable.
 
 The reasoning:
 
 - Two of the three baselines are text and CSS gradients rendered by the browser's own
-  font stack, not by the rasteriser. Those will never match between macOS and Linux no
-  matter how deterministic SwiftShader is, so option (b) does not produce one portable
-  set, it produces two sets that must both be refreshed for every deliberate UI change.
-- Worse for (b): a contributor who changes a legend colour could regenerate the darwin
+  font stack. Those will never match between macOS and Linux no
+  matter how deterministic SwiftShader is, so a second Linux set is two sets that must
+  both be refreshed for every deliberate UI change.
+- Worse: a contributor who changes a legend colour could regenerate the darwin
   bytes on their laptop but would have to round-trip through CI to get the linux bytes.
   Baselines that cannot be regenerated where the change is made rot, and rotted baselines
   get `--update-snapshots=all`'d into meaninglessness.
-- Option (c), functional-only, gives up the only instrument that can see the three things
+- Dropping the screenshots gives up the only instrument that can see the three things
   with no DOM representation: the baked overlay's colour ramp applied to real cells, the
   legend gradient carrying the meaning of those colours, and the calendar swatches. The
   header comment in `e2e/visual.spec.ts` argues at length that a screenshot is the wrong
-  tool for anything a selector can assert and the only tool for these three. Dropping the
-  gate would concede the argument.
-- `macos-latest` is arm64 on macOS 15, which is what the committed baselines were recorded
-  on, so the one committed set stays authoritative and stays regenerable locally.
+  tool for anything a selector can assert and the only tool for these three.
+- The committed baselines were recorded on arm64 macOS 15, which is what `macos-latest` is.
 
-The cost was real: this was a private repository, so macOS minutes billed at a 10x
-multiplier, for 2 tests, in a job that ran separately from the functional suite. The
-documented fallback here was (c): delete the `e2e-visual` job. It was taken on 2026-09-12,
-visual regressions are gated locally now, not in CI. See the note at the top of this file.
+Visual regressions are gated locally, with the commands below.
 
 ### No silent baseline writes
 
-The visual job passed `--update-snapshots=none` while it ran in CI. Playwright's default
-mode is `missing`, which writes an absent baseline to disk and, on a fresh runner with no
-committed file, turns "there is no baseline" into an artifact nobody reviews. `none` made a
-missing baseline a hard failure there. Only a human writes a baseline now, deliberately, with
-the command below.
+Run the visual project with `--update-snapshots=none`. Playwright's default mode is
+`missing`, which writes an absent baseline to disk and turns "there is no baseline" into an
+artifact nobody reads. `none` makes a missing baseline a hard failure. A baseline is written
+by hand, deliberately, with the command below.
 
 ### Timeout headroom under software rasterisation
 
@@ -139,16 +118,16 @@ until it has measured its host, and software first paint is slow. Measured local
 `vite preview` under SwiftShader, the canvas becomes visible in ~105 ms and passes the
 `width > 400` check in ~160 ms, and the whole 2-test visual project finishes in 20.7 s
 against per-test budgets of 420 s. That is roughly two orders of magnitude of headroom, so
-a CI runner several times slower than a laptop is still comfortably inside it. The job
-pins `--workers=1` anyway: the bakes are CPU-bound in software, and two of them competing
-for a 3-core runner is the one plausible way to eat that headroom.
+a machine several times slower than a laptop is still comfortably inside it. Pin
+`--workers=1` anyway: the bakes are CPU-bound in software, and two of them competing
+for a 3-core machine is the one plausible way to eat that headroom.
 
-### Why the visual project used to flake, and what it was not
+### What makes a legend screenshot unstable
 
-`dli-legend-ramp` failed intermittently and was recorded as contention at `--workers=2`. It was
-not. Playwright will not screenshot an element until its box is identical across two consecutive
+An intermittent `dli-legend-ramp` failure looks like worker contention and is something else.
+Playwright will not screenshot an element until its box is identical across two consecutive
 animation frames, and it reports that as **"element is not stable"** with no image attached,
-which reads nothing like the pixel mismatch it is not. Both legends sit low in a scrolling
+which reads nothing like a pixel mismatch. Both legends sit low in a scrolling
 sidebar under lists that keep growing after the thing each test waited for is finished:
 
 - the crop picker fills from the catalogue fetch, inserting **220 px** inside `panel-bed`, which
@@ -157,16 +136,16 @@ sidebar under lists that keep growing after the thing each test waited for is fi
   above the calendar legend
 
 `status-simulation` covers the bake and `status-autorun` covers the ranking. Neither covers
-either fetch, and contention only changed how often one landed inside the five-second screenshot
-window. `e2e/visual.spec.ts` now waits on both as conditions. Measured after: **5 consecutive
-green runs of the visual project at `--workers=2`**, where three consecutive runs failed before,
-with both baselines byte-unchanged, and the full suite 115/115 in 224 s at `--workers=2` against
-367 s at `--workers=1`. The visual CI job pinned `--workers=1` for the CPU reason above.
+either fetch, and contention only changes how often one lands inside the five-second screenshot
+window. `e2e/visual.spec.ts` waits on both as conditions. With those waits the visual project is
+green across **5 consecutive runs at `--workers=2`**, where three consecutive runs failed without
+them, both baselines byte-unchanged, and the full suite runs 115/115 in 224 s at `--workers=2`
+against 367 s at `--workers=1`.
 
 Pinning the target's POSITION is the obvious shortcut and it is wrong: both legends have
 transparent backgrounds, so `position: fixed` lands them over the app header and the baseline
 records the header printing through the swatches. It also captures a pinned 340x14 element as
-14 px where the recorded fractional offset gives 15 px. Tried, reverted, documented in place.
+14 px where the recorded fractional offset gives 15 px.
 
 ## The generated-artifact drift check
 
@@ -180,7 +159,7 @@ records the header printing through the swatches. It also captures a pinned 340x
 Both outputs are committed. CI regenerates them and fails on any diff.
 
 A unit test already pins the union to the JSON, so a stale `citation-ids.generated.ts`
-would be caught. Nothing guarded the rendered Markdown. Without this check, adding a source
+is caught there. Nothing else guards the rendered Markdown. Without this check, adding a source
 to the CSL-JSON and forgetting to regenerate leaves `docs/CITATIONS.md` claiming a source
 count, a verification tally and a set of `backsClaims` that no longer describe the corpus,
 while every test stays green. The bibliography is the provenance story for a project whose
@@ -189,13 +168,13 @@ expensive kind. The check also catches the reverse: a hand edit to `docs/CITATIO
 inside the generated region, which would be overwritten on the next `bun run generate`.
 
 This step runs first in the `checks` job, before `typecheck`, so a stale union reports as
-"run `bun run generate`" rather than as a confusing type error somewhere downstream.
+"run `bun run generate`" before it can surface as a confusing type error somewhere downstream.
 
 ## Bun, Node and caching
 
 `package.json` pins `"packageManager": "bun@1.4.2"` and `scripts/only-bun.mjs` exits
 non-zero for npm, yarn or pnpm. `oven-sh/setup-bun@v2` takes its version from the
-`BUN_VERSION` workflow env rather than from the `packageManager` pin, so those two are the
+`BUN_VERSION` workflow env, which the `packageManager` pin does not feed, so those two are the
 one thing here that has to be changed together. Installs use `--frozen-lockfile`.
 
 **Every script runs as `bun run <name>`, never `bun <name>`.** `bun test` and `bun build` are
@@ -203,25 +182,22 @@ bun's own test runner and bundler, and both would run happily while doing none o
 repo's scripts of those names do. That is the single easiest way to break this workflow.
 
 Node is still installed and still pinned to **24**, because bun does not replace it here: the
-`scripts/*.mjs` tools run under node. The unit suite no longer needs it, since `bun test`
-replaced vitest on 2026-09-08. `engines` requires `>=20`, but 24 is the current
-Active LTS, is what the repo is developed on, and is what `@types/node@^24` describes. Testing
-against 20 as well would be a matrix this project has no reason to carry: it ships a browser
-bundle, not a library consumed on older runtimes.
+`scripts/*.mjs` tools run under node. The unit suite runs under `bun test` and needs no node.
+`engines` requires `>=20`, but 24 is the current Active LTS, is what the repo is developed on, and
+is what `@types/node@^24` describes. Testing against 20 as well would be a matrix this project has
+no reason to carry: it ships a browser bundle.
 
 ### `@playwright/test` is pinned exactly, and why
 
-`"@playwright/test": "1.62.0"`, with no caret. Regenerating the lockfile for the bun move
-resolved it to 1.63.0, and on 1.63.0 `e2e/mobile.spec.ts` "offers the way to plant the bed it
-just selected" fails every full-suite run and passes when the file runs alone. Measured rather
-than guessed: three full runs failed on 1.63.0 and the same suite passed on 1.62.0 on the same
-machine minutes apart, with every runtime dependency identical.
+`"@playwright/test": "1.62.0"`, with no caret. On 1.63.0 `e2e/mobile.spec.ts` "offers the way to
+plant the bed it just selected" fails every full-suite run and passes when the file runs alone. The
+same suite passes on 1.62.0 on the same machine, with every runtime dependency identical.
 
 That test taps a fixed point on the canvas and expects the bed under it to select, and the
-example garden opens on a slow orbit, so it assumes a camera pose rather than waiting for one.
+example garden opens on a slow orbit, so it assumes a camera pose without waiting for one.
 1.63.0 appears to shift the timing enough to matter under load. **The test is the fragile
-half**, the pin buys time rather than fixing anything. Unpinning means first making that tap
-wait for a settled camera instead of a wall-clock moment.
+half**, and the pin buys time without fixing it. Unpinning means first making that tap
+wait for a settled camera.
 
 One cache, plus bun's own:
 
@@ -232,15 +208,15 @@ One cache, plus bun's own:
   `playwright install-deps chromium` on Linux, because the system libraries live outside
   the cached directory, on macOS there are no such deps and the step is omitted.
 
-Keying the browser cache on the resolved version rather than on the lockfile hash means a
-lockfile change that does not move Playwright still hits.
+The browser cache key is the resolved version, so a lockfile change that does not move
+Playwright still hits.
 
 ## The preview server
 
 `playwright.config.ts` starts `vite build && vite preview --port 4173` and sets
 `reuseExistingServer: !process.env.CI`. GitHub Actions sets `CI=true` on every runner, so
-in CI Playwright always starts its own server and fails fast if port 4173 is already bound,
-rather than testing against something it did not build. The build is Rolldown and completes
+in CI Playwright always starts its own server and fails fast if port 4173 is already bound, so
+it never tests against something it did not build. The build is Rolldown and completes
 in well under a second locally, so the 60 s default `webServer.timeout` is not close to
 binding.
 
@@ -259,22 +235,22 @@ bun run build
 
 # the e2e job; CI=true reproduces the no-reuse server behaviour
 CI=true bunx playwright test --project=functional --forbid-only
-# the visual project: not a CI job any more, still checked here before a deliberate snapshot update
+# the visual project, run locally before a deliberate snapshot update
 CI=true bunx playwright test --project=visual --forbid-only --update-snapshots=none --workers=1
 ```
 
 ### A green exit code is not proof the suite ran
 
-Observed repeatedly on a loaded machine (load average 80-143): Playwright exited **0** having
-run only 81, 91 and 8 tests out of 100, 100 and 12. No failures, no "interrupted", nothing in
-the summary to say a fifth of the suite never executed. The eight workers Playwright defaulted to
-starve (the config runs two on a laptop now, for the fans), and the line reporter's tail is easy
-to misread as a complete summary.
+On a loaded machine Playwright can exit **0** having run a fraction of the suite: 81, 91 and 8
+tests out of 100, 100 and 12, at load averages of 80 to 143, with no failures, no "interrupted"
+and nothing in the summary to say a fifth of it never executed. Starved workers do that, and the
+line reporter's tail is easy to misread as a complete summary. The config runs two workers on a
+laptop, for the fans.
 
 Two consequences:
 
-- **Locally on a busy machine**, drop the worker count and read per-test status rather than the
-  summary line. The JSON report cannot be truncated or misread:
+- **Locally on a busy machine**, drop the worker count and read per-test status. The summary line
+  can be misread, and the JSON report cannot:
   ```sh
   CI=true PLAYWRIGHT_JSON_OUTPUT_NAME=/tmp/pw.json \
     bunx playwright test --workers=2 --forbid-only --update-snapshots=none --reporter=json
@@ -309,4 +285,4 @@ Two failure modes are known and are not regressions, both documented in the head
 `e2e/visual.spec.ts`: a snapshot that contains a model output changes with every bake, and
 a snapshot whose box is content-derived changes size by a pixel and fails hard regardless
 of `maxDiffPixelRatio`. If a baseline starts flapping, the fix is to shrink or pin the
-captured element, not to widen the tolerance.
+captured element. A wider tolerance hides the next real change.

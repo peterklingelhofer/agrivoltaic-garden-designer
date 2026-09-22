@@ -28,7 +28,7 @@ const GEOLOCATION_MAX_AGE_MS = 600_000
 
 /**
  * "usda-2023 6a" is a dataset id; a gardener reads "zone 6a (USDA)". Off the grid the zone is
- * computed here from thirty years of daily minima, and the label says so rather than
+ * computed here from thirty years of daily minima, and the label says so, never
  * claiming the map
  */
 const zoneWords = (rating: TemperatureHardinessRating): string =>
@@ -84,7 +84,7 @@ export const SitePanel = (): ReactElement => {
   } = useAddressSearch(searchInput)
   // whether the browser refused a location, its own notice and never the search's
   const [geoBlocked, setGeoBlocked] = useState(false)
-  // hidden rather than shown-and-refused: a permission already denied is not worth a press
+  // hidden, since a permission already denied is not worth a press
   const [geoOffered, setGeoOffered] = useState(true)
   // the press is answered while the browser looks: a phone can take seconds to find itself
   const [locating, setLocating] = useState(false)
@@ -278,7 +278,7 @@ export const SitePanel = (): ReactElement => {
       {/*
         Everything a grower reads once and a specialist reads often, behind one press.
         The step was measured at reading grade 20, the highest in the app, on the first panel a
-        newcomer meets: two coordinate fields, an exceedance percentile, a Köppen code, a hardiness
+        beginner meets: two coordinate fields, an exceedance percentile, a Köppen code, a hardiness
         zone and a water-limitation band, none of which answer the question the step is asking. The
         search, the place it found and the frost sentence are what stayed; the press that looks up
         typed coordinates is in here beside the fields it reads
@@ -351,8 +351,7 @@ export const SitePanel = (): ReactElement => {
               value={timezoneWords(resolved.timezone, resolved.timezoneBasis)}
             />
             <Readout id="site-koppen" label="Climate type (Köppen)" value={resolved.koppenCode} />
-            {/* in plain words: "usda-2023 6a" reads here as a
-                dataset id, which it is */}
+            {/* in plain words: "usda-2023 6a" reads as a dataset id, which it is */}
             <Readout
               id="site-hardiness"
               label="Winter hardiness zone"

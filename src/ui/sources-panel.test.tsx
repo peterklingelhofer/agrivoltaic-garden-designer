@@ -9,8 +9,8 @@ import { mount } from './testkit'
  * Why this file exists.
  *
  * The app disclaims narrowly and well per claim, DLI, water, compliance, but never once said
- * plainly that its output is a planning estimate rather than something an agronomist or an
- * engineer signed off on. That single blanket statement now sits at the top of Sources, and the
+ * plainly that its output is a planning estimate. An agronomist or an
+ * engineer has not signed off on it. That single blanket statement now sits at the top of Sources, and the
  * one way it could regress is by ending up behind `showsFigures`: novice is the default
  * experience and the one most likely to see a stripped-down panel, so that is the level this
  * checks

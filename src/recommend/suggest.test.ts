@@ -426,7 +426,7 @@ describe('an inference never passes for a measurement', () => {
    *
    * The band used to be 72 percent and the survivor used to be ramps, which is no longer
    * admissible at Phoenix at any shade: the climate gate now judges a perennial on the July it
-   * stands through rather than on its March-to-May window alone, so a woodland ephemeral is ruled
+   * stands through, above its March-to-May window alone, so a woodland ephemeral is ruled
    * out of a desert bed on temperature before light is ever consulted. That is the outcome
    * `dli.ts` promises the user on screen; this test's subject was always the inference, not ramps
    */
@@ -437,7 +437,7 @@ describe('an inference never passes for a measurement', () => {
     if (best === undefined) return
     expect(best.cropIds).toContain('claytonia' as CropId)
     // the crops are in the order the combination was built in, so the admission is found by
-    // name rather than taken as the first
+    // matching its name
     const admission = best.confidence.inferredLightAdmissions.find(
       (entry) => entry.cropId === ('claytonia' as CropId),
     )
@@ -453,7 +453,7 @@ describe('an inference never passes for a measurement', () => {
     // and the sourced refusals it stands on top of are legible, not silently dropped. Tomato is
     // one of them: its 20 percent ceiling is Zhang et al. 2025's segmented regression at tier B,
     // where the leafy-greens 40 percent that used to fill this list is this app's own band and
-    // now reads as the inference it is (audit of 2026-09-20)
+    // now reads as the inference it is
     const tomato = set.refused.find((entry) => entry.cropId === ('tomato' as CropId))
     expect(tomato?.limiting?.cause).toEqual({ kind: 'max-design-rsr' })
     expect(tomato?.reason).toMatch(/design ceiling/)

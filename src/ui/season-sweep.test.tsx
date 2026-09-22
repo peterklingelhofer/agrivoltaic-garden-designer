@@ -104,7 +104,7 @@ beforeEach(() => {
   /*
     Vitest needed `toFake: ['setInterval', 'clearInterval']` here, because faking React's own
     scheduling as well stalled `act`. Bun fakes every timer and `act` still flushes, so the
-    narrowing is gone rather than translated
+    narrowing is gone. It is never translated
   */
   vi.useFakeTimers()
 })

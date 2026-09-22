@@ -13,7 +13,7 @@ import {
  * The first thirty seconds. Everything here is about what a visitor who has never used this
  * product sees before they click anything, so nothing in this file draws a plot or runs a bake.
  *
- * The camera assertions read a strip of sky rather than the whole canvas. Foliage has wind in
+ * The camera assertions read a strip of sky only. Foliage has wind in
  * its vertex shader off a shared clock, so the canvas is never twice the same image and "the
  * orbit stopped" cannot be asserted from it. Above the horizon there is nothing but the
  * Preetham sky, which is a function of the hour and the view direction: the hour is fixed by

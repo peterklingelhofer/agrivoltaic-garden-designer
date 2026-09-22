@@ -111,7 +111,7 @@ describe('the physics core seam', () => {
     // the message names both recoverable causes, because neither is obvious from a stack trace
     expect(() => requirePhysicsCore()).toThrow(/bun run rust:wasm/)
     expect(() => requirePhysicsCore()).toThrow(/ensurePhysicsCore/)
-    // and the refusal reaches the physics rather than being swallowed inside it
+    // and the refusal reaches the physics
     expect(() => solarPositionSeries(UTC_MILLIS, OBSERVER, 'nrel-spa')).toThrow(
       /physics core is not loaded/,
     )
@@ -172,8 +172,8 @@ describe('the physics core seam', () => {
 
   /**
    * `decompose` hands the Rust its output arrays straight into `cloneSeries`, and wasm linear
-   * memory is reused by the next allocation. If any of those arrays were a view of it rather than
-   * a copy, a second call would silently rewrite the first call's answer.
+   * memory is reused by the next allocation. Those arrays must be copies. If any of them turned
+   * out to be a view of the source, a second call would silently rewrite the first call's answer.
    */
   it.skipIf(!HAVE_WASM)('does not hand back a view of linear memory', async () => {
     const core = await load()
@@ -197,9 +197,9 @@ describe('the physics core seam', () => {
 /**
  * The loader, which is the only part of this that talks to the network.
  *
- * Every case here is a way the wasm can fail to arrive, and every one of them has to end in the
- * TypeScript running rather than in an exception reaching a render. A physics core that cannot be
- * fetched is not an error condition; it is the ordinary state of every build that has not run
+ * Every case here is a way the wasm can fail to arrive, and every one of them has to end with the
+ * TypeScript running. A physics core that cannot be
+ * fetched is not an error condition. It is the ordinary state of every build that has not run
  * `bun run rust:wasm`, which includes the deployed one.
  */
 describe('loading the compiled core', () => {

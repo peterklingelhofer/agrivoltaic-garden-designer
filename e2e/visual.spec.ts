@@ -37,7 +37,7 @@ import {
  *    whose height is a sum of line boxes: it measured 36 device pixels when the baseline
  *    was recorded and 37 afterwards, and a one pixel size difference is a hard mismatch
  *    that no `maxDiffPixelRatio` can absorb. The month axis was a fourth snapshot and was
- *    dropped for exactly this. Rather than drop a second one, `pinned` fixes the
+ *    dropped for exactly this. In place of dropping a second one, `pinned` fixes the
  *    element's own box before the shot, so the wrap is decided at a known width and the
  *    image is the same size on every run and every machine
  */
@@ -54,7 +54,7 @@ interface Box {
  * The agenda sits above the calendar legend on the same step and settles a moment after the step
  * opens, so the legend is still travelling up the column while everything a spec would normally
  * wait for is already true. `pinned` below fixes an element's SIZE and can do nothing about its
- * position. Two consecutive equal boxes, rather than a timeout, so it costs one frame when the
+ * position. Two consecutive equal boxes decide it, so it costs one frame when the
  * page is already still
  */
 const stillFor = async (target: Locator): Promise<void> => {
@@ -89,7 +89,7 @@ const pinned = async (target: Locator, box: Box): Promise<void> => {
      * with `position: fixed` lands it over the app header, and both have a transparent
      * background, so the header's title and buttons print straight through the swatches: a
      * baseline recorded that way is a picture of two things at once. It also captures a 340x14
-     * element as exactly 14 px rather than the 15 px the recorded fractional offset produces,
+     * element as exactly 14 px, against the 15 px the recorded fractional offset produces,
      * so it cannot be adopted without re-recording. Settle the layout instead
      */
   }, box)
@@ -107,8 +107,8 @@ const RAMP_BOX: Box = { width: 340, height: 14 }
 /**
  * Both legends used to sit low in a scrolling sidebar, under lists that keep growing after the
  * thing each test waited for is already done, and a screenshot of an element that is still
- * moving fails on stability rather than on any pixel. The overlay legend is pinned over the
- * canvas now rather than filed in the sidebar, which took it out of that flow entirely, but the
+ * moving fails on stability. The overlay legend is pinned over the
+ * canvas now. It is not filed in the sidebar, which took it out of that flow entirely, but the
  * calendar legend is still one panel among several on the Calendar step, and the crop picker
  * that used to sit above it in `panel-bed` now lives behind a fold on the plants step and
  * cannot move it; these two waits are kept anyway, as the settle conditions for the async
@@ -118,7 +118,7 @@ const RAMP_BOX: Box = { width: 340, height: 14 }
  * - the crop picker fills from the catalogue fetch
  * - the DLI evidence lands on every recommendation row
  *
- * stated as conditions rather than as sleeps. Attached rather than visible, because the picker
+ * stated as conditions. Never sleeps. It is attached, because the picker
  * sits inside the closed "Pick plants one at a time" fold and the condition is that it has
  * filled, which the document knows whether or not the fold is open
  */
@@ -127,7 +127,7 @@ const catalogSettled = async (page: Page): Promise<void> => {
 }
 
 /*
-  The rows themselves, rather than the DLI evidence one of them may carry.
+  The rows themselves, without the DLI evidence one of them may carry.
   This waited on `readout-recommendation-dli-evidence-*` and stopped being a settle condition
   twice over. A row only renders that note when its limiting factor IS a light gate, so whether
   any row has one is a fact about which crops the bake happened to rank first, and the panel now

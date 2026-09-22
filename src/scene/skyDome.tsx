@@ -3,7 +3,7 @@
  * `SkyLight` is the other half, the part that reads `useAppStore` and turns a location and a
  * moment into the `sun` direction and `radiance` these take as props. Splitting them means this
  * half can be reused by anything that is not the designer, the same split `foliage.ts` and
- * `panelGeometry.ts` already have (the port document section 8e)
+ * `panelGeometry.ts` already have
  */
 
 import { useEffect, useMemo, type ReactElement } from 'react'
@@ -26,7 +26,7 @@ export interface DomeProps {
 }
 
 /**
- * Uniforms are written during render rather than from an effect on purpose: drei renders the
+ * Uniforms are written during render, on purpose: drei renders the
  * environment cube in a layout effect, which would otherwise capture the previous sun
  */
 export const SkyDome = ({ name, sun, scaleM, sunDisc, cloud = 0 }: DomeProps): ReactElement => {

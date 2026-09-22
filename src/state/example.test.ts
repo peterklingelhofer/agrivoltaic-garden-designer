@@ -381,7 +381,7 @@ describe('the store shows the example without adopting it', () => {
 })
 
 /**
- * The assets that actually deploy, read off disk rather than built from a fixture.
+ * The assets that actually deploy, read off disk.
  *
  * Every other test in this file feeds the loader something it made up, which is the right way to
  * test a loader and is why this asset has now broken twice in the field without a single test
@@ -391,7 +391,7 @@ describe('the store shows the example without adopting it', () => {
  * failing thirty tests at once, with the cause several steps removed from the failure
  */
 describe('the baked example assets on disk', () => {
-  // off the working directory rather than `import.meta.url`: this file runs in jsdom, where
+  // off the working directory: `import.meta.url` would differ, since this file runs in jsdom, where
   // that resolves to a document URL and lands the read at the filesystem root
   const dataFile = (name: string): string => join(process.cwd(), 'public', 'data', name)
 

@@ -40,13 +40,13 @@ import {
  * is gone: its questions are the first four steps of the sidebar, each with a Next at its foot,
  * and the fourth runs the search and lands the comparison on the same step. This suite is that
  * path: it asks only things a home grower can answer, it can be finished without a mouse, it
- * ends in a comparison rather than a single answer, the open sky is in that comparison so the
+ * ends in a comparison of several, the open sky included, so the
  * panels can be seen to cost something, and a reload lands where the grower was with what they
  * said.
  *
  * Every assertion here is structural or directional. No absolute light, yield, land-use or
  * kWh figure is pinned anywhere: those are the engine's to change, and a test that froze
- * one would be pinning a model output rather than the product
+ * one would be pinning a model output over the product
  */
 
 const HITS = [
@@ -199,7 +199,7 @@ test('applying a layout lands on the plants step with beds, plants, the reasonin
 test('the comparison opens on a layout with panels, anchored by the open sky', async ({ page }) => {
   test.setTimeout(DESIGN_TIMEOUT_MS + 120_000)
   await openIn(page, 'light')
-  // every question on its defaults, waiting for each step rather than counting presses
+  // every question on its defaults, waiting for each step, with no press counted
   await answerEveryQuestion(page)
 
   /*
@@ -234,7 +234,7 @@ test('the comparison opens on a layout with panels, anchored by the open sky', a
   )
   await openFold(page, 'details-onboarding-explainer')
   await expect(page.getByTestId('readout-onboarding-baseline-help')).toContainText(/no panels/i)
-  // the control is the anchor rather than a fifth option: it loses nothing to itself
+  // the control is the anchor: as its own reference it loses nothing to itself
   await expect(page.getByTestId('readout-onboarding-crops-no-array-control')).toContainText(
     /as it stands today/i,
   )

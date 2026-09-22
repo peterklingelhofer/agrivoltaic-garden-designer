@@ -46,8 +46,8 @@ export const DEFAULT_PV_CHAIN_OPTIONS: PvChainOptions = {
  * The chain's settings for one garden: the ground it stands on, and the part of the year that
  * ground spends white.
  *
- * Built here rather than at each call site because there are three of them, in the editor's
- * report and twice inside the design search, and they were passing `DEFAULT_PV_CHAIN_OPTIONS`
+ * Built here, common to all three call sites, in the editor's
+ * report and twice inside the design search, because they were passing `DEFAULT_PV_CHAIN_OPTIONS`
  * to a garden that had a cover and a winter. Two of them disagreeing about the ground is how a
  * suggested layout came to quote a different year than the same layout did once applied
  */
@@ -70,9 +70,9 @@ export const chainOptionsFor = (
  * re-derived there either; it arrives already computed, which is the same rule the loop here used
  * to state.
  *
- * The whole year crosses the boundary in one call, and that is the reason the chain moved as a
- * unit rather than function by function: it evaluates transposition 8,760 times, and a wasm
- * crossing per hour would have cost far more than the arithmetic it was crossing for.
+ * The whole year crosses the boundary in one call, and that is the reason the chain moved as one
+ * unit: it evaluates transposition 8,760 times, and a wasm crossing per hour would have cost far
+ * more than the arithmetic it was crossing for.
  */
 export const runAnnualChain = (
   array: PvArray,

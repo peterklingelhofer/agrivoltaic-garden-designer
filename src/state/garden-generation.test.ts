@@ -153,7 +153,7 @@ describe('applying a scenario hands over a planted garden, not an empty one', ()
   /**
    * A preview is built from the answers it was raised against, so an answer that moves under it
    * leaves the scene drawing a garden nothing would now propose. Hover-driven previews make that
-   * the common case rather than the corner it is today
+   * far more common than the corner case it is today
    */
   it('drops a standing preview when an answer moves under it', () => {
     useAppStore.setState({

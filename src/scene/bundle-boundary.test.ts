@@ -4,8 +4,7 @@ import { join } from 'node:path'
 import { describe, expect, it } from 'bun:test'
 
 /**
- * The boundary that keeps three.js off the critical path, asserted on the source rather than on
- * the build.
+ * The boundary that keeps three.js off the critical path, asserted on the source itself.
  *
  * three, react-three-fiber and drei are about 332 kB gzipped, two thirds of everything this app
  * ships. They are behind a dynamic import so the shell paints without them: measured on a
@@ -15,8 +14,7 @@ import { describe, expect, it } from 'bun:test'
  * and ONE ordinary-looking import undoes it silently. It has already happened once: three files in
  * `ui/` imported `prefersReducedMotion` from `scene/useGuidedTour`, a `matchMedia` call one line
  * long, and dragged the whole renderer into the first chunk behind it. Nothing about that reads as
- * a performance decision at the call site, which is exactly why it needs a test rather than a
- * comment.
+ * a performance decision at the call site, which is exactly why it needs a test to hold it.
  *
  * Checked on imports, not on bundle output, so the failure names the file that did it
  */

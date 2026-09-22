@@ -112,8 +112,8 @@ import type { LatLon } from '../types/geo'
 /**
  * The day the scene opens on: 23 July 2024, day 205, at local noon.
  *
- * Fixed rather than today's date so the scene is identical on every machine and every day, which
- * the visual baselines depend on. Day 205 rather than the June solstice because the solstice is
+ * Fixed, so the scene is identical on every machine and every day, which
+ * the visual baselines depend on. Day 205 is chosen over the June solstice: the solstice is
  * the right answer to a question nobody opening this app is asking: it is the longest day, but it
  * is also early enough in the season that half the beds are still bare earth. Late July is when a
  * planted garden looks like one, after the summer crops have filled in and before the harvests
@@ -122,8 +122,7 @@ import type { LatLon } from '../types/geo'
 export const DEFAULT_TIME = epochMillis(Date.UTC(2024, 6, 23, 16, 0, 0))
 
 /**
- * The real day, for the surfaces that answer "what do I do now" rather than "what does it look
- * like at this moment".
+ * The real day, read by the surfaces that answer "what do I do now".
  *
  * These were the same field, and the agenda said so out loud: it dated every job from
  * `timeUtcMillis`, "the day the sun and scene are set to". That field is a viewing control, a
@@ -134,9 +133,9 @@ export const DEFAULT_TIME = epochMillis(Date.UTC(2024, 6, 23, 16, 0, 0))
  * slider was the thing standing between you and them.
  *
  * So the clock splits in two. The scene keeps its fixed day and stays reproducible; the
- * calendar reads the day it actually is. Kept in the store rather than called at the point of
- * use so a test can hold the day still, which is the same reason every other clock read in this
- * file goes through a value rather than through `Date.now`
+ * calendar reads the day it actually is. Kept in the store, so a test can hold the day still,
+ * which is the same reason every other clock read in this file goes through a value, never
+ * `Date.now` directly
  */
 export const todayMillis = (): EpochMillis => epochMillis(Date.now())
 
@@ -185,7 +184,7 @@ const simClient = (): SimClient | null => {
  * `cancelAll`, because one client is single-flight by construction. Share it with the editor and
  * a grower who presses Run preview while the layouts are being computed kills their own search
  * with "simulation superseded", which names nothing they did. The guided dock leaves the sidebar
- * live on purpose, so that press is reachable rather than theoretical. Two clients is two workers
+ * live on purpose, so that press stays reachable. Two clients is two workers
  * and one more memo, which is the cheaper of the two prices
  */
 const designClient = (): SimClient | null => {
@@ -319,7 +318,7 @@ const rederiveBedLight = (s: MutableState): void => {
 
 /**
  * A boundary edit, which is a plot size edit: the search laid its candidates out in the old
- * extent, so a finished search is dropped rather than kept, exactly as `answerOnboarding` drops
+ * extent, so a finished search is dropped, exactly as `answerOnboarding` drops
  * one when an answer the search reads moves
  */
 const patchBoundary = (s: MutableState, patch: (plot: GardenPlot) => GardenPlot): void => {
@@ -348,7 +347,7 @@ const patchBed = (s: MutableState, id: BedId, patch: (bed: Bed) => Bed): void =>
 /**
  * The regime checks over the window the state gives, and none when a check throws; one place
  * computes them. The window is read inside the attempt too, so a site with no frost curve
- * leaves the checks empty rather than throwing out of a store action
+ * leaves the checks empty, without throwing out of a store action
  */
 const complianceOf = (
   plot: GardenPlot,
@@ -614,7 +613,7 @@ const plantBeds = (run: PlantingRun, set: Setter, get: () => AppState): void => 
 
   /**
    * What each bed gave up by standing where it does. The comparison is the brightest bed of this
-   * same plot rather than the wizard's open-sky control: it needs no second bake, it works the
+   * same plot: it needs no second bake, it works the
    * same on a garden drawn by hand, and it is the question a grower asks looking at two beds two
    * metres apart. A crop the site refuses outright is refused in the bright bed too, so
    * subtracting that bed's own light-gate list leaves only what the shade cost
@@ -751,11 +750,11 @@ const plantBeds = (run: PlantingRun, set: Setter, get: () => AppState): void => 
 }
 
 /**
- * The standing data every planting reads, fetched rather than waited for, then the ranking.
+ * The standing data every planting reads, fetched here, then the ranking.
  *
  * The wizard can reach a scenario without the editor ever resolving the site, because the
  * design engine resolves one of its own. The ranking needs the editor's, on the location the
- * answers named, so it is fetched here rather than left to fail silently. The ranking goes
+ * answers named, so it is fetched here, where a missing site cannot fail silently. The ranking goes
  * through the editor's own `recommend`, which is what carries the wildlife answers and the
  * region they are judged against, and what comes back is what is planted from: `sets` on the
  * store can already belong to a later run by the time this reads it
@@ -788,7 +787,7 @@ const generateGarden = async (
       energyRatio: scenario.energyRatio,
       archetype: scenario.candidate.archetype,
       explanation: layout.explanation,
-      // measured by the search against its own open-sky control, carried rather than recomputed
+      // measured by the search against its own open-sky control, carried as is
       plotLostToShade: scenario.production.cropsLostToShade,
       layoutRefusals: layout.refusals,
     },
@@ -843,9 +842,9 @@ export const useAppStore = create<AppState>()(
         // Deliberately NOT gated on the guided path being closed, though the two do open
         // together on a first load. The guided panel is a dock across the foot of the canvas,
         // so the example stays in view above it and is the thing the first questions are asked
-        // over: an empty grid is the one state a newcomer cannot read. It gives way on its own
-        // as soon as anything on screen is the visitor's, which `showingExample` asks of the
-        // design rather than of a flag
+        // over: an empty grid is the one state a beginner cannot read. It gives way on its own
+        // as soon as anything on screen is the visitor's, which `showingExample` reads from the
+        // design itself
         if (restored.design !== null || get().example !== 'absent') return
         set((s) => {
           s.example = 'loading'
@@ -977,7 +976,7 @@ export const useAppStore = create<AppState>()(
         )
         /*
           A later lookup took over while this one was in flight, so its answer is the place on
-          screen and this one is dropped rather than written over it. The boot lookup of the
+          screen and this one is simply dropped, without overwriting it. The boot lookup of the
           example's town and a search typed within seconds of opening overlapped this way, and
           whichever finished last won: a visitor who typed Mumbai quickly got Amherst's ground
           under Mumbai's weather, with a clock and a hardiness zone from the wrong hemisphere
@@ -999,7 +998,7 @@ export const useAppStore = create<AppState>()(
             s.site = ready(result.value.site)
             s.weather = ready(result.value.weather)
             s.years = result.value.years
-            // and the years as sites, now rather than on the first press: the seasons step
+            // and the years become sites as soon as they resolve: the seasons step
             // names each choice's year on its card, which it cannot do from raw weather
             s.seasonYears = result.value.years.map((measured) =>
               measuredSeasonYear(result.value.site, measured),
@@ -1019,8 +1018,8 @@ export const useAppStore = create<AppState>()(
             /*
               Never the example's beds: they are a baked design and stay exactly as shipped, and
               `showingExample` knows the example by the plot object's identity, so a plot rebuilt
-              here would take the banner off the screen. Asked at this moment rather than when the
-              lookup started, because at startup the lookup is under way before the example has
+              here would take the banner off the screen. Asked fresh at this moment, because at
+              startup the lookup is under way before the example has
               finished loading. And only when a bed actually changes, for the same reason
             */
             if (!showingExample(get()) && (s.plot?.beds.some(untold) ?? false)) {
@@ -1128,11 +1127,11 @@ export const useAppStore = create<AppState>()(
        *
        * A location is never absent, so this never has to guess: `DEFAULT_LOCATION` seeds it and
        * the toolbar has been asserting it on screen the whole time. Looking it up is the app
-       * agreeing with what it already says rather than a decision made on the visitor's behalf,
+       * agreeing with what it already says; it is not a decision made on the visitor's behalf,
        * and answering the location question replaces it the moment they do say.
        *
        * Only from `idle`, which is what makes it safe to call from anywhere: a failure stays
-       * failed rather than retrying on every render, and a resolved site is never re-fetched
+       * failed and is never retried on every render, and a resolved site is never re-fetched
        */
       ensureSite: async () => {
         if (get().site.status !== 'idle') return
@@ -1210,9 +1209,8 @@ export const useAppStore = create<AppState>()(
        *
        * A planting's id is its bed, its crop and its sow day, so the same crop sown the same day
        * is the same planting and adding it again is more plants of it, kept in its place in the
-       * list. It used to be replaced outright: a second press added one
-       * cucumber to the example's Bed 1, which already carried seventeen sown on that day, and
-       * sixteen of them left the picture
+       * list. Replacing it outright instead would let adding one cucumber to a bed already
+       * carrying seventeen sown that day wipe out sixteen of them
        */
       addPlanting: (planting) =>
         set((s) => {
@@ -1434,7 +1432,7 @@ export const useAppStore = create<AppState>()(
         const site = state.site.value
         const weather = state.weather.value
         // the ground the rows stand on is a term in the front-side transposition AND in the
-        // rear-side gain, so the plot's own cover is passed rather than the chain's default
+        // rear-side gain, so the plot's own cover is passed explicitly
         const result = attempt(() =>
           pvEnergyReport(
             site,
@@ -1488,7 +1486,7 @@ export const useAppStore = create<AppState>()(
         const season = state.simulation.season + 1
         // the hidden truths are this place's, drawn once when the first season runs: a garden
         // that has run seasons keeps the seed it ran them on, wherever it is moved to afterwards.
-        // Drawn here rather than when the place resolves, because the seed is a persisted field
+        // Drawn at this point, because the seed is a persisted field
         // and stamping it at resolve wrote a design nobody had edited, straight after a forget
         const seed =
           state.simulation.season === 0 ? codeOf(site.id as string) >>> 0 : state.simulation.seed
@@ -1529,11 +1527,11 @@ export const useAppStore = create<AppState>()(
             result.value.records,
             result.value.tried,
           )
-          // it named THIS season's harvest; a new one just ran, so it is out of date rather
-          // than wrong, and the grower presses "Compare with no panels" again for this one
+          // it named THIS season's harvest; a new one just ran, so it is simply out of date,
+          // and the grower presses "Compare with no panels" again for this one
           s.noPanels = idle()
           /*
-            The picture agrees with the season (`the convergence document` 6, item 2). Two things were
+            The picture agrees with the season. Two things were
             saying "which year" and neither was the simulation: the scrubber's clock drew a
             drought of 2018 under this year's date, and a slider called "show the garden at year
             N" decided how mature the perennials were drawn while the seasons ran past it.
@@ -1769,8 +1767,8 @@ export const useAppStore = create<AppState>()(
             withAmbition(state.preferences, state.answers.ambition, catalog),
           ),
           /**
-           * The region comes off the site that was just resolved rather than off anything
-           * stored: a botanical area is a fact about where the garden is, and carrying yesterday's
+           * The region comes off the site that was just resolved: a botanical area is a fact
+           * about where the garden is, and carrying yesterday's
            * one into today's location would rank a Massachusetts garden against Peru
            */
           wildlife: { ...state.wildlife, botanicalArea: site.value.botanicalArea },
@@ -1950,7 +1948,7 @@ export const useAppStore = create<AppState>()(
         const calendars = state.calendars.status === 'ready' ? state.calendars.value : []
         const refusals: PlanRefusal[] = []
         // the plant counts are the ones the space accounting derived, so what is placed is
-        // what the suggestion said would fit rather than a fresh division of the bed
+        // exactly what the suggestion said would fit
         for (const allocation of suggestion.space.allocations) {
           const crop = catalog.find((entry) => entry.id === allocation.cropId)
           if (crop === undefined) {
@@ -2027,14 +2025,14 @@ export const useAppStore = create<AppState>()(
 
       answerOnboarding: (patch) =>
         set((s) => {
-          // an answer the SEARCH reads makes a finished run stale, so it is dropped rather than
-          // kept. One the search never reads does not: see `SEARCH_ANSWER_FIELDS`
+          // an answer the SEARCH reads makes a finished run stale, so it is dropped.
+          // One the search never reads does not: see `SEARCH_ANSWER_FIELDS`
           const stale = staleSearchAfter(patch)
           const exposureMoved =
             patch.exposure !== undefined && patch.exposure !== s.answers.exposure
           s.answers = { ...s.answers, ...patch }
           // the surroundings dim every bed's light before the ranking reads it, so a new answer
-          // re-reads the beds off the raster already baked rather than baking it again
+          // re-reads the beds off the raster already baked
           if (exposureMoved) rederiveBedLight(s)
           if (stale && s.onboarding.designs.status === 'ready') {
             s.onboarding = { ...s.onboarding, designs: idle() }
@@ -2068,14 +2066,14 @@ export const useAppStore = create<AppState>()(
          * what is left is the lookup that FAILED, and `ensureSite` deliberately does not retry
          * one of those, because it is called from a render effect and a failed upstream would
          * become a request on a timer. This is a press, so a retry is the visitor asking for it,
-         * and `resolveSite` is the right call rather than `ensureSite`
+         * and this calls `resolveSite` directly, skipping `ensureSite`
          */
         if (get().site.status !== 'ready') {
           await get().resolveSite(get().location, get().locationLabel)
           if (token !== designToken) return
           const site = get().site
           if (site.status !== 'ready') {
-            // the lookup's own sentence, rather than a search that would run the lookup again
+            // the lookup's own sentence: a search never re-runs the lookup itself
             set((s) => {
               s.onboarding = {
                 ...s.onboarding,
@@ -2089,7 +2087,7 @@ export const useAppStore = create<AppState>()(
         // the search's own client, so the candidate bakes leave the thread the wizard has to
         // animate on without the editor being able to cancel them out from under it. Where
         // `createSimClient` already failed there is nothing to pass and the engine falls back
-        // to its own direct import, rather than the wizard growing a second failure path
+        // to its own direct import, keeping failure handling in one place
         const active = designClient()
         const result = await runDesignSuggestions(
           answersOf(state.answers, state.location, state.locationLabel, state.plot),
@@ -2164,7 +2162,7 @@ export const useAppStore = create<AppState>()(
           s.mode = 'select'
           s.draft = []
           s.selectedBedId = null
-          // the light each bed was placed in, carried across rather than re-baked. It is the
+          // the light each bed was placed in, carried across as is. It is the
           // search's own bake of this layout
           s.bedLight = layout.beds.map((bed) => bed.light)
           s.compliance = []
@@ -2419,14 +2417,14 @@ export const scenePlot = (state: AppState): GardenPlot | null => state.previewPl
 
 /**
  * How covered the ground is drawn on the day the scrubber is on, and the albedo that goes with
- * it. Both come from here rather than from each component, because the ground's colour and the
+ * it. Both come from here, because the ground's colour and the
  * sky's bounce off it are two readings of one surface: whitening the picture without whitening
  * the bounce would light the scene off a ground that is not the ground being drawn, which is
  * exactly what invariant 8 exists to stop.
  *
  * The cover is a seasonal weighting off the site's monthly normals, and it is no longer only a
  * picture: the PV chain reads the same `groundSnowCover` per hour, through `chainOptionsFor`.
- * That is the whole reason it stayed one function in `src/sim/snow.ts` rather than becoming two.
+ * That is the whole reason it stayed one function in `src/sim/snow.ts`.
  * `albedoUnderSnow` below is the other half of the same rule, and the scene and the chain call
  * it with the same two arguments
  */
@@ -2519,7 +2517,7 @@ const sceneGround = (state: AppState): { readonly snowCover: number; readonly al
 }
 
 /**
- * Selected as two numbers rather than as one object, because zustand compares what a selector
+ * Selected as two separate numbers, because zustand compares what a selector
  * returns by reference: a selector that builds an object returns a new one every read, every
  * read looks like a change, and the component re-renders until React gives up. That is not a
  * hypothetical, it is what `scene.test.tsx` caught here
@@ -2551,7 +2549,7 @@ export const sameHover = (a: HoverTarget | null, b: HoverTarget | null): boolean
 
 /**
  * Whether this bed is the one under the pointer, hovered directly or through a plant growing in
- * it. Returned as a boolean rather than as the target, because a selector that hands back an
+ * it. Returned as a boolean, because a selector that hands back an
  * object hands back a new one every read: see the note above `sceneSnowCover`
  */
 export const bedHovered =
@@ -2575,7 +2573,7 @@ let examplePlot: GardenPlot | null = null
 /**
  * Whether the example garden is still the garden on screen.
  *
- * Derived from the plot rather than stored as a mode, because a mode is only ever as good as the
+ * Derived from the plot itself, because a mode is only ever as good as the
  * list of actions that remember to clear it, and that list was one entry long: the Clear button.
  * Applying a guided layout replaces the plot, the array and every planting and left the banner
  * up, so the app told a grower "nothing here is yours yet" over their own garden, which reads as

@@ -1,9 +1,9 @@
 import { useEffect, useState, type RefObject } from 'react'
 
 /**
- * What is out of sight in a scroll box, measured rather than assumed.
+ * What is out of sight in a scroll box, measured and never assumed.
  *
- * Extracted from the guided dock's answer column, which needed it first and computed the two
+ * Extracted from the guided dock's answer column, which needed it first and settled the two
  * questions worth answering separately. It is here because two more places need the same answer
  * for the same reason: the dock's help paragraph and the agent's transcript both scroll, and both
  * would otherwise be content a keyboard cannot reach.
@@ -24,7 +24,7 @@ export interface Overflow {
 }
 
 /**
- * The ref is the CALLER's, rather than made here and handed back.
+ * The ref is the CALLER's. It is never made here and handed back.
  *
  * Two reasons, and the second is the one that decided it. Some of these boxes are already
  * referenced for something else -- the transcript is scrolled to its newest turn -- and one ref is

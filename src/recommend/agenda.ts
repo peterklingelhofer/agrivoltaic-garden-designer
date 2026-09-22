@@ -172,7 +172,7 @@ interface Placed {
 }
 
 /**
- * Distance forward from today rather than a raw day number, so a southern-hemisphere
+ * Distance forward from today, above a raw day number, so a southern-hemisphere
  * season that crosses 31 December orders and groups exactly as a northern one does
  */
 const place = (item: AgendaItem, today: DayOfYear, daysLeftInMonth: number): Placed => {

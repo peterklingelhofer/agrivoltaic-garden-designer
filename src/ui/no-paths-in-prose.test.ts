@@ -12,10 +12,9 @@ import { Glob } from 'bun'
  * a phone. The pointer belongs in a comment beside the string, where the person who needs it is
  * already reading.
  *
- * It is a whole-repo scan rather than a check on the four strings that were wrong, because the
- * next one will be written somewhere else. `Cited.caveat` is not the only way prose reaches a
- * screen: a refusal reason, a disclaimer and a limiting factor all do, and they live in `sim`,
- * `recommend` and `data` as well as here
+ * It is a whole-repo scan, because the next one will be written somewhere else. `Cited.caveat`
+ * is not the only way prose reaches a screen: a refusal reason, a disclaimer and a limiting
+ * factor all do, and they live in `sim`, `recommend` and `data` as well as here
  */
 const ROOT = join(import.meta.dir, '..')
 const sources: Record<string, string> = {}
@@ -36,15 +35,14 @@ const withoutComments = (source: string): string =>
     .filter((line) => !/^\s*(\/\/|\*)/.test(line))
     .join('\n')
 
-/** Long enough to be prose rather than an identifier, a key or a path being built, and one line */
+/** Long enough to be prose, well past an identifier, a key or a path being built, and one line */
 const PROSE = /(['"])((?:(?!\1)[^\\\n]|\\.){60,})\1/g
 
 /**
  * Paths, and the names this repo calls its own documents by.
  *
- * "the agrivoltaics document" and "the solar geometry document" are how the source refers to the science and solar-engineering notes, and
- * they read to a gardener as a missing footnote. They are perfectly good in a comment, which is
- * where they now live
+ * A "doc 02" style pointer reads to a gardener as a missing footnote, so that shape stays on the
+ * list beside the paths
  */
 const FORBIDDEN = /\bsrc\/|\bdocs\/|\.tsx?\b|\.mjs\b|\.md\b|Decision Record|\bdocs? \d/i
 

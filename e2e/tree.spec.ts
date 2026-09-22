@@ -27,7 +27,7 @@ test('a tree drawn on the ground shades the light, and survives a reload', async
   const app = await openApp(page, { exampleGarden: true })
   // the example design and raster arrive over the network after the canvas is already up; the
   // banner is what says they landed, and drawing a tree before it does draws on the plot the
-  // app started on rather than the example, which the fetch then overwrites from under it
+  // app started on. The example has not arrived yet: the fetch overwrites it from under it
   await expect(page.getByTestId('panel-example')).toBeVisible({ timeout: 60_000 })
 
   await step(page, 'light')

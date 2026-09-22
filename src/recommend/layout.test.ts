@@ -30,7 +30,7 @@ import {
  * gap beside it, and every crop decision taken on that bed is taken against a daily light
  * integral that is true of no part of it. These tests assert the structure and the direction
  * of the fix, never an absolute light figure: the field below is synthetic, so a pinned
- * number here would pin the fixture rather than the placement
+ * number here would pin the fixture
  */
 
 const WINDOW: GrowingWindow = { startMonth: 4, endMonth: 9 }
@@ -328,7 +328,7 @@ describe('the bed count for a plot', () => {
     expect(bedCountFor(8, 6)).toBe(MAX_BEDS)
     expect(bedCountFor(12, 8)).toBe(MAX_BEDS)
     expect(bedCountFor(60, 40)).toBe(BED_CEILING)
-    // and rises between the two rather than jumping
+    // and rises between the two smoothly
     const middling = bedCountFor(30, 20)
     expect(middling).toBeGreaterThan(MAX_BEDS)
     expect(middling).toBeLessThanOrEqual(BED_CEILING)

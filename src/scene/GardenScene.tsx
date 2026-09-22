@@ -61,7 +61,7 @@ export const GardenScene = (): ReactElement => {
     [plot],
   )
   /**
-   * How far the ground grid reaches, from the plot rather than from the plane it is drawn on.
+   * How far the ground grid reaches, from the plot.
    *
    * A garden is a few tens of metres and the grid faded at 110, so a 32 by 24 m plot sat in a
    * hundred metres of one-metre squares and the whole frame read as a CAD sheet. Half the
@@ -123,12 +123,12 @@ export const GardenScene = (): ReactElement => {
         a ground fragment. That is worth not doing on its own merits.
 
         It was added believing it would fix a flicker reported on Firefox, and it did not. Measured
-        afterwards, rather than assumed: Firefox hands out a 24-bit depth buffer on Apple silicon,
+        afterwards, directly: Firefox hands out a 24-bit depth buffer on Apple silicon,
         where the smallest resolvable depth difference around this camera distance is about half a
         millimetre, so the two planes were already four quanta apart and coplanarity cannot have
         been what was on screen. The Firefox flicker is still open.
 
-        A lift rather than the `polygonOffset` `DliOverlay` uses one file over, because that
+        A lift here, a different approach from the `polygonOffset` `DliOverlay` uses one file over, because that
         material is ours and takes the prop directly while this one is drei's and would have to be
         reached by prop piercing that races the material it pierces
       */}
@@ -155,7 +155,7 @@ export const GardenScene = (): ReactElement => {
         sky and this grid were what was left.
       */}
       {/*
-        The fade is tied to the garden rather than to the plane it is drawn on. At the fixed 110 m
+        The fade is tied to the garden itself, whatever plane it is drawn on. At the fixed 110 m
         it had, a 32 by 24 m plot sat in the middle of a hundred metres of one-metre squares and
         the first thing anybody saw was a CAD sheet: the grid is a ruler for the beds, so it
         reaches a little past the longest side of the plot and stops. The bounded 120 m plane
@@ -230,7 +230,7 @@ export const GardenScene = (): ReactElement => {
       */}
       {/*
         `onChange` marks the frame structural; drei already calls `invalidate()` for us on the
-        same event, so this adds the reason rather than the request. It is needed because the
+        same event, so this adds only the reason; the request itself already happened. It is needed because the
         shadow cascades track the camera frustum and the occlusion estimate is screen-space, so
         both are stale the moment the camera moves, and a frame that did not know it was the
         camera moving would reuse them and smear

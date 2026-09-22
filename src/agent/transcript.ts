@@ -11,8 +11,8 @@ import type { IntentId } from './intent'
  * The answers already survive one: they go into the store through the same actions the wizard
  * uses and are persisted with the design. What did not survive was the TRANSCRIPT, so a visitor
  * who reloaded came back to a garden that had been described to them by nobody, with an agent
- * that greeted them as a stranger. The setup was intact and the conversation about it was gone,
- * which reads as the agent having forgotten rather than the page having reloaded.
+ * that greeted them as if new to it. The setup was intact and the conversation about it was gone,
+ * which reads as the agent having forgotten. It is easy to mistake for a page reload.
  *
  * The key lives in `state/persist.ts` with the others, so that `removeDesign` can take it: a
  * garden cleared from the editor must not leave a conversation about it behind
@@ -33,7 +33,7 @@ export const KEEP_TURNS = 40
  *
  * It lived here and again in `ui/agent-words.ts`, which meant a fourth tone had to be added twice
  * and the transcript's own guard silently discarded every restored turn that used it. The panel
- * imports this rather than restating it; `src/agent` cannot import `src/ui`, so this is the end
+ * imports this directly, without restating it; `src/agent` cannot import `src/ui`, so this is the end
  * of the seam the shared word has to live at
  */
 export const TONES = ['say', 'note', 'caveat', 'provenance'] as const
@@ -84,7 +84,7 @@ const isLine = (value: unknown): value is StoredLine => {
 }
 
 /**
- * Decoded rather than cast, like everything else this app reads back from storage.
+ * Decoded, with no cast, like everything else this app reads back from storage.
  *
  * What is on the other side of `localStorage` is a string somebody could have written by hand,
  * and a transcript that trusts it renders whatever it is given. Anything that does not decode is

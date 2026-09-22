@@ -51,7 +51,7 @@ describe('the temperatures a crop actually stands in', () => {
   })
 
   /**
-   * The misclassification the hot limb exposed rather than caused. Thyme, oregano, sage, winter
+   * The misclassification this hot limb makes visible. Thyme, oregano, sage, winter
    * savory and hyssop are Mediterranean-basin sub-shrubs that sat on the temperate
    * `hardy-perennial` envelope and its 34 C ceiling, while rosemary, the same family from the same
    * region, sat on the subtropical one, so only which archetype an author happened to pick decided

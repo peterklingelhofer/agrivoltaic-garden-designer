@@ -6,8 +6,8 @@ export const TTL_ERROR_SECONDS = 60
 /**
  * A 5xx, which is an upstream down or one that outran `UPSTREAM_TIMEOUT_MS`, held for less than
  * the minute a 4xx gets. The client's own retries a quarter of a second apart still land on it,
- * and so does a room asking at once; its scheduled retry a minute later gets a fresh attempt
- * instead of the failure it already read, which held for a minute was what it kept reading
+ * and so does a room asking at once; its scheduled retry a minute later gets a fresh attempt,
+ * not the failure it already read, which held for a minute was what it kept reading
  */
 export const TTL_OUTAGE_SECONDS = 10
 

@@ -26,8 +26,8 @@ const WEAK = ' and '
  *
  * Two, because a one-word half is almost always part of the phrase it was cut out of: splitting
  * "a bit of both" at its "and"-less seam is not possible, but "salt and pepper" would leave
- * "salt", and a single word on one side of a conjunction is the signature of a list rather than
- * of a second request
+ * "salt", and a single word on one side of a conjunction is the signature of a list, distinct
+ * from a second request
  */
 export const MIN_CLAUSE_WORDS = 2
 

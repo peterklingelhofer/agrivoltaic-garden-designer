@@ -14,7 +14,7 @@ import { existsSync } from 'node:fs'
  * Hence `MODEL_REQUIRED`. Locally, absent weights still skip, because a fresh clone should be
  * able to run the suite without a 58 MB download it did not ask for. In CI the same absence is a
  * hard failure, asserted by `model-presence.test.ts`, because there the weights are fetched on
- * purpose and their absence means the fetch broke rather than that somebody is working offline.
+ * purpose and their absence always means the fetch broke.
  *
  * Node-only, and imported by tests alone; `boundary.test.ts` holds that. Nothing the browser
  * loads may reach this file, because `node:fs` does not exist there
@@ -32,11 +32,11 @@ export const HAVE_MODEL = existsSync(MODEL_FILE)
  * There is one: Cloudflare Workers Builds deploys this repo on every push to `main`, it runs `bun run test` as part of its build command, and it sets `CI` the
  * way every builder does.
  *
- * This said Workers Builds "has no `models/`" until 2026-09-09. It has them: `build:deploy` runs
+ * This once said Workers Builds "has no `models/`". It has them: `build:deploy` runs
  * `fetch-agent-model` before the suite, and that script writes to `models/` at the repo root,
  * which is the path `HAVE_MODEL` reads. Whether the claim was ever true is not checkable from
- * here. Both builders fetch the weights today,
- * so the case that motivated this variable does not bite either of them.
+ * here. Both builders fetch the weights today, so the case that motivated this variable does not
+ * bite either of them.
  *
  * The rule stays regardless, and not out of caution. "This builder fetches the weights" is still
  * not derivable from "this is a builder", and the next one to set `CI` without fetching would

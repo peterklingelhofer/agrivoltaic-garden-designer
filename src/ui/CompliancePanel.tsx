@@ -90,7 +90,7 @@ export const CompliancePanel = (): ReactElement => {
       ) : null}
       {/* the idle case carries a press now, so it is the one state `AsyncNotice` does not
           render here: loading and error still belong to it, because those are this slice's own
-          business rather than a thing the visitor can settle */}
+          business, and there is nothing there for the visitor to settle */}
       {raster.status === 'idle' ? (
         <MissingRaster testId="status-compliance" />
       ) : (

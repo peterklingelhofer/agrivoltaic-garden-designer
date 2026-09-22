@@ -13,7 +13,7 @@ export type ComplianceRegimeId =
 // No regime is self-verifiable. MA SMART looked self-verifiable from geometry alone but is
 // not: DOER mandates its own Shading Analysis Tool, the regulation does not say whether the
 // 50% test is cumulative or worst-instantaneous, and every parameter is waivable. The raster
-// does now resolve Growing Season Hours. See the verification document
+// does now resolve Growing Season Hours
 export type Verifiability = 'estimate-only'
 
 export interface ComplianceRegime {
@@ -34,8 +34,8 @@ interface CriterionCore {
   readonly criterion: Criterion
 }
 
-// 'meets' / 'misses' rather than pass/fail: these are design parameters for an expedited
-// track, not a determination, and pass/fail language must never reach a user
+// 'meets' and 'misses' name design parameters for an expedited track. A determination comes
+// later, from elsewhere, and pass/fail language must never reach a user
 export interface MeetsResult extends CriterionCore {
   readonly outcome: 'meets'
   readonly measured: number

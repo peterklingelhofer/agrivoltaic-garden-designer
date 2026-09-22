@@ -6,7 +6,7 @@ import type { Requirement } from './requirement'
  * What is missing, and the press that settles it, said once.
  *
  * Replaces four hand-built versions of the same thing. The sentence and the button are one
- * element rather than two, because the pair that drifted apart was exactly the failure: the
+ * element. Never two: the pair that drifted apart was exactly the failure: the
  * ranking panel put its sentence on a status line and its button in a separate row, and a later
  * edit changed one of them
  */

@@ -107,7 +107,7 @@ describe('what the guided setup planted', () => {
 
   /**
    * The three answers the design search was run with have no editable home anywhere, and that is
-   * the decision rather than an omission: a second copy of them would be a second source of truth
+   * the decision. Not an omission: a second copy of them would be a second source of truth
    * for one idea. What is owed is naming them and offering the way back to the one place that
    * does change them, with everything already typed still in it
    */
@@ -161,9 +161,9 @@ describe('what the guided setup planted', () => {
 })
 
 /**
- * The panel used to list the crops the generation planted while the
- * planting question had since replaced them, so the old names stayed on screen for as long
- * as the step stayed open, which reads as a planting that failed. The list reads the plot now
+ * The panel used to list the crops the generation planted, even after the planting question
+ * replaced them, so a stale name could read as a choice that had failed. The list reads the
+ * plot now
  */
 describe('the plan card follows the beds', () => {
   it('lists what is in each bed now, and counts it, off the plot rather than the snapshot', async () => {
@@ -195,8 +195,8 @@ describe('the plan card follows the beds', () => {
 
   /**
    * One fold at the foot of the plants step, closed. The card ran to four paragraphs and a bed
-   * list above the open step, and every persona who reached the editor scrolled past it; the bed
-   * cards on the step's face now say what is planted, and this is the record of why
+   * list above the open step, easy to scroll past entirely; the bed cards on the step's face now
+   * say what is planted, and this is the record of why
    */
   it('is one closed fold holding the whole record', async () => {
     await generate()

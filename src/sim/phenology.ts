@@ -15,7 +15,7 @@ import { saturationVapourPressureKpa } from './vapour'
  * on top of the paper's own rule are this app's: the mean is centred, ten days either side of
  * each day and wrapping past the typical year's end, so the paper's rule itself carries no added
  * lag; a calendar month counts as in leaf when the mean on its 15th day passes 0.5, because the
- * bake that reads this accumulates by month rather than by day; the day length behind the
+ * bake that reads this accumulates by whole months. The day length behind the
  * photoperiod indicator is the standard sunrise-hour-angle formula on `spencerDeclination`, the
  * declination the solar geometry already carries; and a drawn tree reads the index with the
  * vapour-pressure-deficit indicator held at 1. The paper chose that indicator as a surrogate for

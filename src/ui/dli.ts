@@ -53,9 +53,9 @@ const reasonOf = (cited: Cited<number>): string =>
 
 /**
  * A Tier C figure is this app's own inference from the crop's sun label, so the sentence says
- * so: a reader took "(Purdue, VCE)" beside the number as the number's source. Since the sweep of
- * 2026-09-20 an inference carries a citation only where that document prints this crop's own
- * figure, and the sentence splits on whether it does
+ * so: a reader took "(Purdue, VCE)" beside the number as the number's source. An inference
+ * carries a citation only where that document prints this crop's own figure, and the sentence
+ * splits on whether it does
  */
 const summaryOf = (label: string, value: string, cited: Cited<number>): string =>
   cited.provenance === 'inferred'

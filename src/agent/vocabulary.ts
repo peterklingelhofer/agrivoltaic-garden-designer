@@ -445,16 +445,15 @@ export const scopeSubjectIn = (text: string): ScopeTopic | null => {
  * Greetings, thanks and the other things people say that are not about the garden.
  *
  * They need naming because the question about the PLACE accepts anything as a possible place
- * name, which is right for "Amherst" and absurd for "hiya": a real session opened with a greeting
- * and the agent sent it to the geocoder. "Ta" at the end of the same session was met with "I did
- * not follow that", which is a poor way to be thanked
+ * name, which is right for "Amherst" and absurd for "hiya": it goes to the geocoder as a greeting,
+ * and "ta" at the end is met with "I did not follow that", which is a poor way to be thanked
  */
 /**
- * The pleasantries that are gratitude rather than salutation.
+ * The pleasantries that are gratitude.
  *
- * A real session ended with "thanks" and was answered "Hello." Both are pleasantries and both
- * deserve better than the geocoder, which is why they share an intent, but they are not the same
- * thing said twice: answering thanks with a greeting reads as an agent that heard a noise
+ * "Thanks" answered with "Hello." -- both are pleasantries and both deserve better than the
+ * geocoder, which is why they share an intent, but they are not the same thing said twice:
+ * answering thanks with a greeting reads as an agent that heard a noise
  */
 export const THANKS: readonly string[] = ['thanks', 'thank you', 'ta', 'cheers', 'nice one']
 
@@ -580,7 +579,7 @@ const WORD_NUMBER: Readonly<Record<string, number>> = {
  *
  * Words as well as digits, because "about two metres" is how a height limit gets described out
  * loud and refusing it sends someone back to a slider they were trying to avoid. Feet are read
- * and converted rather than refused: the app is metric throughout and a grower who thinks in feet
+ * and converted: the app is metric throughout and a grower who thinks in feet
  * is not going to convert on our behalf
  */
 export const lengths = (text: string): readonly number[] => {
@@ -696,8 +695,8 @@ const heads = new WeakMap<readonly Crop[], ReadonlyMap<string, readonly CropId[]
  * cow, chick, field. Those are the commonest words a beginner types, and every one of them found
  * nothing at all.
  *
- * It returns EVERY crop sharing the head noun rather than guessing at one, and that turns out to
- * be the right answer rather than a compromise. "I do not want beans" means all five of them, and
+ * It returns EVERY crop sharing the head noun, and that turns out to
+ * be the right answer. "I do not want beans" means all five of them, and
  * "I want beans" means the ranking should pick whichever bean this bed's light can carry -- which
  * is the decision this whole application exists to make, and not one the router should pre-empt
  */
@@ -741,8 +740,8 @@ export const cropVocabulary = (catalog: readonly Crop[]): readonly Candidate<Cro
     changes, and building this is not free: 163 crops with four or five names each is about 650
     phrases to normalise and sort. It was being rebuilt once per candidate intent, twenty-one
     times for every sentence typed, which measured at ~100 ms a sentence in node. A WeakMap and
-    not a module-level variable so a test that loads a second catalogue gets a second vocabulary
-    rather than the first one's answers
+    not a module-level variable so a test that loads a second catalogue gets a second vocabulary,
+    never the first one's answers
   */
   const held = built.get(catalog)
   if (held !== undefined) return held

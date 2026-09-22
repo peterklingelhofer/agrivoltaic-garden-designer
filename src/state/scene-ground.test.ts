@@ -88,7 +88,7 @@ describe('snow reaching the ground the camera sees', () => {
 })
 
 /**
- * The picture and the number, checked against each other rather than each against a copy.
+ * The picture and the number, checked against each other directly.
  *
  * The renderer knew about the snow and the PV chain did not, so the scene drew a white January
  * while the year's generation was computed off summer grass. Both now read `groundSnowCover` and

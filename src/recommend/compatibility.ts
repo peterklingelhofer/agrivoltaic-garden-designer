@@ -39,7 +39,7 @@ import { cropLabel } from '../data/crops'
  * against the SITE; nothing compared two crops proposed for the same bed. Each
  * term below is computed from data the catalogue already holds, carries its own
  * verdict and its own citations, and is reported separately so a suggestion can
- * be argued with rather than merely trusted
+ * be argued with, and never merely trusted
  */
 export interface PairContext {
   readonly bed: Bed
@@ -184,8 +184,8 @@ export const phOverlap = (a: Crop, b: Crop): PhOverlap => {
 }
 
 /**
- * A crop whose absolute pH span is narrow enough to be physiology rather than a
- * preference cannot be moved to a compromise, so disjoint optima where either
+ * A crop whose absolute pH span is narrow enough to reflect physiology
+ * cannot be moved to a compromise, so disjoint optima where either
  * side is that narrow is a hard conflict, not a warning. Blueberry, alone in
  * this catalogue in optimising below pH 6.2, is exactly that crop
  */

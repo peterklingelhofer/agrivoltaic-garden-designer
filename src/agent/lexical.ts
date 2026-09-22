@@ -48,16 +48,16 @@ import {
 /**
  * How far the query has to score before an intent is claimed at all.
  *
- * Tuned to refuse rather than to guess. Below this the panel asks "did you mean one of these?"
+ * Tuned to refuse. Below this the panel asks "did you mean one of these?"
  * with the top few as chips, which is a better failure than confidently answering the wrong
- * question, and is the failure a five year old recovers from without reading anything
+ * question, and is the failure a beginner recovers from without reading anything
  */
 export const CONFIDENCE_FLOOR = 0.34
 
 /**
  * What standing on a question is worth.
  *
- * Multiplicative rather than additive so it can never drag an intent that scored nothing up over
+ * Multiplicative, so a zero score can never drag an intent up over
  * the floor: it sharpens a real contest between two plausible readings and does not manufacture
  * one. The number is the smallest that reliably separates "two metres" answering the height
  * question from the same words answering the plot-size question
@@ -140,7 +140,7 @@ interface CropsFound {
   readonly ids: readonly CropId[]
   readonly certain: boolean
   /**
-   * The words of the sentence this consumed, as typed rather than as spelt in the catalogue.
+   * The words of the sentence this consumed, as typed.
    *
    * Reported because the matcher is the only thing that knows: "courgetes" is claimed by
    * `courgette` through a near-spelling, and anything downstream comparing the sentence against
@@ -155,7 +155,7 @@ const cropsIn = (text: string, catalog: RouteContext['catalog']): CropsFound => 
   const said = singularise(text)
 
   /*
-    Three passes, and the UNION of them rather than the first that hits.
+    Three passes, and the UNION of them.
 
     Returning early on containment was the obvious shape and it silently halved a common
     sentence: "tomatos and courgetes" contains "tomato" exactly, so the search stopped there and
@@ -416,11 +416,12 @@ const scoreAll = (text: string, context: RouteContext, reading: Reading): readon
       /*
       A bare "yes" carries no meaning of its own; all of its meaning is in the question it is
       answering, and the question is on screen. No phrase in the table can cover this, because
-      the phrase that would cover it is the question rather than the answer, so the question
+      the phrase that would cover it is the question itself, so the question
       being asked is allowed to vouch for a plain affirmative or refusal directly.
 
-      A floor and not an override: something that scores higher on its own words still wins, which
-      is what keeps "I do not want tomatoes" a refusal of tomatoes rather than a no to the tap
+      This is a floor: something that scores higher on its own words still wins regardless, which
+      is what keeps "I do not want tomatoes" read as a refusal of tomatoes. It does not get read
+      as a no to the tap
     */
       const answersTheQuestion =
         intent.step !== null && intent.step === context.step && intent.slot === 'yes-no'
@@ -483,7 +484,7 @@ const scoreAll = (text: string, context: RouteContext, reading: Reading): readon
  * The readings worth acting on: everything, less any destructive intent that was not asked for
  * clearly.
  *
- * Dropped rather than demoted, so no fallback can reach one either: the question on screen must
+ * Dropped entirely, so no fallback can reach one either: the question on screen must
  * not be able to vouch for `undo`, and neither must a crop name
  */
 const scoreIntents = (text: string, context: RouteContext, reading: Reading): readonly Scored[] =>
@@ -508,7 +509,7 @@ export const nearMisses = (text: string, context: RouteContext, count = 3): read
  * about locating a garden, it is a place name. Refusing it is absurd, and it is the most likely
  * first thing anybody types.
  *
- * Narrow rather than a catch-all, in two ways. `ranked` has already dropped every intent whose
+ * Narrow, in two ways. `ranked` has already dropped every intent whose
  * slot this sentence could not fill, so nothing is accepted that has no answer in it; and only
  * the intent belonging to the question actually being asked is eligible, so an unparseable
  * sentence at a moment when nothing was asked is still met with "I did not follow that".
@@ -620,8 +621,8 @@ const cropNamedAlone = (ranked: readonly Scored[]): Scored | undefined => {
 }
 
 /**
- * Above this, a phrase match is taken as a reading of the sentence rather than a resemblance to
- * one, and nothing is allowed to outrank it.
+ * Above this, a phrase match is taken as a reading of the sentence, and nothing is allowed to
+ * outrank it.
  *
  * Between this and `CONFIDENCE_FLOOR` sits the band where a crop found BY NAME in the catalogue
  * is the better evidence. "Runner beans" reaches 0.37 against "fruit and berries" purely on the
@@ -676,7 +677,7 @@ export const understandingFor = (
   /**
    * The bar a destructive intent has to clear, on the CALLER's scale.
    *
-   * Passed in rather than read from `DESTRUCTIVE_FLOOR`, because Dice over character bigrams and
+   * Passed in directly, because Dice over character bigrams and
    * cosine over sentence embeddings are not the same scale and cannot share a threshold. A Dice
    * of 0.48 is a coincidence; a cosine of 0.48 against "take out the" is a firm reading, and
    * holding the embedding to the lexical figure meant "pull out the courgettes" could never
@@ -693,10 +694,10 @@ export const understandingFor = (
   /*
     A WH-question is never an instruction, and this is where both routers pass through.
 
-    A played session asked "when do i plant the tomatoes" and "what should i do this month" and
-    was answered, both times, by REPLANTING every bed: `plan-planting` shares its whole vocabulary
-    with the questions people ask about planting, and the reply that came back was the planting
-    report rather than a calendar. Nothing on screen said the garden had just been rewritten.
+    "When do i plant the tomatoes" and "what should i do this month" were both once answered by
+    REPLANTING every bed: `plan-planting` shares its whole vocabulary with the questions people
+    ask about planting, and the reply that came back was the planting report where a calendar was
+    expected. Nothing on screen said the garden had just been rewritten.
 
     The guard was already here for `like-crop` and `dislike-crop`, on exactly the same reasoning,
     and stopping at those two was arbitrary. Somebody who opens with "what" or "when" is asking,
@@ -737,9 +738,9 @@ export const routeLexically = (text: string, context: RouteContext): Understandi
   if (normalise(text) === '') return null
   /*
     Pleasantries first, before anything else can read them as an answer. The question about the
-    place accepts any text as a possible place name, so a session that opened with "hiya" sent a
-    greeting to the geocoder; "ta" at the end of the same session was met with "I did not follow
-    that". Neither is about the garden and both deserve better than either
+    place accepts any text as a possible place name, so "hiya" sends a greeting to the geocoder;
+    "ta" at the end is met with "I did not follow that". Neither is about the garden and both
+    deserve better than either
   */
   if (isSocial(text)) {
     return {
@@ -756,7 +757,7 @@ export const routeLexically = (text: string, context: RouteContext): Understandi
   const ranked = scoreIntents(text, context, reading)
   const top = ranked[0]
   /*
-    Read in order of how much each reading is actually worth, rather than by score alone:
+    Read in order of how much each reading is actually worth:
 
       1. a phrase match confident enough to stand on its own
       2. a crop found BY NAME, which beats any merely marginal phrase match
@@ -778,7 +779,7 @@ export const routeLexically = (text: string, context: RouteContext): Understandi
   const listOfCrops = !pendingHasACandidate && isOnlyCropNames(text, reading)
   const chosen = listOfCrops
     ? /*
-        Reported as a CERTAINTY rather than as the weak fallback `cropNamedAlone` normally is.
+        Reported as a CERTAINTY. `cropNamedAlone` normally reports a weaker fallback.
         Every content word in the sentence is a catalogue name, which is about as sure as this
         router gets, and `embedding.ts` reads `spoken` to decide whether to second-guess a
         reading: without this the model overrode "tomatos and courgetes" with the ambition

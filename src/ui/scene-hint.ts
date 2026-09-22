@@ -7,9 +7,9 @@ import type { EditorMode } from '../state/slices'
  * and then had nowhere to go: pressing Enter did nothing, double-clicking did nothing, and the
  * only way to turn the corners into a bed was a button called "Close polygon" sitting inside a
  * collapsed accordion in the sidebar. All three of these are true now, and said on the surface
- * the drawing is happening on rather than in a panel the drawer is not looking at.
+ * the drawing is happening on. It never lands in a panel the drawer is not looking at.
  *
- * Kept beside the component rather than in it for the reason `cold-open.ts` is: what a surface
+ * Kept beside the component. It is not mounted inside it, for the reason `cold-open.ts` is: what a surface
  * says can be read, and tested, without a store or a canvas behind it
  */
 export type DrawMode = Exclude<EditorMode, 'select' | 'move'>
@@ -22,7 +22,7 @@ export const DRAW_HINT: Readonly<Record<DrawMode, string>> = {
 }
 
 /**
- * The same, for a finger. "Double-click... press Enter... Esc" is the desktop hint, on a screen
+ * The same, for a finger. The desktop hint reads "Double-click... press Enter... Esc" on a screen
  * with no mouse and no keys; the gestures here are the ones a touch screen has, and the two
  * presses beside the hint are what close and abandon a shape whatever the pointer
  */

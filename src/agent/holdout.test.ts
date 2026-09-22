@@ -85,7 +85,7 @@ describe('the held-out set', () => {
       `HOLDOUT: ${((ok / HOLDOUT.length) * 100).toFixed(0)}% (${String(ok)}/${String(HOLDOUT.length)})\n${misses.join('\n')}`,
     )
     /*
-      Reported rather than graded, which is the original note here and still right: a floor near
+      Reported only, which is the original note here and still right: a floor near
       the measured score would create the same pressure to tune against it that spent all three
       sets. What has been added is not a grade. `COLLAPSE_FLOOR` sits at 60% against a set that
       scores 87%, far enough below that no honest change approaches it, and it exists because
