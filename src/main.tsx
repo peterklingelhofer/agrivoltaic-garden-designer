@@ -28,7 +28,7 @@ if (host) {
     // the plan strip, the print sheet and the app's own hooks, which used to fail to a blank page
     createRoot(host).render(
       <StrictMode>
-        <ErrorBoundary label="Agrivoltaic garden designer" testId="panel-app-failed">
+        <ErrorBoundary label="Agrivoltaic garden model" testId="panel-app-failed">
           <App />
         </ErrorBoundary>
       </StrictMode>,
